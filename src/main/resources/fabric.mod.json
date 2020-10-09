@@ -9,13 +9,14 @@
     "unascribed"
   ],
   "contact": {
-    "homepage": "https://unascribed.com/",
-    "source": "https://github.com/unascribed/Ears"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/ears",
+    "source": "https://github.com/unascribed/Ears",
+    "issues": "https://github.com/unascribed/Ears/issues"
   },
 
   "license": "MIT",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "com.unascribed.ears.EarsMod"
@@ -27,8 +28,7 @@
 
   "depends": {
     "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": ">=1.15"
   },
   "suggests": {
   }
