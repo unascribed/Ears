@@ -1,20 +1,19 @@
 package com.unascribed.ears;
 
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.client.texture.Texture;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
 
 public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	
@@ -23,50 +22,58 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	}
 
 	@Override
-	public void render(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-		Identifier skin = getTexture(entity);
-		AbstractTexture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
+	public void render(AbstractClientPlayerEntity entity, final float limbAngle, final float limbDistance,
+			final float tickDelta, final float age, final float headYaw, final float headPitch, final float scale) {
+		Identifier skin = entity.getSkinTexture();
+		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
 		if (tex instanceof EarsAwareTexture && !entity.isInvisible()) {
 			if (((EarsAwareTexture)tex).isEarsEnabled()) {
 				try {
-					m.push();
-					int overlay = LivingEntityRenderer.getOverlay(entity, 0);
-					VertexConsumer vc = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(skin));
-					getContextModel().head.rotate(m);
-					m.translate(-0.5, -1, 0);
-					Matrix4f mv = m.peek().getModel();
-					Matrix3f mn = m.peek().getNormal();
-					vc.vertex(mv, 0, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(24/64f, 8/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 1, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(40/64f, 8/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 1, 0, 0).color(1f, 1f, 1f, 1f).texture(40/64f, 0/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).texture(24/64f, 0/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
+					GlStateManager.pushMatrix();
+					Tessellator tess = Tessellator.getInstance();
+					BufferBuilder vc = tess.getBuffer();
+					vc.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
+					getContextModel().head.applyTransform(0.0625f);
+					GlStateManager.enableCull();
+					GlStateManager.translated(-0.5, -1, 0);
+					vc.vertex(0, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(24/64f, 8/64f).normal(0, 0, -1).next();
+					vc.vertex(1, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(40/64f, 8/64f).normal(0, 0, -1).next();
+					vc.vertex(1, 0, 0).color(1f, 1f, 1f, 1f).texture(40/64f, 0/64f).normal(0, 0, -1).next();
+					vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(24/64f, 0/64f).normal(0, 0, -1).next();
 					
-					vc.vertex(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 44/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 1, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 1, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 0, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 44/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					m.pop();
+					vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 44/64f).normal(0, 0, 1).next();
+					vc.vertex(1, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).normal(0, 0, 1).next();
+					vc.vertex(1, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).normal(0, 0, 1).next();
+					vc.vertex(0, 0.5f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 44/64f).normal(0, 0, 1).next();
+					tess.draw();
+					GlStateManager.popMatrix();
 					
-					m.push();
-					getContextModel().torso.rotate(m);
-					m.translate(-0.25, 0.625, 0.15);
-					m.multiply(Vector3f.POSITIVE_X.getRadialQuaternion((float)Math.toRadians(30+(limbDistance*40))));
-					mv = m.peek().getModel();
-					mn = m.peek().getNormal();
-					vc.vertex(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 16/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 0.5f, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 16/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 0.5f, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
-					vc.vertex(mv, 0, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, 1).next();
+					GlStateManager.pushMatrix();
+					getContextModel().torso.applyTransform(0.0625f);
+					GlStateManager.translated(-0.25, 0.625, 0.15);
+					GlStateManager.rotated(30+(limbDistance*40), 1, 0, 0);
+					vc.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
+					vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 16/64f).normal(0, 0, 1).next();
+					vc.vertex(0.5f, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 16/64f).normal(0, 0, 1).next();
+					vc.vertex(0.5f, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).normal(0, 0, 1).next();
+					vc.vertex(0, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).normal(0, 0, 1).next();
 					
-					vc.vertex(mv, 0, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 0.5f, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 0.5f, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 16/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					vc.vertex(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 16/64f).overlay(overlay).light(light).normal(mn, 0, 0, -1).next();
-					m.pop();
+					vc.vertex(0, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 28/64f).normal(0, 0, -1).next();
+					vc.vertex(0.5f, 0.75f, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 28/64f).normal(0, 0, -1).next();
+					vc.vertex(0.5f, 0, 0).color(1f, 1f, 1f, 1f).texture(64/64f, 16/64f).normal(0, 0, -1).next();
+					vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(56/64f, 16/64f).normal(0, 0, -1).next();
+					tess.draw();
+					GlStateManager.popMatrix();
+					GlStateManager.disableCull();
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean hasHurtOverlay() {
+		return true;
 	}
 }

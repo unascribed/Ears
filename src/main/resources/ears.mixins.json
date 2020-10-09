@@ -7,7 +7,8 @@
   ],
   "client": [
     "MixinPlayerEntityRenderer",
-    "MixinPlayerSkinTexture"
+    "MixinPlayerSkinTexture",
+    "MixinSkinRemappingImageFilter"
   ],
   "injectors": {
     "defaultRequire": 1
