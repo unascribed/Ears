@@ -24,6 +24,6 @@ bin/
 .classpath
 .project
 
-# fabric
-
+# forge&fabric
 run/
+minecraft/

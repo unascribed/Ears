@@ -1,0 +1,37 @@
+// See https://github.com/elytra/Skeleton/wiki for what all these values mean
+
+ext {
+	group = 'com.unascribed'
+	projectName = 'Ears'
+
+	useElytraVersionFormat = false
+	version = '1.0.1'
+
+	concreteVersion = ''
+	concreteModules = [ ]
+
+	coremod = 'com.unascribed.ears.asm.EarsLoadingPlugin'
+	miniVersion = '0.2-SNAPSHOT'
+
+	language = 'java'
+
+	forge = '1.12.2-14.23.5.2847'
+	mappings = 'snapshot_20180413'
+
+	enforceLicenseHeaders = false
+
+	verbose = false
+}
+
+if (!ext.early) {
+archivesBaseName = 'ears-forge'
+
+repositories {
+	// the skeleton already defines mavenCentral, jcenter, and the Elytra repo
+	// will also have Shadowfacts' maven if the language is set to kotlin
+}
+
+dependencies {
+
+}
+}

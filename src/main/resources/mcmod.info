@@ -1,0 +1,11 @@
+[
+{
+  "modid": "ears",
+  "name": "Ears",
+  "description": "Faithful fancy fashion features for fuzzy folk.",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/ears",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["unascribed"]
+}
+]
