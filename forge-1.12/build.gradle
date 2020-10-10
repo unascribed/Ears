@@ -1,0 +1,251 @@
+/*
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2017 Una Thompson (unascribed)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of 
+ * this software and associated documentation files (the "Software"), to deal in 
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * of the Software, and to permit persons to whom the Software is furnished to do 
+ * so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all 
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * SOFTWARE.
+ */
+
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+		maven {
+			url = "http://files.minecraftforge.net/maven"
+		}
+		maven {
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
+		classpath 'gradle.plugin.net.minecrell:licenser:0.3'
+		classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.3'
+	}
+}
+
+ext.early = true
+apply from: 'project.gradle'
+
+if (project.ext.language == 'kotlin') {
+	apply plugin: 'kotlin'
+} else if (project.ext.language == 'scala') {
+	apply plugin: 'scala'
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+project.ext.package = project.ext.group+'.'+project.ext.projectName.toLowerCase()
+
+if (project.ext.useElytraVersionFormat) {
+	def branch;
+	if (System.env.BRANCH_NAME) {
+		// Jenkins support
+		branch = System.env.BRANCH_NAME;
+		branch = branch.substring(branch.lastIndexOf('/')+1);
+	} else {
+		branch = 'git rev-parse --abbrev-ref HEAD'.execute().in.text.trim();
+	}
+	if (branch == "HEAD") {
+		branch = 'git rev-parse --short HEAD'.execute().in.text.trim();
+	}
+	def commits = 'git rev-list --count HEAD'.execute().in.text.trim();
+	def dirty = !'git diff-index HEAD'.execute().in.text.trim().isEmpty();
+	version = branch+'-'+project.ext.version+'.'+commits+(dirty ? '-dirty' : '');
+} else {
+	version = project.ext.version;
+}
+println()
+println("Elytra Project Skeleton v1.1.4")
+println("https://github.com/elytra/Skeleton")
+println()
+println("Project Name: "+project.ext.projectName)
+println("Version: "+version)
+println()
+println("Package: "+project.ext.package)
+println()
+if (!project.ext.concreteModules.isEmpty()) {
+	println("Concrete Version: "+project.ext.concreteVersion)
+}
+if (project.ext.coremod && project.ext.miniVersion) {
+	println("Mini Version: "+project.ext.miniVersion);
+}
+println("Forge Version: "+project.ext.forge)
+println("Mappings: "+project.ext.mappings)
+println()
+println("Language: "+project.ext.language.charAt(0).toUpperCase()+project.ext.language.substring(1))
+println()
+
+project.ext.priv = parseConfig(file('private.properties'))
+
+group = project.ext.group
+archivesBaseName = project.ext.projectName
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+repositories {
+	jcenter()
+	mavenCentral()
+	maven {
+		url 'https://repo.elytradev.com/'
+	}
+	if (project.ext.language == 'kotlin') {
+		maven {
+			url 'http://maven.shadowfacts.net/'
+		}
+	}
+}
+
+if (project.ext.enforceLicenseHeaders) {
+	apply plugin: 'net.minecrell.licenser'
+}
+
+def needsShadow = !project.ext.concreteModules.isEmpty() || project.ext.miniVersion
+
+if (needsShadow) {
+	apply plugin: 'com.github.johnrengelman.shadow'
+
+	jar {
+		classifier = 'slim'
+	}
+
+	shadowJar {
+		classifier = ''
+		relocate 'com.elytradev.concrete', project.ext.package+'.repackage.com.elytradev.concrete'
+		relocate 'com.elytradev.mini', project.ext.package+'.asm.repackage.com.elytradev.mini'
+		configurations = [project.configurations.shadow]
+	}
+
+	reobf {
+		shadowJar { mappingType = 'SEARGE' }
+	}
+
+	tasks.reobfJar.doLast {
+		file('build/libs/'+archivesBaseName+'-'+version+'-slim.jar').delete()
+	}
+
+	tasks.build.dependsOn reobfShadowJar
+
+	artifacts {
+		archives shadowJar
+	}
+
+	dependencies {
+		for (String module : project.ext.concreteModules) {
+			shadow 'com.elytradev.concrete:concrete-'+module+':'+project.ext.concreteVersion
+			deobfCompile 'com.elytradev.concrete:concrete-'+module+':'+project.ext.concreteVersion
+		}
+		if (project.ext.miniVersion) {
+			shadow 'com.elytradev:mini:'+project.ext.miniVersion
+			compile 'com.elytradev:mini:'+project.ext.miniVersion
+		}
+	}
+}
+
+ext.early = false
+apply from: 'project.gradle'
+
+if (project.ext.language == 'kotlin') {
+	dependencies {
+		compile 'net.shadowfacts:Forgelin:1.5.1'
+	}
+}
+
+if (file('private.gradle').exists()) {
+	apply plugin: 'maven'
+
+	configurations {
+		deploy
+	}
+
+	dependencies {
+		deploy 'org.apache.maven.wagon:wagon-ssh:2.10'
+	}
+
+	apply from: 'private.gradle'
+}
+
+
+
+minecraft {
+	version = project.ext.forge
+	mappings = project.ext.mappings
+
+	runDir = "minecraft"
+
+	replaceIn 'src/main/java/'+project.ext.package.replace('.', '/')+'/'+project.ext.projectName+'.java'
+	replace '@VERSION@', project.version
+
+	if (project.ext.coremod) {
+		coreMod = project.ext.coremod
+	}
+}
+
+if (project.ext.coremod) {
+	jar {
+		manifest {
+			attributes (
+				'FMLCorePlugin': project.ext.coremod,
+				'FMLCorePluginContainsFMLMod': true
+			)
+		}
+	}
+}
+
+if (project.ext.language == 'kotlin') {
+	sourceSets.main.java.srcDirs += 'src/main/kotlin'
+}
+
+processResources {
+	// this will ensure that this task is redone when the versions change.
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+
+	// replace stuff in mcmod.info, nothing else
+	from(sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+
+		// replace version and mcversion
+		expand 'version':project.version, 'mcversion':project.minecraft.version
+	}
+
+	// copy everything else, thats not the mcmod.info
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+		exclude '*.xcf'
+		exclude '*.wav'
+	}
+}
+
+def parseConfig(File config) {
+	if (!config.exists()) return null
+	config.withReader {
+		def prop = new Properties()
+		prop.load(it)
+		return (new ConfigSlurper().parse(prop))
+	}
+}
