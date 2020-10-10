@@ -5,7 +5,7 @@ ext {
 	projectName = 'Ears'
 
 	useElytraVersionFormat = false
-	version = '1.0.1'
+	version = file('../version.txt').text.trim()
 
 	concreteVersion = ''
 	concreteModules = [ ]
@@ -24,7 +24,7 @@ ext {
 }
 
 if (!ext.early) {
-archivesBaseName = 'ears-forge'
+archivesBaseName = 'ears-forge-1.12'
 
 repositories {
 	// the skeleton already defines mavenCentral, jcenter, and the Elytra repo

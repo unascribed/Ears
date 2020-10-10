@@ -1,0 +1,3 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = targetCompatibility = '1.8'

@@ -1,0 +1,12 @@
+modLoader="javafml" #mandatory
+loaderVersion="[34,)"
+license="MIT"
+issueTrackerURL="https://github.com/unascribed/Ears/issues"
+[[mods]]
+modId="ears"
+version="${file.jarVersion}"
+displayName="Ears"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/ears"
+logoFile="ears-icon.png"
+authors="unascribed"
+description="Faithful fancy fashion features for fuzzy folk."
