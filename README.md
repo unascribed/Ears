@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://unascribed.com/ears-banner.png" alt="Ears" width="512" height="180"/>
+  <img src="https://unascribed.com/ears-banner.png" alt="Ears" width="512"/>
   <h3 align="center">Faithful fancy fashion features for fuzzy folk.</h3>
 </p>
 
