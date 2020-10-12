@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[26,)"
+loaderVersion="[29,)"
 license="MIT"
 issueTrackerURL="https://github.com/unascribed/Ears/issues"
 [[mods]]

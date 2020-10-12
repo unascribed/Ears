@@ -10,8 +10,3 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/ears"
 logoFile="ears-icon.png"
 authors="unascribed"
 description="Faithful fancy fashion features for fuzzy folk."
-[[dependencies.ears]]
-modId="mixinbootstrap"
-mandatory=false
-ordering="AFTER"
-versionRange="*"

@@ -1,12 +1,9 @@
 package com.unascribed.ears.mixin;
 
-import java.io.InputStream;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.unascribed.ears.EarsAwareTexture;
 
@@ -24,9 +21,8 @@ public abstract class MixinPlayerSkinTexture extends SimpleTexture implements Ea
 	
 	private boolean earsEnabled = false;
 
-	@Inject(at=@At("RETURN"), method = "loadTexture(Ljava/io/InputStream;)Lnet/minecraft/client/renderer/texture/NativeImage;")
-	private void loadTexture(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
-		NativeImage cur = ci.getReturnValue();
+	@Inject(at=@At("HEAD"), method = "setImage(Lnet/minecraft/client/renderer/texture/NativeImage;)V")
+	public void setImage(NativeImage cur, CallbackInfo ci) {
 		if (cur.getHeight() == 64) {
 			boolean allMatch = true;
 			out: for (int x = 0; x < 4; x++) {
@@ -41,28 +37,9 @@ public abstract class MixinPlayerSkinTexture extends SimpleTexture implements Ea
 		}
 	}
 	
-	@Inject(at = @At("HEAD"), method = "setAreaOpaque(Lnet/minecraft/client/renderer/texture/NativeImage;IIII)V", cancellable = true)
-	private static void setAreaOpaque(NativeImage image, int x, int y, int width, int height, CallbackInfo ci) {
-		if (x == 0 && y == 0 && width == 32 && height == 16) {
-			// Leave the unused corners of the head texture transparent-capable for ears.
-			ci.cancel();
-			setAreaOpaque(image, 8, 0, 16, 8);
-			setAreaOpaque(image, 0, 8, 32, 8);
-		}
-		if (x == 0 && y == 16 && width == 64 && height == 32) {
-			// Leave the unused space to the right of the body texture transparent-capable for ears.
-			ci.cancel();
-			setAreaOpaque(image, 0, 16, 56, 32);
-		}
-	}
-	
-	@Shadow
-	private static void setAreaOpaque(NativeImage image, int x, int y, int width, int height) {}
-	
 	@Override
 	public boolean isEarsEnabled() {
 		return earsEnabled;
 	}
-	
 	
 }
