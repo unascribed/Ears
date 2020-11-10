@@ -1,3 +1,7 @@
-apply plugin: 'java-library'
+try {
+	apply plugin: 'java-library'
+} catch (e) {
+	apply plugin: 'java'
+}
 
 sourceCompatibility = targetCompatibility = '1.8'
