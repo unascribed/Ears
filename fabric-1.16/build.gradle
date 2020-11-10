@@ -15,7 +15,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation project('common')
+	compile project('common')
 }
 
 processResources {
@@ -30,6 +30,7 @@ processResources {
 		exclude "fabric.mod.json"
 	}
 }
+
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
@@ -47,5 +48,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
+	from '../common/build/classes/java/main'
 	from "../LICENSE"
 }

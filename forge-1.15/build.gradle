@@ -127,6 +127,7 @@ dependencies {
 jar.finalizedBy('reobfJar') 
 
 jar {
+	from '../common/build/classes/java/main'
     manifest {
         attributes(["Specification-Title": "ears",
                     "Specification-Vendor": "unascribed",
