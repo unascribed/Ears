@@ -29,7 +29,7 @@ public class EarsCommon {
 	}
 	
 	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount) {
-		if (features.earsEnabled) {
+		if (features != null && features.earsEnabled) {
 //			for (BodyPart part : BodyPart.values()) {
 //				delegate.push();
 //				delegate.anchorTo(part);
