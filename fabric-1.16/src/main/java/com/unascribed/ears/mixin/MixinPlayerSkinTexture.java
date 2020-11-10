@@ -8,7 +8,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.unascribed.ears.EarsAwareTexture;
+import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsImage;
+import com.unascribed.ears.common.RawEarsImage;
 
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
@@ -16,53 +20,43 @@ import net.minecraft.client.texture.ResourceTexture;
 import net.minecraft.util.Identifier;
 
 @Mixin(PlayerSkinTexture.class)
-public abstract class MixinPlayerSkinTexture extends ResourceTexture implements EarsAwareTexture {
+public abstract class MixinPlayerSkinTexture extends ResourceTexture implements EarsFeaturesHolder {
 
 	public MixinPlayerSkinTexture(Identifier location) {
 		super(location);
 	}
 	
-	private boolean earsEnabled = false;
+	private EarsFeatures earsFeatures;
 
 	@Inject(at=@At("RETURN"), method = "loadTexture(Ljava/io/InputStream;)Lnet/minecraft/client/texture/NativeImage;")
 	private void loadTexture(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
 		NativeImage cur = ci.getReturnValue();
-		if (cur.getHeight() == 64) {
-			boolean allMatch = true;
-			out: for (int x = 0; x < 4; x++) {
-				for (int y = 32; y < 36; y++) {
-					if ((cur.getPixelColor(x, y)&0x00FFFFFF) != 0xD8233F) {
-						allMatch = false;
-						break out;
-					}
-				}
-			}
-			earsEnabled = allMatch;
-		}
+		EarsImage img = new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false);
+		earsFeatures = EarsFeatures.detect(img);
 	}
 	
+	private static boolean ears$reentering = false;
+	
 	@Inject(at = @At("HEAD"), method = "stripAlpha(Lnet/minecraft/client/texture/NativeImage;IIII)V", cancellable = true)
-	private static void stripAlpha(NativeImage image, int x, int y, int width, int height, CallbackInfo ci) {
-		if (x == 0 && y == 0 && width == 32 && height == 16) {
-			// Leave the unused corners of the head texture transparent-capable for ears.
-			ci.cancel();
-			stripAlpha(image, 8, 0, 16, 8);
-			stripAlpha(image, 0, 8, 32, 8);
+	private static void stripAlpha(NativeImage image, int x1, int y1, int x2, int y2, CallbackInfo ci) {
+		if (ears$reentering) return;
+		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
+			try {
+				ears$reentering = true;
+				EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> stripAlpha(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
+			} finally {
+				ears$reentering = false;
+			}
 		}
-		if (x == 0 && y == 16 && width == 64 && height == 32) {
-			// Leave the unused space to the right of the body texture transparent-capable for ears.
-			ci.cancel();
-			stripAlpha(image, 0, 16, 56, 32);
-		}
+		ci.cancel();
 	}
 	
 	@Shadow
-	private static void stripAlpha(NativeImage image, int x, int y, int width, int height) {}
+	private static void stripAlpha(NativeImage image, int x1, int y1, int x2, int y2) {}
 	
 	@Override
-	public boolean isEarsEnabled() {
-		return earsEnabled;
+	public EarsFeatures getEarsFeatures() {
+		return earsFeatures;
 	}
-	
 	
 }

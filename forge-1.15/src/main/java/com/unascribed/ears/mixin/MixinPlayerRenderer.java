@@ -11,18 +11,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.unascribed.ears.EarsFeatureRenderer;
+import com.unascribed.ears.EarsLayerRenderer;
 
 @Mixin(PlayerRenderer.class)
-public abstract class MixinPlayerEntityRenderer extends LivingRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
+public abstract class MixinPlayerRenderer extends LivingRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
 
-	public MixinPlayerEntityRenderer(EntityRendererManager dispatcher, PlayerModel<AbstractClientPlayerEntity> model, float shadowRadius) {
+	public MixinPlayerRenderer(EntityRendererManager dispatcher, PlayerModel<AbstractClientPlayerEntity> model, float shadowRadius) {
 		super(dispatcher, model, shadowRadius);
 	}
 
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererManager;Z)V")
 	private void init(EntityRendererManager erd, boolean b, CallbackInfo ci) {
-		this.addLayer(new EarsFeatureRenderer(this));
+		this.addLayer(new EarsLayerRenderer(this));
 	}
 	
 }

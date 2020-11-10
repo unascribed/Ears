@@ -32,6 +32,7 @@ repositories {
 }
 
 dependencies {
-
+	compile project('common')
+	shadow project('common')
 }
 }

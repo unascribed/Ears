@@ -6,6 +6,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.unascribed.ears.common.EarsCommon;
+
 import net.minecraft.client.texture.ImageFilter;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.SkinRemappingImageFilter;
@@ -13,19 +15,20 @@ import net.minecraft.client.texture.SkinRemappingImageFilter;
 @Mixin(SkinRemappingImageFilter.class)
 public abstract class MixinSkinRemappingImageFilter implements ImageFilter {
 
+	private static boolean ears$reentering;
+	
 	@Inject(at = @At("HEAD"), method = "method_3312(Lnet/minecraft/client/texture/NativeImage;IIII)V", cancellable = true)
-	private static void method_3312(NativeImage image, int x, int y, int width, int height, CallbackInfo ci) {
-		if (x == 0 && y == 0 && width == 32 && height == 16) {
-			// Leave the unused corners of the head texture transparent-capable for ears.
-			ci.cancel();
-			method_3312(image, 8, 0, 16, 8);
-			method_3312(image, 0, 8, 32, 8);
+	private static void method_3312(NativeImage image, int x1, int y1, int x2, int y2, CallbackInfo ci) {
+		if (ears$reentering) return;
+		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
+			try {
+				ears$reentering = true;
+				EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> method_3312(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
+			} finally {
+				ears$reentering = false;
+			}
 		}
-		if (x == 0 && y == 16 && width == 64 && height == 32) {
-			// Leave the unused space to the right of the body texture transparent-capable for ears.
-			ci.cancel();
-			method_3312(image, 0, 16, 56, 32);
-		}
+		ci.cancel();
 	}
 	
 	@Shadow

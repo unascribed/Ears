@@ -1,1 +1,2 @@
 rootProject.name = "ears-forge-1.16"
+includeFlat 'common'

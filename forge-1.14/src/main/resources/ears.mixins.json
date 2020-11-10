@@ -7,8 +7,9 @@
   "mixins": [
   ],
   "client": [
-    "MixinPlayerEntityRenderer",
-    "MixinPlayerSkinTexture"
+    "MixinPlayerRenderer",
+    "MixinDownloadingTexture",
+    "MixinDownloadImageBuffer"
   ],
   "injectors": {
     "defaultRequire": 1

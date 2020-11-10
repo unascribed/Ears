@@ -10,3 +10,5 @@ pluginManagement {
 }
 
 rootProject.name = "ears-fabric-1.16"
+
+includeFlat 'common'
