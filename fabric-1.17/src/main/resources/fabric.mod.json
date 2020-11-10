@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ears",
+  "version": "${version}",
+
+  "name": "Ears",
+  "description": "Faithful fancy fashion features for fuzzy folk.",
+  "authors": [
+    "unascribed"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/ears",
+    "source": "https://github.com/unascribed/Ears",
+    "issues": "https://github.com/unascribed/Ears/issues"
+  },
+
+  "license": "MIT",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "com.unascribed.ears.EarsMod"
+    ]
+  },
+  "mixins": [
+    "ears.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "minecraft": ">1.16"
+  },
+  "suggests": {
+  }
+}
