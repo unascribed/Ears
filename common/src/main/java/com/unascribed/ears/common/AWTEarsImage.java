@@ -28,5 +28,9 @@ public class AWTEarsImage implements EarsImage {
 		return delegate.getRGB(x, y);
 	}
 	
+	@Override
+	public String toString() {
+		return "AWTEarsImage["+getWidth()+"x"+getHeight()+", delegate="+delegate+"]";
+	}
 	
 }

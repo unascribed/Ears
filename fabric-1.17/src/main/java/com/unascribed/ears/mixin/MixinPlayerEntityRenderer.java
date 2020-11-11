@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.EarsFeatureRenderer;
+import com.unascribed.ears.common.EarsLog;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -22,6 +23,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/class_5618;Z)V")
 	private void init(class_5618 arg, boolean bl, CallbackInfo ci) {
+		EarsLog.debug("Platform:Inject", "Construct player renderer");
 		this.addFeature(new EarsFeatureRenderer(this));
 	}
 	

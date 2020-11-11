@@ -13,7 +13,10 @@ import java.util.WeakHashMap;
 import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsLog;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -30,6 +33,7 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true)
@@ -39,10 +43,18 @@ public class Ears {
 	
 	private LayerEars layer;
 	
+	public Ears() {
+		if (EarsLog.DEBUG) {
+			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
+					Loader.instance().getMCVersionString(), ForgeVersion.getVersion(), FMLCommonHandler.instance().getSide());
+		}
+	}
+	
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent e) {
 		MinecraftForge.EVENT_BUS.register(this);
 		
+		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
 		RenderPlayer rp = (RenderPlayer)RenderManager.instance.entityRenderMap.get(EntityPlayer.class);
 		
 		layer = new LayerEars(rp);
@@ -79,13 +91,16 @@ public class Ears {
 	
 	@SubscribeEvent
 	public void onRenderPlayerPost(RenderPlayerEvent.Specials.Post e) {
+		EarsLog.debug("Platform", "RenderPlayerEvent.Specials.Post player={}, renderer={}, partialTicks={}", e.entityPlayer, e.renderer, e.partialRenderTick);
 		layer.doRenderLayer((AbstractClientPlayer)e.entityPlayer,
 				e.entityPlayer.prevLimbSwingAmount + (e.entityPlayer.limbSwingAmount - e.entityPlayer.prevLimbSwingAmount) * e.partialRenderTick,
 				e.partialRenderTick);
 	}
 	
 	public static BufferedImage interceptParseUserSkin(ImageBufferDownload subject, BufferedImage image) {
+		EarsLog.debug("Platform:Inject", "parseUserSkin({}, {})", subject, image);
 		if (image == null) {
+			EarsLog.debug("Platform:Inject", "parseUserSkin(...): Image is null");
 			return null;
 		} else {
 			setImageWidth(subject, 64);
@@ -95,6 +110,7 @@ public class Ears {
 			g.drawImage(image, 0, 0, null);
 
 			if (image.getHeight() == 32) {
+				EarsLog.debug("Platform:Inject", "parseUserSkin(...): Upgrading legacy skin");
 				g.drawImage(newImg, 24, 48, 20, 52, 4, 16, 8, 20, null);
 				g.drawImage(newImg, 28, 48, 24, 52, 8, 16, 12, 20, null);
 				g.drawImage(newImg, 20, 52, 16, 64, 8, 20, 12, 32, null);
@@ -123,6 +139,7 @@ public class Ears {
 	}
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
+		EarsLog.debug("Platform:Inject", "Process player skin");
 		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
 	}
 	
@@ -203,6 +220,7 @@ public class Ears {
 	}
 	private static void setAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		try {
+			EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {})", subject, x1, y1, x2, y2);
 			setAreaOpaque.invokeExact(subject, x1, y1, x2, y2);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;

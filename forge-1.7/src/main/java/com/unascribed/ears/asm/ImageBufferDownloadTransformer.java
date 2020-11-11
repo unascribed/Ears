@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 import com.unascribed.ears.asm.mini.annotation.Patch;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.asm.mini.MiniTransformer;
 import com.unascribed.ears.asm.mini.PatchContext;
 
@@ -34,6 +35,7 @@ public class ImageBufferDownloadTransformer extends MiniTransformer {
 	
 	@Patch.Method(descriptor="(Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage;", mcp="parseUserSkin", srg="func_78432_a")
 	public void patchParseUserSkin(PatchContext ctx) {
+		EarsLog.debug("Platform:Inject", "Patching parseUserSkin");
 		ctx.jumpToStart();
 		// return EarsMod.interceptParseUserSkin(this, ...);
 		ctx.add(new IntInsnNode(ALOAD, 0));

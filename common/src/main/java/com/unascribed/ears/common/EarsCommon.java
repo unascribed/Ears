@@ -6,11 +6,24 @@ import com.unascribed.ears.common.EarsRenderDelegate.TexRotation;
 
 public class EarsCommon {
 
+	private static final ThreadLocal<float[][]> uvScratch = new ThreadLocal<float[][]>() {
+		@Override
+		protected float[][] initialValue() {
+			return new float[][] {
+				{0, 0},
+				{0, 0},
+				{0, 0},
+				{0, 0}
+			};
+		}
+	};
+	
 	public interface StripAlphaMethod {
 		void stripAlpha(int x1, int y1, int x2, int y2);
 	}
 	
 	public static void carefullyStripAlpha(StripAlphaMethod sam, boolean sixtyFour) {
+		EarsLog.debug("Common", "carefullyStripAlpha({}, {})", sam, sixtyFour);
 		sam.stripAlpha(8, 0, 24, 8);
 		sam.stripAlpha(0, 8, 32, 16);
 		
@@ -29,25 +42,31 @@ public class EarsCommon {
 	}
 	
 	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount) {
+		EarsLog.debug("Common", "render({}, {}, {})", features, delegate, swingAmount);
+		
+		if (EarsLog.DEBUG) {
+			delegate = new DebuggingDelegate(delegate);
+		}
+		
 		if (features != null && features.earsEnabled) {
-//			for (BodyPart part : BodyPart.values()) {
-//				delegate.push();
-//				delegate.anchorTo(part);
-//				delegate.renderDebugDot(1, 1, 1, 1);
-//				delegate.push();
-//				delegate.translate(part.xSize, 0, 0);
-//				delegate.renderDebugDot(1, 0, 0, 1);
-//				delegate.pop();
-//				delegate.push();
-//				delegate.translate(0, -part.ySize, 0);
-//				delegate.renderDebugDot(0, 1, 0, 1);
-//				delegate.pop();
-//				delegate.push();
-//				delegate.translate(0, 0, part.zSize);
-//				delegate.renderDebugDot(0, 0, 1, 1);
-//				delegate.pop();
-//				delegate.pop();
-//			}
+			for (BodyPart part : BodyPart.values()) {
+				delegate.push();
+				delegate.anchorTo(part);
+				delegate.renderDebugDot(1, 1, 1, 1);
+				delegate.push();
+				delegate.translate(part.xSize, 0, 0);
+				delegate.renderDebugDot(1, 0, 0, 1);
+				delegate.pop();
+				delegate.push();
+				delegate.translate(0, -part.ySize, 0);
+				delegate.renderDebugDot(0, 1, 0, 1);
+				delegate.pop();
+				delegate.push();
+				delegate.translate(0, 0, part.zSize);
+				delegate.renderDebugDot(0, 0, 1, 1);
+				delegate.pop();
+				delegate.pop();
+			}
 			delegate.push();
 			delegate.anchorTo(BodyPart.HEAD);
 			delegate.translate(-4, -16, 4);
@@ -65,6 +84,7 @@ public class EarsCommon {
 	}
 
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+		EarsLog.debug("Common", "calculateUVs({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
 		float minU = u/64f;
 		float minV = v/64f;
 		
@@ -87,12 +107,16 @@ public class EarsCommon {
 			minV = swap;
 		}
 		
-		float[][] uv = {
-				{minU, maxV},
-				{maxU, maxV},
-				{maxU, minV},
-				{minU, minV}
-		};
+		float[][] uv = uvScratch.get();
+		
+		uv[0][0] = minU;
+		uv[0][1] = maxV;
+		uv[1][0] = maxU;
+		uv[1][1] = maxV;
+		uv[2][0] = maxU;
+		uv[2][1] = minV;
+		uv[3][0] = minU;
+		uv[3][1] = minV;
 		
 		if (rot == TexRotation.CW) {
 			float[] swap = uv[3];
@@ -116,5 +140,10 @@ public class EarsCommon {
 		}
 		return uv;
 	}
+	
+	
+	// various purpose-built overloads prevent boxing and array allocation when debugging is off
+
+	
 	
 }

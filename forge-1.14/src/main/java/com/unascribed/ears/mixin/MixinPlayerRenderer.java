@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.EarsLayerRenderer;
+import com.unascribed.ears.common.EarsLog;
 
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -22,6 +23,7 @@ public abstract class MixinPlayerRenderer extends LivingRenderer<AbstractClientP
 
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererManager;Z)V")
 	private void init(EntityRendererManager erd, boolean b, CallbackInfo ci) {
+		EarsLog.debug("Platform:Inject", "Construct player renderer");
 		this.addLayer(new EarsLayerRenderer(this));
 	}
 	

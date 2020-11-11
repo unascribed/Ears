@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 
 import net.minecraft.client.Minecraft;
@@ -28,14 +29,18 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 	
 	public EarsLayerRenderer(RenderPlayer render) {
 		this.render = render;
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
 	@Override
 	public void render(AbstractClientPlayer entity, final float limbAngle, final float limbDistance,
 			final float tickDelta, final float age, final float headYaw, final float headPitch, final float scale) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		ResourceLocation skin = entity.getLocationSkin();
 		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			GlStateManager.enableCull();
@@ -94,6 +99,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			default: return;
 		}
 		if (!model.showModel) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}

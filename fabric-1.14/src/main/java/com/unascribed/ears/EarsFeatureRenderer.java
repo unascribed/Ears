@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Box;
@@ -23,6 +24,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	
 	public EarsFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
 		super(context);
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 
 	private int skipRendering;
@@ -31,9 +33,12 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	@Override
 	public void render(AbstractClientPlayerEntity entity, final float limbAngle, final float limbDistance,
 			final float tickDelta, final float age, final float headYaw, final float headPitch, final float scale) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		Identifier skin = entity.getSkinTexture();
 		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			GlStateManager.enableCull();
@@ -92,6 +97,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			default: return;
 		}
 		if (!model.visible) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}

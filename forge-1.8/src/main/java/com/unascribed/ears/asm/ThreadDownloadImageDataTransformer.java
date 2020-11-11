@@ -4,6 +4,7 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 import com.unascribed.ears.asm.mini.annotation.Patch;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.asm.mini.MiniTransformer;
 import com.unascribed.ears.asm.mini.PatchContext;
 
@@ -12,6 +13,7 @@ public class ThreadDownloadImageDataTransformer extends MiniTransformer {
 
 	@Patch.Method(descriptor="(Ljava/awt/image/BufferedImage;)V", mcp="setBufferedImage", srg="func_147641_a")
 	public void patchSetBufferedImage(PatchContext ctx) {
+		EarsLog.debug("Platform:Inject", "Patching setBufferedImage");
 		ctx.jumpToStart();
 		// EarsMod.checkSkin(this, ...);
 		ctx.add(new IntInsnNode(ALOAD, 0));

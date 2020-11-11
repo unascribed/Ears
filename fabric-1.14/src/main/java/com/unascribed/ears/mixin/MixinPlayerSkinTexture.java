@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsImage;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.RawEarsImage;
 
 import net.minecraft.client.texture.NativeImage;
@@ -26,6 +27,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 
 	@Inject(at=@At("HEAD"), method = "method_4534(Lnet/minecraft/client/texture/NativeImage;)V")
 	public void method_4534(NativeImage cur, CallbackInfo ci) {
+		EarsLog.debug("Platform:Inject", "Process player skin");
 		EarsImage img = new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false);
 		earsFeatures = EarsFeatures.detect(img);
 	}

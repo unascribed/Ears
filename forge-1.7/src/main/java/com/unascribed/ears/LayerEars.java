@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -26,9 +27,12 @@ public class LayerEars implements EarsRenderDelegate {
 	}
 	
 	public void doRenderLayer(AbstractClientPlayer entity, float limbDistance, float partialTicks) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		ResourceLocation skin = entity.getLocationSkin();
 		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
 			this.skipRendering = 0;
 			this.stackDepth = 0;
@@ -83,6 +87,7 @@ public class LayerEars implements EarsRenderDelegate {
 			default: return;
 		}
 		if (!model.showModel) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}

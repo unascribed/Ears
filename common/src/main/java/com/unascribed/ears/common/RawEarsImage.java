@@ -45,4 +45,9 @@ public class RawEarsImage implements EarsImage {
 		return raw;
 	}
 	
+	@Override
+	public String toString() {
+		return "RawEarsImage["+getWidth()+"x"+getHeight()+", swapRedBlue="+swapRedBlue+", data=["+data.limit()+" entries]]";
+	}
+	
 }

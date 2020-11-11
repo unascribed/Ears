@@ -10,6 +10,7 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 import com.unascribed.ears.asm.mini.annotation.Patch;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.asm.mini.MiniTransformer;
 import com.unascribed.ears.asm.mini.PatchContext;
 
@@ -36,6 +37,7 @@ public class ImageBufferDownloadTransformer extends MiniTransformer {
 	
 	@Patch.Method(descriptor="(IIII)V", mcp="setAreaOpaque", srg="func_78433_b")
 	public void patchSetAreaOpaque(PatchContext ctx) {
+		EarsLog.debug("Platform:Inject", "Patching setAreaOpaque");
 		ctx.jumpToStart();
 		// if (EarsMod.interceptSetAreaOpaque(this, ...)) return;
 		ctx.add(new IntInsnNode(ALOAD, 0));

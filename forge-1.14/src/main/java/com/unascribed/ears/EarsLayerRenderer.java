@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	
 	public EarsLayerRenderer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> context) {
 		super(context);
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 
 	private int skipRendering;
@@ -32,9 +34,12 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	@Override
 	public void render(AbstractClientPlayerEntity entity, final float limbAngle, final float limbDistance,
 			final float tickDelta, final float age, final float headYaw, final float headPitch, final float scale) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		ResourceLocation skin = entity.getLocationSkin();
 		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			GlStateManager.enableCull();
@@ -93,6 +98,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			default: return;
 		}
 		if (!model.showModel) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}
@@ -124,11 +130,11 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
 
-		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		vc.pos(0, h, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).normal(0, 0, -1).endVertex();
-		vc.pos(w, h, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).normal(0, 0, -1).endVertex();
-		vc.pos(w, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).normal(0, 0, -1).endVertex();
-		vc.pos(0, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).normal(0, 0, -1).endVertex();
+		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
+		vc.pos(0, h, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, -1).endVertex();
+		vc.pos(w, h, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, -1).endVertex();
+		vc.pos(w, 0, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, -1).endVertex();
+		vc.pos(0, 0, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, -1).endVertex();
 		tess.draw();
 	}
 
@@ -140,11 +146,11 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
 		
-		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		vc.pos(0, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).normal(0, 0, 1).endVertex();
-		vc.pos(w, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).normal(0, 0, 1).endVertex();
-		vc.pos(w, h, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).normal(0, 0, 1).endVertex();
-		vc.pos(0, h, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).normal(0, 0, 1).endVertex();
+		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
+		vc.pos(0, 0, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, 1).endVertex();
+		vc.pos(w, 0, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, 1).endVertex();
+		vc.pos(w, h, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, 1).endVertex();
+		vc.pos(0, h, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, 1).endVertex();
 		tess.draw();
 	}
 

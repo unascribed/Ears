@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import com.elytradev.mini.MiniTransformer;
 import com.elytradev.mini.PatchContext;
 import com.elytradev.mini.annotation.Patch;
+import com.unascribed.ears.common.EarsLog;
 
 @Patch.Class("net.minecraft.client.renderer.ImageBufferDownload")
 public class ImageBufferDownloadTransformer extends MiniTransformer {
@@ -36,6 +37,7 @@ public class ImageBufferDownloadTransformer extends MiniTransformer {
 	
 	@Patch.Method(descriptor="(IIII)V", mcp="setAreaOpaque", srg="func_78433_b")
 	public void patchSetAreaOpaque(PatchContext ctx) {
+		EarsLog.debug("Platform:Inject", "Patching setAreaOpaque");
 		ctx.jumpToStart();
 		// if (EarsMod.interceptSetAreaOpaque(this, ...)) return;
 		ctx.add(new IntInsnNode(ALOAD, 0));

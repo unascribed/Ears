@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.NotRandom;
 
@@ -44,9 +45,12 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	
 	@Override
 	public void render(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
 		ResourceLocation skin = getEntityTexture(entity);
 		Texture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.m = m;
 			this.vc = vertexConsumers.getBuffer(RenderType.getEntityCutout(skin));
 			this.light = light;
@@ -102,6 +106,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			default: return;
 		}
 		if (!model.showModel) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}

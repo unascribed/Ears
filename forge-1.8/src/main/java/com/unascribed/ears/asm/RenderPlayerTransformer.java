@@ -5,6 +5,7 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 import com.unascribed.ears.asm.mini.annotation.Patch;
+import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.asm.mini.MiniTransformer;
 import com.unascribed.ears.asm.mini.PatchContext;
 
@@ -13,6 +14,7 @@ public class RenderPlayerTransformer extends MiniTransformer {
 	
 	@Patch.Method(srg="<init>", mcp="<init>", descriptor="(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
 	public void patchConstructor(PatchContext ctx) {
+		EarsLog.debug("Platform:Inject", "Patching player renderer constructor");
 		ctx.search(new InsnNode(RETURN)).jumpBefore();
 		// EarsMod.addLayer(this);
 		ctx.add(new IntInsnNode(ALOAD, 0));
