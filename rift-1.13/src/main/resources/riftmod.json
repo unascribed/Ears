@@ -1,0 +1,6 @@
+{
+  "id": "ears",
+  "name": "Ears",
+  "authors": [ "unascribed" ],
+  "listeners": [ "com.unascribed.ears.EarsMod" ]
+}

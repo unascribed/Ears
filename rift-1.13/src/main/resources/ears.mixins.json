@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "com.unascribed.ears.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "ears.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "MixinRenderPlayer",
+    "MixinThreadDownloadImageData",
+    "MixinImageBufferDownload"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

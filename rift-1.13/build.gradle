@@ -1,0 +1,59 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven { url 'https://www.jitpack.io' }
+		maven { url 'http://repo.spongepowered.org/maven' }
+		maven { url 'https://files.minecraftforge.net/maven' }
+	}
+	dependencies {
+		classpath 'com.github.Chocohead:ForgeGradle:jitpack-SNAPSHOT'
+		classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+	}
+}
+
+apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
+
+group 'com.unascribed.ears'
+version = file('../version.txt').text.trim()
+archivesBaseName = 'ears-rift-1.13'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.unascribed.com' }
+	maven {
+		url 'https://www.jitpack.io'
+		metadataSources {
+			artifact()
+		}
+	}
+}
+
+dependencies {
+	implementation 'com.github.Chocohead:Rift:jitpack-2d8bb9bd56-1:dev'
+	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
+	
+	implementation project('common')
+}
+
+jar {
+	from '../common/build/classes/java/main'
+}
+
+minecraft {
+	version = '1.13.2'
+	mappings = 'snapshot_20181130'
+	runDir = 'run'
+	tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
+	replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
+	replace '@VERSION@', project.version
+}
+
+mixin {
+    defaultObfuscationEnv notch
+    add sourceSets.main, 'ears.refmap.json'
+}

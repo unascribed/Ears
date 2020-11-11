@@ -1,0 +1,2 @@
+rootProject.name = "ears-rift-1.13"
+includeFlat 'common'
