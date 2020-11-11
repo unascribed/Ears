@@ -34,6 +34,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	
 	public EarsLayerRenderer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> context) {
 		super(context);
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 
 	private MatrixStack m;

@@ -49,23 +49,25 @@ public class EarsCommon {
 		}
 		
 		if (features != null && features.earsEnabled) {
-			for (BodyPart part : BodyPart.values()) {
-				delegate.push();
-				delegate.anchorTo(part);
-				delegate.renderDebugDot(1, 1, 1, 1);
-				delegate.push();
-				delegate.translate(part.xSize, 0, 0);
-				delegate.renderDebugDot(1, 0, 0, 1);
-				delegate.pop();
-				delegate.push();
-				delegate.translate(0, -part.ySize, 0);
-				delegate.renderDebugDot(0, 1, 0, 1);
-				delegate.pop();
-				delegate.push();
-				delegate.translate(0, 0, part.zSize);
-				delegate.renderDebugDot(0, 0, 1, 1);
-				delegate.pop();
-				delegate.pop();
+			if (EarsLog.DEBUG) {
+				for (BodyPart part : BodyPart.values()) {
+					delegate.push();
+					delegate.anchorTo(part);
+					delegate.renderDebugDot(1, 1, 1, 1);
+					delegate.push();
+					delegate.translate(part.xSize, 0, 0);
+					delegate.renderDebugDot(1, 0, 0, 1);
+					delegate.pop();
+					delegate.push();
+					delegate.translate(0, -part.ySize, 0);
+					delegate.renderDebugDot(0, 1, 0, 1);
+					delegate.pop();
+					delegate.push();
+					delegate.translate(0, 0, part.zSize);
+					delegate.renderDebugDot(0, 0, 1, 1);
+					delegate.pop();
+					delegate.pop();
+				}
 			}
 			delegate.push();
 			delegate.anchorTo(BodyPart.HEAD);
@@ -140,10 +142,6 @@ public class EarsCommon {
 		}
 		return uv;
 	}
-	
-	
-	// various purpose-built overloads prevent boxing and array allocation when debugging is off
-
 	
 	
 }

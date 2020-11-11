@@ -24,6 +24,7 @@ public class LayerEars implements EarsRenderDelegate {
 	
 	public LayerEars(RenderPlayer render) {
 		this.render = render;
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
 	public void doRenderLayer(AbstractClientPlayer entity, float limbDistance, float partialTicks) {

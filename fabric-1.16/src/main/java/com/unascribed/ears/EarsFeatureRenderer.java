@@ -34,6 +34,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	
 	public EarsFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
 		super(context);
+		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 
 	private MatrixStack m;

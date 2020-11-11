@@ -45,6 +45,8 @@ public class EarsLog {
 			debugStream.printf("[T+%03d.%03d] (%s): %s\r\n", secs, millis, tag, buf);
 		}
 	}
+	
+	// various purpose-built overloads prevent boxing and array allocation when debugging is off
 
 	public static void debug(String tag, String fmt) {
 		if (DEBUG) {

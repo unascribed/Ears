@@ -1,0 +1,99 @@
+plugins {
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
+}
+
+def version = file('../version.txt').text.trim()
+def target = project.getProperty("target")
+
+def prefix = ""
+def artifact = "../${target}/build/libs/ears-${target}-${version}.jar"
+def stability = ""
+def gameVersions = []
+def requires = []
+def conflicts = []
+
+switch (target) {
+	case "fabric-1.14":
+		prefix = "FABRIC 1.14"
+		stability = 'release'
+		gameVersions = ['Fabric', '1.14', '1.14.1', '1.14.2', '1.14.3', '1.14.4']
+		break
+	case "fabric-1.16":
+		prefix = "FABRIC 1.15/16"
+		stability = 'release'
+		gameVersions = ['Fabric', '1.15', '1.15.1', '1.15.2', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4']
+		break
+	case "fabric-1.17":
+		prefix = "FABRIC 1.17"
+		stability = 'alpha'
+		// TODO: when Curse adds 1.17-Snapshot, use it
+		gameVersions = ['Fabric', '1.16-Snapshot']
+		break
+	case "forge-1.7":
+		prefix = "FORGE 1.7"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.7.10']
+		conflicts = ['skinport', 'lumy-skin-patch']
+		break
+	case "forge-1.8":
+		prefix = "FORGE 1.8"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.8.9']
+		break
+	case "forge-1.12":
+		prefix = "FORGE 1.12"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.12.2']
+		break
+	case "forge-1.14":
+		prefix = "FORGE 1.14"
+		stability = 'beta'
+		requires = ['mixinbootstrap']
+		gameVersions = ['Forge', '1.14', '1.14.1', '1.14.2', '1.14.3', '1.14.4']
+		break
+	case "forge-1.15":
+		prefix = "FORGE 1.15"
+		stability = 'beta'
+		requires = ['mixinbootstrap']
+		gameVersions = ['Forge', '1.15', '1.15.1', '1.15.2']
+		break
+	case "forge-1.16":
+		prefix = "FORGE 1.16"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4']
+		break
+	case "rift-1.13":
+		prefix = "RIFT 1.13"
+		stability = 'beta'
+		gameVersions = ['Rift', '1.13.2']
+		break
+	default:
+		throw new Exception("Unknown target ${target}")
+}
+
+curseforge {
+	apiKey = project.getProperty("curseApiKey")
+	project {
+		id = '412013'
+		changelogType = 'html'
+		changelog = file('../changelog.html')
+
+		releaseType = stability
+		gameVersions.each { addGameVersion(it) }
+		
+		mainArtifact(file(artifact)) {
+			displayName = "[${prefix}] Ears v${version}"
+			
+			relations {
+				conflicts.each { incompatible(it) }
+				requires.each { requiredDependency(it) }
+			}
+		}
+	}
+	options {
+		javaVersionAutoDetect = false
+	}
+}
+
+task build {}
+task assemble {}
