@@ -21,7 +21,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 		super(arg, model, shadowRadius);
 	}
 
-	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/class_5618;Z)V")
+	@Inject(at=@At("TAIL"), method="<init>", allow=1)
 	private void init(class_5618 arg, boolean bl, CallbackInfo ci) {
 		EarsLog.debug("Platform:Inject", "Construct player renderer");
 		this.addFeature(new EarsFeatureRenderer(this));
