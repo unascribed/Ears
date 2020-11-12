@@ -39,11 +39,7 @@ cp */build/libs/* artifacts
 rm -f artifacts/*-sources{,-dev}.jar artifacts/common.jar
 if [ -n "$1" ]; then
 	echo "Proceeding to publish..."
-	cd publish
-	for proj in $all; do
-		echo Publishing $proj...
-		TERM=dumb chronic ./gradlew -PcurseApiKey=$1 -Ptarget=$proj curseforge
-	done
+	./publish.sh $1
 	echo 'All OK.'
 else
 	echo "Not publishing as no Curse API key was specified."
