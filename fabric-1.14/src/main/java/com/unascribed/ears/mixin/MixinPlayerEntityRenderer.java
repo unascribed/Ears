@@ -21,10 +21,22 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 		super(dispatcher, model, shadowRadius);
 	}
 
+	private EarsFeatureRenderer ears$featureRenderer;
+	
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/render/entity/EntityRenderDispatcher;Z)V")
 	private void init(EntityRenderDispatcher erd, boolean b, CallbackInfo ci) {
 		EarsLog.debug("Platform:Inject", "Construct player renderer");
-		this.addFeature(new EarsFeatureRenderer(this));
+		this.addFeature(ears$featureRenderer = new EarsFeatureRenderer(this));
+	}
+	
+	@Inject(at = @At("TAIL"), method = "renderLeftArm(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)V")
+	private void renderLeftArm(AbstractClientPlayerEntity e, CallbackInfo ci) {
+		ears$featureRenderer.renderLeftArm(e);
+	}
+	
+	@Inject(at = @At("TAIL"), method = "renderRightArm(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)V")
+	private void renderRightArm(AbstractClientPlayerEntity e, CallbackInfo ci) {
+		ears$featureRenderer.renderRightArm(e);
 	}
 	
 }

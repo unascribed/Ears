@@ -132,31 +132,33 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	}
 
 	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Matrix4f mv = m.getLast().getMatrix();
 		Matrix3f mn = m.getLast().getNormal();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
+		float g = grow.grow;
 		
-		vc.pos(mv, 0, h, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
-		vc.pos(mv, w, h, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
-		vc.pos(mv, w, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
-		vc.pos(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
+		vc.pos(mv, -g, h+g, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
+		vc.pos(mv, w+g, h+g, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
+		vc.pos(mv, w+g, -g, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
+		vc.pos(mv, -g, -g, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, -1).endVertex();
 	}
 
 	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Matrix4f mv = m.getLast().getMatrix();
 		Matrix3f mn = m.getLast().getNormal();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
+		float g = grow.grow;
 		
-		vc.pos(mv, 0, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
-		vc.pos(mv, w, 0, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
-		vc.pos(mv, w, h, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
-		vc.pos(mv, 0, h, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
+		vc.pos(mv, -g, -g, 0).color(1f, 1f, 1f, 1f).tex(uv[3][0], uv[3][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
+		vc.pos(mv, w+g, -g, 0).color(1f, 1f, 1f, 1f).tex(uv[2][0], uv[2][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
+		vc.pos(mv, w+g, h+g, 0).color(1f, 1f, 1f, 1f).tex(uv[1][0], uv[1][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
+		vc.pos(mv, -g, h+g, 0).color(1f, 1f, 1f, 1f).tex(uv[0][0], uv[0][1]).overlay(overlay).lightmap(light).normal(mn, 0, 0, 1).endVertex();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.unascribed.ears.common;
 
 import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
+import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.EarsRenderDelegate.TexRotation;
 
@@ -48,7 +49,7 @@ public class EarsCommon {
 			delegate = new DebuggingDelegate(delegate);
 		}
 		
-		if (features != null && features.earsEnabled) {
+		if (features != null && features.enabled) {
 			if (EarsLog.DEBUG) {
 				for (BodyPart part : BodyPart.values()) {
 					delegate.push();
@@ -69,19 +70,98 @@ public class EarsCommon {
 					delegate.pop();
 				}
 			}
+			// ears
 			delegate.push();
 			delegate.anchorTo(BodyPart.HEAD);
 			delegate.translate(-4, -16, 4);
-			delegate.renderFront(24, 0, 16, 8, TexRotation.NONE, TexFlip.NONE);
-			delegate.renderBack(56, 28, 16, 8, TexRotation.CW, TexFlip.NONE);
+			delegate.renderFront(24, 0, 16, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+			delegate.renderBack(56, 28, 16, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 			delegate.pop();
 			
+			// tail
 			delegate.push();
 			delegate.anchorTo(BodyPart.TORSO);
 			delegate.translate(0, -2, 4);
 			delegate.rotate(30+(swingAmount*40), 1, 0, 0);
-			delegate.renderDoubleSided(56, 16, 8, 12, TexRotation.NONE, TexFlip.HORIZONTAL);
+			delegate.renderDoubleSided(56, 16, 8, 12, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 			delegate.pop();
+			
+			if (features.newRegions) {
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				
+				// side ears, left
+				delegate.translate(-4, -8, 4);
+				delegate.renderFront(36, 16, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(12, 16, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				
+				// side ears, right
+				delegate.translate(12, 0, 0);
+				delegate.renderFront(36, 32, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(12, 32, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				
+				// chin
+				delegate.translate(-8, 9, -4.5f);
+				delegate.renderDoubleSided(56, 44, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
+				
+				if (features.backPointingEars) {
+					if (features.asymmetricalBackPointingEars) {
+						// left back-pointing ear
+						delegate.rotate(90, 0, 1, 0);
+						delegate.translate(-17.5f, -9, -0.5f);
+						delegate.renderDoubleSided(0, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
+						
+						// right back-pointing ear
+						delegate.translate(0, 0, 9);
+						delegate.renderDoubleSided(56, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
+					} else {
+						// left back-pointing ear
+						delegate.rotate(90, 0, 1, 0);
+						delegate.translate(-17.5f, -9, -0.5f);
+						delegate.renderFront(0, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
+						delegate.renderBack(56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
+						
+						// right back-pointing ear
+						delegate.translate(0, 0, 9);
+						delegate.renderFront(56, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
+						delegate.renderBack(0, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
+					}
+				}
+				
+				delegate.pop();
+				
+				// claws, left leg
+				delegate.push();
+				delegate.anchorTo(BodyPart.LEFT_LEG);
+				delegate.translate(0, 0, -4);
+				delegate.rotate(90, 1, 0, 0);
+				delegate.renderDoubleSided(16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				delegate.pop();
+				
+				// claws, right leg
+				delegate.push();
+				delegate.anchorTo(BodyPart.RIGHT_LEG);
+				delegate.translate(0, 0, -4);
+				delegate.rotate(90, 1, 0, 0);
+				delegate.renderDoubleSided(0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				delegate.pop();
+				
+				// claws, left arm
+				delegate.push();
+				delegate.anchorTo(BodyPart.LEFT_ARM);
+				delegate.rotate(90, 0, 1, 0);
+				delegate.translate(-4, 0, 4);
+				delegate.renderDoubleSided(44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				delegate.pop();
+				
+				// claws, right arm
+				delegate.push();
+				delegate.anchorTo(BodyPart.RIGHT_ARM);
+				delegate.rotate(90, 0, 1, 0);
+				delegate.translate(-4, 0, 0);
+				delegate.renderDoubleSided(52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+			}
 		}
 	}
 

@@ -124,34 +124,36 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 	}
 
 	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.getInstance();
 		BufferBuilder vc = tess.getBuffer();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
+		float g = grow.grow;
 
 		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		vc.pos(0, h, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, -1).endVertex();
-		vc.pos(w, h, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, -1).endVertex();
-		vc.pos(w, 0, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, -1).endVertex();
-		vc.pos(0, 0, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, -1).endVertex();
+		vc.pos(-g, h+g, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, -1).endVertex();
+		vc.pos(w+g, h+g, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, -1).endVertex();
+		vc.pos(w+g, -g, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, -1).endVertex();
+		vc.pos(-g, -g, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, -1).endVertex();
 		tess.draw();
 	}
 
 	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.getInstance();
 		BufferBuilder vc = tess.getBuffer();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
+		float g = grow.grow;
 		
 		vc.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		vc.pos(0, 0, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, 1).endVertex();
-		vc.pos(w, 0, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, 1).endVertex();
-		vc.pos(w, h, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, 1).endVertex();
-		vc.pos(0, h, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, 1).endVertex();
+		vc.pos(-g, -g, 0).tex(uv[3][0], uv[3][1]).normal(0, 0, 1).endVertex();
+		vc.pos(w+g, -g, 0).tex(uv[2][0], uv[2][1]).normal(0, 0, 1).endVertex();
+		vc.pos(w+g, h+g, 0).tex(uv[1][0], uv[1][1]).normal(0, 0, 1).endVertex();
+		vc.pos(-g, h+g, 0).tex(uv[0][0], uv[0][1]).normal(0, 0, 1).endVertex();
 		tess.draw();
 	}
 

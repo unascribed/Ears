@@ -39,21 +39,21 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 	}
 
 	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderFront({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
-		delegate.renderFront(u, v, w, h, rot, flip);
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		EarsLog.debug("Platform:Renderer:Delegate", "renderFront({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		delegate.renderFront(u, v, w, h, rot, flip, grow);
 	}
 
 	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderBack({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
-		delegate.renderBack(u, v, w, h, rot, flip);
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		EarsLog.debug("Platform:Renderer:Delegate", "renderBack({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		delegate.renderBack(u, v, w, h, rot, flip, grow);
 	}
 
 	@Override
-	public void renderDoubleSided(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderDoubleSided({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
-		delegate.renderDoubleSided(u, v, w, h, rot, flip);
+	public void renderDoubleSided(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		EarsLog.debug("Platform:Renderer:Delegate", "renderDoubleSided({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		delegate.renderDoubleSided(u, v, w, h, rot, flip, grow);
 	}
 
 	@Override

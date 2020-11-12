@@ -29,6 +29,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 
 	private int skipRendering;
 	private int stackDepth;
+	private BodyPart permittedBodyPart;
 	
 	@Override
 	public void render(AbstractClientPlayerEntity entity, final float limbAngle, final float limbDistance,
@@ -41,9 +42,44 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
+			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderLeftArm(AbstractClientPlayerEntity entity) {
+		Identifier skin = entity.getSkinTexture();
+		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderLeftArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.LEFT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderRightArm(AbstractClientPlayerEntity entity) {
+		Identifier skin = entity.getSkinTexture();
+		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.RIGHT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -74,6 +110,13 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 
 	@Override
 	public void anchorTo(BodyPart part) {
+		if (permittedBodyPart != null && part != permittedBodyPart) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
 		ModelPart model;
 		switch (part) {
 			case HEAD:
@@ -122,34 +165,36 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	}
 
 	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.getInstance();
 		BufferBuilder vc = tess.getBuffer();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
+		float g = grow.grow;
 
 		vc.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
-		vc.vertex(0, h, 0).color(1f, 1f, 1f, 1f).texture(uv[0][0], uv[0][1]).normal(0, 0, -1).next();
-		vc.vertex(w, h, 0).color(1f, 1f, 1f, 1f).texture(uv[1][0], uv[1][1]).normal(0, 0, -1).next();
-		vc.vertex(w, 0, 0).color(1f, 1f, 1f, 1f).texture(uv[2][0], uv[2][1]).normal(0, 0, -1).next();
-		vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(uv[3][0], uv[3][1]).normal(0, 0, -1).next();
+		vc.vertex(-g, h+g, 0).color(1f, 1f, 1f, 1f).texture(uv[0][0], uv[0][1]).normal(0, 0, -1).next();
+		vc.vertex(w+g, h+g, 0).color(1f, 1f, 1f, 1f).texture(uv[1][0], uv[1][1]).normal(0, 0, -1).next();
+		vc.vertex(w+g, -g, 0).color(1f, 1f, 1f, 1f).texture(uv[2][0], uv[2][1]).normal(0, 0, -1).next();
+		vc.vertex(-g, -g, 0).color(1f, 1f, 1f, 1f).texture(uv[3][0], uv[3][1]).normal(0, 0, -1).next();
 		tess.draw();
 	}
 
 	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.getInstance();
 		BufferBuilder vc = tess.getBuffer();
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
+		float g = grow.grow;
 		
 		vc.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
-		vc.vertex(0, 0, 0).color(1f, 1f, 1f, 1f).texture(uv[3][0], uv[3][1]).normal(0, 0, 1).next();
-		vc.vertex(w, 0, 0).color(1f, 1f, 1f, 1f).texture(uv[2][0], uv[2][1]).normal(0, 0, 1).next();
-		vc.vertex(w, h, 0).color(1f, 1f, 1f, 1f).texture(uv[1][0], uv[1][1]).normal(0, 0, 1).next();
-		vc.vertex(0, h, 0).color(1f, 1f, 1f, 1f).texture(uv[0][0], uv[0][1]).normal(0, 0, 1).next();
+		vc.vertex(-g, -g, 0).color(1f, 1f, 1f, 1f).texture(uv[3][0], uv[3][1]).normal(0, 0, 1).next();
+		vc.vertex(w+g, -g, 0).color(1f, 1f, 1f, 1f).texture(uv[2][0], uv[2][1]).normal(0, 0, 1).next();
+		vc.vertex(w+g, h+g, 0).color(1f, 1f, 1f, 1f).texture(uv[1][0], uv[1][1]).normal(0, 0, 1).next();
+		vc.vertex(-g, h+g, 0).color(1f, 1f, 1f, 1f).texture(uv[0][0], uv[0][1]).normal(0, 0, 1).next();
 		tess.draw();
 	}
 
@@ -165,4 +210,5 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		Tessellator.getInstance().draw();
 		GlStateManager.enableTexture();
 	}
+
 }

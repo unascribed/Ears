@@ -113,34 +113,36 @@ public class LayerEars implements EarsRenderDelegate {
 	}
 
 	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.instance;
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
-
+		float g = grow.grow;
+		
 		tess.startDrawing(GL11.GL_QUADS);
 		tess.setNormal(0, 0, -1);
-		tess.addVertexWithUV(0, h, 0, uv[0][0], uv[0][1]);
-		tess.addVertexWithUV(w, h, 0, uv[1][0], uv[1][1]);
-		tess.addVertexWithUV(w, 0, 0, uv[2][0], uv[2][1]);
-		tess.addVertexWithUV(0, 0, 0, uv[3][0], uv[3][1]);
+		tess.addVertexWithUV(-g, h+g, 0, uv[0][0], uv[0][1]);
+		tess.addVertexWithUV(w+g, h+g, 0, uv[1][0], uv[1][1]);
+		tess.addVertexWithUV(w+g, -g, 0, uv[2][0], uv[2][1]);
+		tess.addVertexWithUV(-g, -g, 0, uv[3][0], uv[3][1]);
 		tess.draw();
 	}
 
 	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
 		if (skipRendering > 0) return;
 		Tessellator tess = Tessellator.instance;
 		
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
+		float g = grow.grow;
 		
 		tess.startDrawing(GL11.GL_QUADS);
 		tess.setNormal(0, 0, 1);
-		tess.addVertexWithUV(0, 0, 0, uv[3][0], uv[3][1]);
-		tess.addVertexWithUV(w, 0, 0, uv[2][0], uv[2][1]);
-		tess.addVertexWithUV(w, h, 0, uv[1][0], uv[1][1]);
-		tess.addVertexWithUV(0, h, 0, uv[0][0], uv[0][1]);
+		tess.addVertexWithUV(-g, -g, 0, uv[3][0], uv[3][1]);
+		tess.addVertexWithUV(w+g, -g, 0, uv[2][0], uv[2][1]);
+		tess.addVertexWithUV(w+g, h+g, 0, uv[1][0], uv[1][1]);
+		tess.addVertexWithUV(-g, h+g, 0, uv[0][0], uv[0][1]);
 		tess.draw();
 	}
 

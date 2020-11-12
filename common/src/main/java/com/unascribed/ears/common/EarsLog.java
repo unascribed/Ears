@@ -35,7 +35,7 @@ public class EarsLog {
 			Matcher m = BRACES_PATTERN.matcher(fmt);
 			int i = 0;
 			while (m.find()) {
-				m.appendReplacement(buf, arg != null && i < arg.length ? String.valueOf(arg[i]) : "{}");
+				m.appendReplacement(buf, arg != null && i < arg.length ? String.valueOf(arg[i]).replace("\\", "\\\\").replace("$", "\\$") : "{}");
 				i++;
 			}
 			m.appendTail(buf);
@@ -117,6 +117,12 @@ public class EarsLog {
 	public static void debug(String tag, String fmt, int arg1, int arg2, int arg3, int arg4, Object arg5, Object arg6) {
 		if (DEBUG) {
 			debugva(tag, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
+		}
+	}
+	
+	public static void debug(String tag, String fmt, int arg1, int arg2, int arg3, int arg4, Object arg5, Object arg6, Object arg7) {
+		if (DEBUG) {
+			debugva(tag, fmt, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 		}
 	}
 

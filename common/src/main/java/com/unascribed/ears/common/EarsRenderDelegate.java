@@ -81,17 +81,30 @@ public interface EarsRenderDelegate {
 		}
 	}
 	
+	public enum QuadGrow {
+		NONE(0),
+		/**
+		 * Matches secondary layers.
+		 */
+		HALFPIXEL(0.5f),
+		;
+		public final float grow;
+		QuadGrow(float grow) {
+			this.grow = grow;
+		}
+	}
+	
 	void push();
 	void pop();
 	
 	void anchorTo(BodyPart part);
 	void translate(float x, float y, float z);
 	void rotate(float ang, float x, float y, float z);
-	void renderFront(int u, int v, int width, int height, TexRotation rot, TexFlip flip);
-	void renderBack(int u, int v, int width, int height, TexRotation rot, TexFlip flip);
-	default void renderDoubleSided(int u, int v, int width, int height, TexRotation rot, TexFlip flip) {
-		renderFront(u, v, width, height, rot, flip);
-		renderBack(u, v, width, height, rot, flip.flipHorizontally());
+	void renderFront(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
+	void renderBack(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
+	default void renderDoubleSided(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		renderFront(u, v, width, height, rot, flip, grow);
+		renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
 	}
 	
 	void renderDebugDot(float r, float g, float b, float a);
