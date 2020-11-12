@@ -2,8 +2,8 @@ plugins {
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-def version = file('../version.txt').text.trim()
 def target = project.getProperty("target")
+def version = file('../version.txt').text.trim()+file("../${target}/version-suffix.txt").text.trim()
 
 def prefix = ""
 def artifact = "../${target}/build/libs/ears-${target}-${version}.jar"
@@ -83,10 +83,13 @@ curseforge {
 		
 		mainArtifact(file(artifact)) {
 			displayName = "[${prefix}] Ears v${version}"
-			
-			relations {
-				conflicts.each { incompatible(it) }
-				requires.each { requiredDependency(it) }
+
+			// it is an error to open this section and not set any relations
+			if (!conflicts.isEmpty() || !requires.isEmpty()) {
+				relations {
+					conflicts.each { incompatible(it) }
+					requires.each { requiredDependency(it) }
+				}
 			}
 		}
 	}

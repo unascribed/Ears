@@ -5,7 +5,7 @@ ext {
 	projectName = 'Ears'
 
 	useElytraVersionFormat = false
-	version = file('../version.txt').text.trim()
+	version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 
 	concreteVersion = ''
 	concreteModules = [ ]

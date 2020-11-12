@@ -16,7 +16,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = file('../version.txt').text.trim()
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group = 'com.unascribed.ears' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'ears-forge-1.16'
 

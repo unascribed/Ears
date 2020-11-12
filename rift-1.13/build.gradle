@@ -16,7 +16,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
 group 'com.unascribed.ears'
-version = file('../version.txt').text.trim()
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 archivesBaseName = 'ears-rift-1.13'
 
 sourceCompatibility = 1.8
