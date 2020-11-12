@@ -1,0 +1,6 @@
+*.java diff=java
+gradlew linguist-vendored
+gradlew.bat linguist-vendored
+*.jar binary
+*.gradle linguist-detectable
+*.json linguist-detectable
