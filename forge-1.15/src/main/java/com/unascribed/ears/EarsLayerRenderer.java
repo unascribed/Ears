@@ -10,7 +10,6 @@ import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.NotRandom;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -43,6 +42,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	private int overlay;
 	private int skipRendering;
 	private int stackDepth = 0;
+	private BodyPart permittedBodyPart;
 	
 	@Override
 	public void render(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
@@ -58,7 +58,46 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			this.overlay = LivingRenderer.getPackedOverlay(entity, 0);
 			this.skipRendering = 0;
 			this.stackDepth = 0;
+			this.permittedBodyPart = null;
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			this.m = null;
+			this.vc = null;
+		}
+	}
+	
+	public void renderLeftArm(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity) {
+		ResourceLocation skin = getEntityTexture(entity);
+		Texture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderLeftArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
+			this.m = m;
+			this.vc = vertexConsumers.getBuffer(RenderType.getEntityCutout(skin));
+			this.light = light;
+			this.overlay = LivingRenderer.getPackedOverlay(entity, 0);
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.LEFT_ARM;
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			this.m = null;
+			this.vc = null;
+		}
+	}
+	
+	public void renderRightArm(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity) {
+		ResourceLocation skin = getEntityTexture(entity);
+		Texture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
+			this.m = m;
+			this.vc = vertexConsumers.getBuffer(RenderType.getEntityCutout(skin));
+			this.light = light;
+			this.overlay = LivingRenderer.getPackedOverlay(entity, 0);
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.RIGHT_ARM;
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
 			this.m = null;
 			this.vc = null;
 		}
@@ -84,6 +123,13 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 	@Override
 	public void anchorTo(BodyPart part) {
+		if (permittedBodyPart != null && part != permittedBodyPart) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
 		ModelRenderer model;
 		switch (part) {
 			case HEAD:

@@ -13,7 +13,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;;
 public class EarsLoadingPlugin extends MiniCoremod {
 
 	public EarsLoadingPlugin() {
-		super(ImageBufferDownloadTransformer.class, ThreadDownloadImageDataTransformer.class);
+		super(ImageBufferDownloadTransformer.class, ThreadDownloadImageDataTransformer.class, RenderPlayerTransformer.class);
 		EarsLog.debug("Platform:Inject", "Coremod constructed");
 	}
 

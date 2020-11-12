@@ -20,12 +20,24 @@ public abstract class MixinRenderPlayer extends RenderLivingBase<AbstractClientP
 	public MixinRenderPlayer(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn) {
 		super(renderManagerIn, modelBaseIn, shadowSizeIn);
 	}
+	
+	private EarsLayerRenderer ears$layerRenderer;
 
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
 	private void init(RenderManager erd, boolean b, CallbackInfo ci) {
 		EarsLog.debug("Platform:Inject", "Construct player renderer");
 		RenderPlayer self = (RenderPlayer)(Object)this;
-		this.addLayer(new EarsLayerRenderer(self));
+		this.addLayer(ears$layerRenderer = new EarsLayerRenderer(self));
+	}
+	
+	@Inject(at = @At("TAIL"), method = "renderLeftArm(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+	private void renderLeftArm(AbstractClientPlayer e, CallbackInfo ci) {
+		ears$layerRenderer.renderLeftArm(e);
+	}
+	
+	@Inject(at = @At("TAIL"), method = "renderRightArm(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+	private void renderRightArm(AbstractClientPlayer e, CallbackInfo ci) {
+		ears$layerRenderer.renderRightArm(e);
 	}
 	
 }

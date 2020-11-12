@@ -7,6 +7,7 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -30,6 +31,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 	private int skipRendering;
 	private int stackDepth;
+	private BodyPart permittedBodyPart;
 	
 	@Override
 	public void render(AbstractClientPlayerEntity entity, final float limbAngle, final float limbDistance,
@@ -42,9 +44,44 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
+			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderLeftArm(AbstractClientPlayerEntity entity) {
+		ResourceLocation skin = entity.getLocationSkin();
+		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderLeftArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.LEFT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderRightArm(AbstractClientPlayerEntity entity) {
+		ResourceLocation skin = entity.getLocationSkin();
+		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
+			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.RIGHT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -75,6 +112,13 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 	@Override
 	public void anchorTo(BodyPart part) {
+		if (permittedBodyPart != null && part != permittedBodyPart) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
 		RendererModel model;
 		switch (part) {
 			case HEAD:
@@ -168,4 +212,5 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		Tessellator.getInstance().draw();
 		GlStateManager.enableTexture();
 	}
+
 }

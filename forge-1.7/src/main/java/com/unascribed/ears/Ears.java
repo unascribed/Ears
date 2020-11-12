@@ -41,7 +41,7 @@ public class Ears {
 	
 	public static final Map<ITextureObject, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
 	
-	private LayerEars layer;
+	private static LayerEars layer;
 	
 	public Ears() {
 		if (EarsLog.DEBUG) {
@@ -141,6 +141,10 @@ public class Ears {
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
+	}
+	
+	public static void renderFirstPersonArm(RenderPlayer rp, EntityPlayer player) {
+		layer.renderRightArm((AbstractClientPlayer)player);
 	}
 	
 	private static final MethodHandle setAreaOpaque;

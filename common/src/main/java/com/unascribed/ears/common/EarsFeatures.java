@@ -61,7 +61,7 @@ public class EarsFeatures {
 					EarsLog.debug("Common:Features", "detect(...): Pixel at 1, 32 is Magic Red, disabling new regions");
 					newRegions = false;
 				} else {
-					EarsLog.debug("Common:Features", "detect(...): Pixel at 1, 32 is not a recognized magic color (#3F23D8, #23D848, or #D82350) - it's #{}",  upperHex24Dbg(img.getARGB(0, 32)));
+					EarsLog.debug("Common:Features", "detect(...): Pixel at 1, 32 is not a recognized magic color (#3F23D8, #23D848, or #D82350) - it's #{}",  upperHex24Dbg(img.getARGB(1, 32)));
 					return DISABLED;
 				}
 				MagicPixel third = MagicPixel.from(img.getARGB(2, 32));
@@ -80,7 +80,7 @@ public class EarsFeatures {
 					backEars = true;
 					asymBackEars = false;
 				} else {
-					EarsLog.debug("Common:Features", "detect(...): Pixel at 2, 32 is not a recognized magic color (#3F23D8, #23D848, or #D82350) - it's #{}",  upperHex24Dbg(img.getARGB(0, 32)));
+					EarsLog.debug("Common:Features", "detect(...): Pixel at 2, 32 is not a recognized magic color (#3F23D8, #23D848, or #D82350) - it's #{}",  upperHex24Dbg(img.getARGB(2, 32)));
 					return DISABLED;
 				}
 				return new EarsFeatures(true, newRegions, backEars, asymBackEars);

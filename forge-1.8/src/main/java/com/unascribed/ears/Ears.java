@@ -13,6 +13,7 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsLog;
 
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 public class Ears {
 	
 	public static final Map<ITextureObject, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
+	private static final Map<RenderPlayer, LayerEars> earsLayers = new WeakHashMap<>();
 	
 	private static boolean reentering;
 	
@@ -58,7 +60,21 @@ public class Ears {
 	
 	public static void addLayer(RenderPlayer rp) {
 		EarsLog.debug("Platform:Inject", "Construct player renderer");
-		rp.addLayer(new LayerEars(rp));
+		LayerEars layer = new LayerEars(rp);
+		earsLayers.put(rp, layer);
+		rp.addLayer(layer);
+	}
+	
+	public static void renderLeftArm(RenderPlayer rp, AbstractClientPlayer player) {
+		EarsLog.debug("Platform:Inject", "renderLeftArm({}, {})", rp, player);
+		LayerEars le = earsLayers.get(rp);
+		if (le != null) le.renderLeftArm(player);
+	}
+	
+	public static void renderRightArm(RenderPlayer rp, AbstractClientPlayer player) {
+		EarsLog.debug("Platform:Inject", "renderRightArm({}, {})", rp, player);
+		LayerEars le = earsLayers.get(rp);
+		if (le != null) le.renderRightArm(player);
 	}
 	
 	private static final MethodHandle setAreaOpaque;

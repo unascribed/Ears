@@ -24,6 +24,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 	
 	private int skipRendering;
 	private int stackDepth;
+	private BodyPart permittedBodyPart;
 	
 	public LayerEars(RenderPlayer render) {
 		this.render = render;
@@ -43,9 +44,46 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
 			this.skipRendering = 0;
 			this.stackDepth = 0;
+			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, limbDistance);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderLeftArm(AbstractClientPlayer entity) {
+		ResourceLocation skin = entity.getLocationSkin();
+		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderLeftArm(...): skin={}, tex={}", skin, tex);
+		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
+			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
+			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.LEFT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0);
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+	}
+	
+	public void renderRightArm(AbstractClientPlayer entity) {
+		ResourceLocation skin = entity.getLocationSkin();
+		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
+		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
+			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
+			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.RIGHT_ARM;
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -76,6 +114,13 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 
 	@Override
 	public void anchorTo(BodyPart part) {
+		if (permittedBodyPart != null && part != permittedBodyPart) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
 		ModelRenderer model;
 		switch (part) {
 			case HEAD:
