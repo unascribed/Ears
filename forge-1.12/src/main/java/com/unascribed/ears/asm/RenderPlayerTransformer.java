@@ -11,7 +11,7 @@ import com.unascribed.ears.common.EarsLog;
 @Patch.Class("net.minecraft.client.renderer.entity.RenderPlayer")
 public class RenderPlayerTransformer extends MiniTransformer {
 	
-	@Patch.Method(srg="<init>", mcp="<init>", descriptor="(Lnet/minecraft/client/renderer/entity/RenderManager;)V")
+	@Patch.Method(srg="<init>", mcp="<init>", descriptor="(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
 	public void patchConstructor(PatchContext ctx) {
 		EarsLog.debug("Platform:Inject", "Patching player renderer constructor");
 		ctx.search(new InsnNode(RETURN)).jumpBefore();

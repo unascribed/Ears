@@ -94,7 +94,7 @@ public class EarsFeatures {
 	}
 	
 	private static String upperHex24Dbg(int col) {
-		return EarsLog.DEBUG ? Integer.toString(col|0xFF000000).substring(2).toUpperCase(Locale.ROOT) : "";
+		return EarsLog.DEBUG ? Integer.toHexString(col|0xFF000000).substring(2).toUpperCase(Locale.ROOT) : "";
 	}
 
 	@Override
