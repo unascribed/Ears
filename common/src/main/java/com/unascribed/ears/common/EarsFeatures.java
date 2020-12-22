@@ -190,8 +190,9 @@ public class EarsFeatures {
 	
 	private static float pxValToUnit(int i) {
 		if (i == 0) return 0;
-		int j = i-127;
+		int j = i-128;
 		if (j < 0) j -= 1;
+		if (j >= 0) j += 1;
 		return j/128f;
 	}
 
