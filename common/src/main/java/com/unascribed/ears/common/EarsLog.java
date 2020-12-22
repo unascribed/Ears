@@ -71,6 +71,12 @@ public class EarsLog {
 			debugva(tag, fmt, arg1, arg2);
 		}
 	}
+	
+	public static void debug(String tag, String fmt, Object arg1, float arg2) {
+		if (DEBUG) {
+			debugva(tag, fmt, arg1, arg2);
+		}
+	}
 
 	public static void debug(String tag, String fmt, Object arg1, Object arg2, float arg3) {
 		if (DEBUG) {
@@ -97,6 +103,12 @@ public class EarsLog {
 	}
 
 	public static void debug(String tag, String fmt, float arg1, float arg2, float arg3, float arg4) {
+		if (DEBUG) {
+			debugva(tag, fmt, arg1, arg2, arg3, arg4);
+		}
+	}
+	
+	public static void debug(String tag, String fmt, Object arg1, float arg2, float arg3, float arg4) {
 		if (DEBUG) {
 			debugva(tag, fmt, arg1, arg2, arg3, arg4);
 		}

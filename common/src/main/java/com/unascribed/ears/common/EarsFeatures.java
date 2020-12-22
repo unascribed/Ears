@@ -14,8 +14,6 @@ public class EarsFeatures {
 		RED(0xD82350),
 		PURPLE(0xB923D8),
 		CYAN(0x23D8C6),
-		YELLOW(0xD7D823),
-		ORANGE(0xD86A23)
 		;
 		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<>();
 		static {
@@ -124,50 +122,27 @@ public class EarsFeatures {
 			}
 		}
 	}
-	public enum TailBend {
-		NONE(0),
-		DOWN(0, -30),
-		UP(0, 30),
-		DOWN_DOWN(0, -20, -30),
-		UP_UP(0, 20, 30),
-		DOWN_UP(0, -30, 60),
-		UP_DOWN(0, 30, -60),
-		;
-		public final float[] angles;
-		private TailBend(float... angles) {
-			this.angles = angles;
-		}
-		public static TailBend fromMP(MagicPixel mp) {
-			switch (mp) {
-				default:
-					EarsLog.debug("Common:Features", "detect(...): {} is not valid for the tail bend pixel; pretending it's Magic Blue", mp);
-				case BLUE: return NONE;
-				case RED: return DOWN;
-				case GREEN: return UP;
-				case PURPLE: return DOWN_DOWN;
-				case CYAN: return UP_UP;
-				case ORANGE: return DOWN_UP;
-				case YELLOW: return UP_DOWN;
-			}
-		}
-	}
 
-	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, TailBend.NONE);
+	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0);
 	
 	public final boolean enabled;
 	public final EarMode earMode;
 	public final EarAnchor earAnchor;
 	public final Protrusions protrusions;
 	public final TailMode tailMode;
-	public final TailBend tailBend;
+	public final float tailBend1;
+	public final float tailBend2;
+	public final float tailBend3;
 
-	private EarsFeatures(boolean enabled, EarMode earMode, EarAnchor earAnchor, Protrusions protrusions, TailMode tailMode, TailBend tailBend) {
+	private EarsFeatures(boolean enabled, EarMode earMode, EarAnchor earAnchor, Protrusions protrusions, TailMode tailMode, float tailBend1, float tailBend2, float tailBend3) {
 		this.enabled = enabled;
 		this.earMode = earMode;
 		this.earAnchor = earAnchor;
 		this.protrusions = protrusions;
 		this.tailMode = tailMode;
-		this.tailBend = tailBend;
+		this.tailBend1 = tailBend1;
+		this.tailBend2 = tailBend2;
+		this.tailBend3 = tailBend3;
 	}
 	
 	public static EarsFeatures detect(EarsImage img) {
@@ -179,8 +154,31 @@ public class EarsFeatures {
 				EarAnchor earAnchor = getMagicPixel(img, 2, EarAnchor::fromMP, "ear anchor", earMode != EarMode.NONE && earMode != EarMode.BEHIND);
 				Protrusions protrusions = getMagicPixel(img, 3, Protrusions::fromMP, "protrusions");
 				TailMode tailMode = getMagicPixel(img, 4, TailMode::fromMP, "tail mode");
-				TailBend tailBend = getMagicPixel(img, 5, TailBend::fromMP, "tail bend");
-				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend);
+				int tailBend = getPixel(img, 5);
+				float tailBend1 = 0;
+				float tailBend2 = 0;
+				float tailBend3 = 0;
+				if (MagicPixel.from(tailBend) == MagicPixel.BLUE) {
+					EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is Magic Blue, pretending it's black");
+				} else {
+					tailBend1 = pxValToUnit((tailBend&0xFF0000) >> 16)*90;
+					tailBend2 = pxValToUnit((tailBend&0x00FF00) >> 8)*90;
+					tailBend3 = pxValToUnit((tailBend&0x0000FF) >> 0)*90;
+					if (tailBend1 != 0) {
+						if (tailBend2 != 0) {
+							if (tailBend3 != 0) {
+								EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is #{} - 4 segments with angles 0, {}, {}, {}", upperHex24Dbg(tailBend), tailBend1, tailBend2, tailBend3);
+							} else {
+								EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is #{} - 3 segments with angles 0, {}, {}", upperHex24Dbg(tailBend), tailBend1, tailBend2);
+							}
+						} else {
+							EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is #{}XX - 2 segments with angles 0, {}", upperHex24f16Dbg(tailBend), tailBend1);
+						}
+					} else {
+						EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is #{}XXXX - 1 flat segment", upperHex24f8Dbg(tailBend));
+					}
+				}
+				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend1, tailBend2, tailBend3);
 			} else {
 				EarsLog.debug("Common:Features", "detect(...): Pixel at 0, 32 is not #3F23D8 (Magic Blue) - it's #{}. Disabling",  upperHex24Dbg(img.getARGB(0, 32)));
 				return DISABLED;
@@ -188,6 +186,19 @@ public class EarsFeatures {
 		}
 		EarsLog.debug("Common:Features", "detect(...): Legacy skin, ignoring");
 		return DISABLED;
+	}
+	
+	private static float pxValToUnit(int i) {
+		if (i == 0) return 0;
+		int j = i-127;
+		if (j < 0) j -= 1;
+		return j/128f;
+	}
+
+	private static int getPixel(EarsImage img, int idx) {
+		int x = idx%4;
+		int y = 32+(idx/4);
+		return img.getARGB(x, y);
 	}
 	
 	private static MagicPixel getMagicPixel(EarsImage img, int idx) {
@@ -223,15 +234,24 @@ public class EarsFeatures {
 		return b;
 	}
 
+	private static String upperHex24f8Dbg(int col) {
+		return EarsLog.DEBUG ? Integer.toHexString(((col>>16)&0xFF)|0xFF00).substring(2).toUpperCase(Locale.ROOT) : "";
+	}
+	
+	private static String upperHex24f16Dbg(int col) {
+		return EarsLog.DEBUG ? Integer.toHexString(((col>>8)&0xFFFF)|0xFF0000).substring(2).toUpperCase(Locale.ROOT) : "";
+	}
+	
 	private static String upperHex24Dbg(int col) {
 		return EarsLog.DEBUG ? Integer.toHexString(col|0xFF000000).substring(2).toUpperCase(Locale.ROOT) : "";
 	}
 
 	@Override
 	public String toString() {
-		return "EarsFeatures [enabled=" + enabled + ", earMode=" + earMode
+		return "EarsFeatures[enabled=" + enabled + ", earMode=" + earMode
 				+ ", earAnchor=" + earAnchor + ", protrusions=" + protrusions
-				+ ", tailMode=" + tailMode + ", tailBend=" + tailBend + "]";
+				+ ", tailMode=" + tailMode + ", tailBend={" + tailBend1
+				+ ", " + tailBend2 + ", " + tailBend3 + "}]";
 	}
-	
+
 }

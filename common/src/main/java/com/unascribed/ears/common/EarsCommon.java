@@ -2,7 +2,6 @@ package com.unascribed.ears.common;
 
 import com.unascribed.ears.common.EarsFeatures.EarAnchor;
 import com.unascribed.ears.common.EarsFeatures.EarMode;
-import com.unascribed.ears.common.EarsFeatures.TailBend;
 import com.unascribed.ears.common.EarsFeatures.TailMode;
 import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
@@ -131,7 +130,6 @@ public class EarsCommon {
 			}
 			
 			TailMode tailMode = features.tailMode;
-			TailBend tailBend = features.tailBend;
 			
 			if (tailMode != TailMode.NONE) {
 				float ang = 0;
@@ -151,10 +149,20 @@ public class EarsCommon {
 				delegate.anchorTo(BodyPart.TORSO);
 				delegate.translate(0, -2, 4);
 				delegate.rotate(ang+(swingAmount*swing), 1, 0, 0);
-				int segments = tailBend.angles.length;
+				int segments = 1;
+				float[] angles = {0, features.tailBend1, features.tailBend2, features.tailBend3};
+				if (features.tailBend1 != 0) {
+					segments++;
+					if (features.tailBend2 != 0) {
+						segments++;
+						if (features.tailBend3 != 0) {
+							segments++;
+						}
+					}
+				}
 				int segHeight = 12/segments;
 				for (int i = 0; i < segments; i++) {
-					delegate.rotate(tailBend.angles[i]*(1-(swingAmount/2)), 1, 0, 0);
+					delegate.rotate(angles[i]*(1-(swingAmount/2)), 1, 0, 0);
 					delegate.renderDoubleSided(56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 					delegate.translate(0, segHeight, 0);
 				}
