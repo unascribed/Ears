@@ -1,5 +1,9 @@
 package com.unascribed.ears.common;
 
+import com.unascribed.ears.common.EarsFeatures.EarAnchor;
+import com.unascribed.ears.common.EarsFeatures.EarMode;
+import com.unascribed.ears.common.EarsFeatures.TailBend;
+import com.unascribed.ears.common.EarsFeatures.TailMode;
 import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.EarsRenderDelegate.TexFlip;
@@ -70,66 +74,97 @@ public class EarsCommon {
 					delegate.pop();
 				}
 			}
-			// ears
-			delegate.push();
-			delegate.anchorTo(BodyPart.HEAD);
-			delegate.translate(-4, -16, 4);
-			delegate.renderFront(24, 0, 16, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
-			delegate.renderBack(56, 28, 16, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
-			delegate.pop();
 			
-			// tail
-			delegate.push();
-			delegate.anchorTo(BodyPart.TORSO);
-			delegate.translate(0, -2, 4);
-			delegate.rotate(30+(swingAmount*40), 1, 0, 0);
-			delegate.renderDoubleSided(56, 16, 8, 12, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
-			delegate.pop();
+			EarMode earMode = features.earMode;
+			EarAnchor earAnchor = features.earAnchor;
 			
-			if (features.newRegions) {
+			if (earMode == EarMode.ABOVE || earMode == EarMode.AROUND) {
 				delegate.push();
 				delegate.anchorTo(BodyPart.HEAD);
-				
-				// side ears, left
-				delegate.translate(-4, -8, 4);
-				delegate.renderFront(36, 16, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
-				delegate.renderBack(12, 16, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
-				
-				// side ears, right
-				delegate.translate(12, 0, 0);
-				delegate.renderFront(36, 32, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
-				delegate.renderBack(12, 32, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
-				
-				// chin
-				delegate.translate(-8, 9, -4.5f);
-				delegate.renderDoubleSided(56, 44, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
-				
-				if (features.backPointingEars) {
-					if (features.asymmetricalBackPointingEars) {
-						// left back-pointing ear
-						delegate.rotate(90, 0, 1, 0);
-						delegate.translate(-17.5f, -9, -0.5f);
-						delegate.renderDoubleSided(0, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
-						
-						// right back-pointing ear
-						delegate.translate(0, 0, 9);
-						delegate.renderDoubleSided(56, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
-					} else {
-						// left back-pointing ear
-						delegate.rotate(90, 0, 1, 0);
-						delegate.translate(-17.5f, -9, -0.5f);
-						delegate.renderFront(0, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
-						delegate.renderBack(56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
-						
-						// right back-pointing ear
-						delegate.translate(0, 0, 9);
-						delegate.renderFront(56, 0, 8, 8, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.HALFPIXEL);
-						delegate.renderBack(0, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.HALFPIXEL);
-					}
+				if (earAnchor == EarAnchor.CENTER) {
+					delegate.translate(0, 0, 4);
+				} else if (earAnchor == EarAnchor.BACK) {
+					delegate.translate(0, 0, 8);
 				}
-				
+				delegate.push();
+				delegate.translate(-4, -16, 0);
+				delegate.renderFront(24, 0, 16, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 28, 16, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
-				
+				if (earMode == EarMode.AROUND) {
+					delegate.translate(-4, -8, 0);
+					delegate.renderFront(36, 16, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderBack(12, 16, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					
+					delegate.translate(12, 0, 0);
+					delegate.renderFront(36, 32, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderBack(12, 32, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				}
+				delegate.pop();
+			} else if (earMode == EarMode.SIDES) {
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				if (earAnchor == EarAnchor.CENTER) {
+					delegate.translate(0, 0, 4);
+				} else if (earAnchor == EarAnchor.BACK) {
+					delegate.translate(0, 0, 8);
+				}
+				delegate.translate(-8, -8, 0);
+				delegate.renderFront(24, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.translate(16, 0, 0);
+				delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 28, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+			} else if (earMode == EarMode.BEHIND) {
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				delegate.rotate(90, 0, 1, 0);
+				delegate.translate(-16, -8, 0);
+				delegate.renderFront(24, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.rotate(180, 0, 1, 0);
+				delegate.translate(-8, 0, -8);
+				delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 28, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+			}
+			
+			TailMode tailMode = features.tailMode;
+			TailBend tailBend = features.tailBend;
+			
+			if (tailMode != TailMode.NONE) {
+				float ang = 0;
+				float swing = 0;
+				if (tailMode == TailMode.DOWN) {
+					ang = 30;
+					swing = 40;
+				} else if (tailMode == TailMode.BACK) {
+					ang = 80;
+					swing = 20;
+				} else if (tailMode == TailMode.UP) {
+					ang = 130;
+					swing = -20;
+				}
+				// tail
+				delegate.push();
+				delegate.anchorTo(BodyPart.TORSO);
+				delegate.translate(0, -2, 4);
+				delegate.rotate(ang+(swingAmount*swing), 1, 0, 0);
+				int segments = tailBend.angles.length;
+				int segHeight = 12/segments;
+				for (int i = 0; i < segments; i++) {
+					delegate.rotate(tailBend.angles[i]*(1-(swingAmount/2)), 1, 0, 0);
+					delegate.renderDoubleSided(56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.translate(0, segHeight, 0);
+				}
+				delegate.pop();
+			}
+			
+			boolean claws = features.protrusions.claws;
+			boolean horn = features.protrusions.horn;
+			
+			if (claws) {
 				// claws, left leg
 				delegate.push();
 				delegate.anchorTo(BodyPart.LEFT_LEG);
@@ -160,6 +195,16 @@ public class EarsCommon {
 				delegate.rotate(90, 0, 1, 0);
 				delegate.translate(-4, 0, 0);
 				delegate.renderDoubleSided(52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+			}
+			
+			if (horn) {
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				delegate.translate(0, -8, 0);
+				delegate.rotate(25, 1, 0, 0);
+				delegate.translate(0, -8, 0);
+				delegate.renderDoubleSided(56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 			}
 		}

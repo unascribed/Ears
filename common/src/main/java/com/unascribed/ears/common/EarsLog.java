@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class EarsLog {
 
-	public static final boolean DEBUG = Boolean.getBoolean("com.unascribed.ears.Debug");
+	public static final boolean DEBUG = Boolean.getBoolean("com.unascribed.ears.Debug") || Boolean.getBoolean("ears.debug");
 	private static final PrintStream debugStream;
 	private static final Pattern BRACES_PATTERN = Pattern.compile("{}", Pattern.LITERAL);
 	private static final long START = System.nanoTime();
@@ -97,6 +97,12 @@ public class EarsLog {
 	}
 
 	public static void debug(String tag, String fmt, float arg1, float arg2, float arg3, float arg4) {
+		if (DEBUG) {
+			debugva(tag, fmt, arg1, arg2, arg3, arg4);
+		}
+	}
+	
+	public static void debug(String tag, String fmt, Object arg1, Object arg2, Object arg3, Object arg4) {
 		if (DEBUG) {
 			debugva(tag, fmt, arg1, arg2, arg3, arg4);
 		}

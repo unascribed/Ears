@@ -26,8 +26,7 @@ switch (target) {
 	case "fabric-1.17":
 		prefix = "FABRIC 1.17"
 		stability = 'alpha'
-		// TODO: when Curse adds 1.17-Snapshot, use it
-		gameVersions = ['Fabric', '1.16-Snapshot']
+		gameVersions = ['Fabric', '1.17']
 		break
 	case "forge-1.7":
 		prefix = "FORGE 1.7"
