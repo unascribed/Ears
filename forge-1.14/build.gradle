@@ -119,7 +119,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
     compile files('MixinBootstrap.jar')
-    compile project('common')
+    compile(project('common')) { transitive = false }
 
 }
 // Example configuration to allow publishing using the maven-publish task

@@ -2,7 +2,7 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven { url 'https://www.jitpack.io' }
-		maven { url 'http://repo.spongepowered.org/maven' }
+		maven { url='https://dist.creeper.host/Sponge/maven' }
 		maven { url 'https://files.minecraftforge.net/maven' }
 	}
 	dependencies {
@@ -37,7 +37,7 @@ dependencies {
 	implementation 'com.github.Chocohead:Rift:jitpack-2d8bb9bd56-1:dev'
 	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
 	
-	implementation project('common')
+	implementation(project('common')) { transitive = false }
 }
 
 jar {

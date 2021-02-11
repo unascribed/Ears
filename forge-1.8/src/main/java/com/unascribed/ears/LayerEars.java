@@ -22,6 +22,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 	
 	private final RenderPlayer render;
 	
+	private AbstractClientPlayer entity;
 	private int skipRendering;
 	private int stackDepth;
 	private BodyPart permittedBodyPart;
@@ -42,6 +43,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.entity = entity;
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = null;
@@ -50,6 +52,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, limbDistance);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
+			this.entity = null;
 		}
 	}
 	
@@ -60,6 +63,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
 			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.entity = entity;
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = BodyPart.LEFT_ARM;
@@ -68,6 +72,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
+			this.entity = null;
 		}
 	}
 	
@@ -78,6 +83,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
 			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.entity = entity;
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
@@ -86,6 +92,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0);
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
+			this.entity = null;
 		}
 	}
 
@@ -149,6 +156,9 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 				skipRendering = 1;
 			}
 			return;
+		}
+		if (entity.isSneaking() && part == BodyPart.HEAD) {
+			GlStateManager.translate(0, 0.2125, 0);
 		}
 		model.postRender(1/16f);
 		ModelBox cuboid = model.cubeList.get(0);

@@ -64,8 +64,8 @@ repositories {
 }
 
 dependencies {
-    compile project('common')
-    shadow project('common')
+    compile(project('common')) { transitive = false }
+    shadow(project('common')) { transitive = false }
 
 }
 

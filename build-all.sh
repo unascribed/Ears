@@ -18,6 +18,7 @@ for proj in $all; do
 		rm -f build-ok
 		# the gradles will race on constantly rebuilding common if not forced not to
 		TERM=dumb chronic ./gradlew clean build -x common:build -x common:clean -x common:compileJava -x common:processResources -x common:classes -x common:jar && touch build-ok
+		rm -f build/libs/*-dev.jar
 	) &
 done
 wait
