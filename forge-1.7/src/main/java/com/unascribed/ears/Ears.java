@@ -27,7 +27,6 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.ITextureObject;
@@ -53,11 +52,11 @@ public class Ears {
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent e) {
 		MinecraftForge.EVENT_BUS.register(this);
-		
+		layer = new LayerEars();
+	}
+	
+	public static void amendPlayerRenderer(RenderPlayer rp) {
 		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
-		RenderPlayer rp = (RenderPlayer)RenderManager.instance.entityRenderMap.get(EntityPlayer.class);
-		
-		layer = new LayerEars(rp);
 		
 		ModelBiped model = new ModelBiped(0, 0, 64, 64);
 		ReflectionHelper.setPrivateValue(RendererLivingEntity.class, rp, model, "field_77045_g", "mainModel");
@@ -92,7 +91,7 @@ public class Ears {
 	@SubscribeEvent
 	public void onRenderPlayerPost(RenderPlayerEvent.Specials.Post e) {
 		EarsLog.debug("Platform", "RenderPlayerEvent.Specials.Post player={}, renderer={}, partialTicks={}", e.entityPlayer, e.renderer, e.partialRenderTick);
-		layer.doRenderLayer((AbstractClientPlayer)e.entityPlayer,
+		layer.doRenderLayer(e.renderer, (AbstractClientPlayer)e.entityPlayer,
 				e.entityPlayer.prevLimbSwingAmount + (e.entityPlayer.limbSwingAmount - e.entityPlayer.prevLimbSwingAmount) * e.partialRenderTick,
 				e.partialRenderTick);
 	}
@@ -144,7 +143,7 @@ public class Ears {
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp, EntityPlayer player) {
-		layer.renderRightArm((AbstractClientPlayer)player);
+		layer.renderRightArm(rp, (AbstractClientPlayer)player);
 	}
 	
 	private static final MethodHandle setAreaOpaque;

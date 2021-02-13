@@ -17,18 +17,16 @@ import net.minecraft.util.ResourceLocation;
 
 public class LayerEars implements EarsRenderDelegate {
 	
-	private final RenderPlayer render;
-	
+	private RenderPlayer render;
 	private int skipRendering;
 	private int stackDepth;
 	private BodyPart permittedBodyPart;
 	
-	public LayerEars(RenderPlayer render) {
-		this.render = render;
+	public LayerEars() {
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
-	public void doRenderLayer(AbstractClientPlayer entity, float limbDistance, float partialTicks) {
+	public void doRenderLayer(RenderPlayer render, AbstractClientPlayer entity, float limbDistance, float partialTicks) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		ResourceLocation skin = entity.getLocationSkin();
 		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
@@ -36,6 +34,7 @@ public class LayerEars implements EarsRenderDelegate {
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.render = render;
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = null;
@@ -44,16 +43,18 @@ public class LayerEars implements EarsRenderDelegate {
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, limbDistance);
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glDisable(GL11.GL_CULL_FACE);
+			this.render = null;
 		}
 	}
 	
-	public void renderRightArm(AbstractClientPlayer entity) {
+	public void renderRightArm(RenderPlayer render, AbstractClientPlayer entity) {
 		ResourceLocation skin = entity.getLocationSkin();
 		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
 		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
 		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
 			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
 			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.render = render;
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
@@ -62,6 +63,7 @@ public class LayerEars implements EarsRenderDelegate {
 			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0);
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glDisable(GL11.GL_CULL_FACE);
+			this.render = null;
 		}
 	}
 
