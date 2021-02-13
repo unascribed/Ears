@@ -51,12 +51,6 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 	}
 
 	@Override
-	public void renderDoubleSided(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderDoubleSided({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
-		delegate.renderDoubleSided(u, v, w, h, rot, flip, grow);
-	}
-
-	@Override
 	public void renderDebugDot(float r, float g, float b, float a) {
 		EarsLog.debug("Platform:Renderer:Delegate", "renderDebugDot({}, {}, {}, {})", r, g, b, a);
 		delegate.renderDebugDot(r, g, b, a);

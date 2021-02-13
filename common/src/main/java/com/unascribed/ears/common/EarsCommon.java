@@ -182,7 +182,7 @@ public class EarsCommon {
 				int segHeight = 12/segments;
 				for (int i = 0; i < segments; i++) {
 					delegate.rotate(angles[i]*(1-(swingAmount/2)), 1, 0, 0);
-					delegate.renderDoubleSided(56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					renderDoubleSided(delegate, 56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 					delegate.translate(0, segHeight, 0);
 				}
 				delegate.pop();
@@ -197,7 +197,7 @@ public class EarsCommon {
 				delegate.anchorTo(BodyPart.LEFT_LEG);
 				delegate.translate(0, 0, -4);
 				delegate.rotate(90, 1, 0, 0);
-				delegate.renderDoubleSided(16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				renderDoubleSided(delegate, 16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				// claws, right leg
@@ -205,7 +205,7 @@ public class EarsCommon {
 				delegate.anchorTo(BodyPart.RIGHT_LEG);
 				delegate.translate(0, 0, -4);
 				delegate.rotate(90, 1, 0, 0);
-				delegate.renderDoubleSided(0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				renderDoubleSided(delegate, 0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				// claws, left arm
@@ -213,7 +213,7 @@ public class EarsCommon {
 				delegate.anchorTo(BodyPart.LEFT_ARM);
 				delegate.rotate(90, 0, 1, 0);
 				delegate.translate(-4, 0, 4);
-				delegate.renderDoubleSided(44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
+				renderDoubleSided(delegate, 44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				// claws, right arm
@@ -221,7 +221,7 @@ public class EarsCommon {
 				delegate.anchorTo(BodyPart.RIGHT_ARM);
 				delegate.rotate(90, 0, 1, 0);
 				delegate.translate(-4, 0, 0);
-				delegate.renderDoubleSided(52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
+				renderDoubleSided(delegate, 52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 			}
 			
@@ -231,10 +231,15 @@ public class EarsCommon {
 				delegate.translate(0, -8, 0);
 				delegate.rotate(25, 1, 0, 0);
 				delegate.translate(0, -8, 0);
-				delegate.renderDoubleSided(56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				renderDoubleSided(delegate, 56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 			}
 		}
+	}
+
+	private static void renderDoubleSided(EarsRenderDelegate delegate, int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		delegate.renderFront(u, v, width, height, rot, flip, grow);
+		delegate.renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
 	}
 
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {

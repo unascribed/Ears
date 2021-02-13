@@ -102,10 +102,6 @@ public interface EarsRenderDelegate {
 	void rotate(float ang, float x, float y, float z);
 	void renderFront(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
 	void renderBack(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
-	default void renderDoubleSided(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		renderFront(u, v, width, height, rot, flip, grow);
-		renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
-	}
 	
 	void renderDebugDot(float r, float g, float b, float a);
 	
