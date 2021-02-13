@@ -63,7 +63,7 @@ switch (target) {
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13"
-		stability = 'beta'
+		stability = 'alpha'
 		gameVersions = ['Rift', '1.13.2']
 		break
 	default:

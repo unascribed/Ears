@@ -157,8 +157,12 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer>, EarsRende
 			}
 			return;
 		}
-		if (entity.isSneaking() && part == BodyPart.HEAD) {
-			GlStateManager.translate(0, 0.2125, 0);
+		if (entity.isSneaking()) {
+			if (part == BodyPart.LEFT_LEG || part == BodyPart.RIGHT_LEG) {
+				GlStateManager.translate(0, 0.1875, 0);
+			} else {
+				GlStateManager.translate(0, 0.2125, 0);
+			}
 		}
 		model.postRender(1/16f);
 		ModelBox cuboid = model.cubeList.get(0);
