@@ -13,6 +13,11 @@ def requires = []
 def conflicts = []
 
 switch (target) {
+	case "fabric-1.8":
+		prefix = "FABRIC 1.8"
+		stability = 'alpha'
+		gameVersions = ['Fabric', '1.8.9']
+		break
 	case "fabric-1.14":
 		prefix = "FABRIC 1.14"
 		stability = 'release'
