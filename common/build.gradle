@@ -13,5 +13,8 @@ repositories {
 }
 
 dependencies {
-	compile 'org.spongepowered:mixin:0.7-SNAPSHOT'
+	compile('org.spongepowered:mixin:0.7-SNAPSHOT') {
+		transitive = false
+	}
+	compile 'org.apache.logging.log4j:log4j-core:2.0-beta9'
 }

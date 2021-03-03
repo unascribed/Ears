@@ -51,29 +51,29 @@ public class EarsCommon {
 		if (EarsLog.DEBUG) {
 			delegate = new DebuggingDelegate(delegate);
 		}
+
+		if (EarsLog.DEBUG) {
+			for (BodyPart part : BodyPart.values()) {
+				delegate.push();
+				delegate.anchorTo(part);
+				delegate.renderDebugDot(1, 1, 1, 1);
+				delegate.push();
+				delegate.translate(part.xSize, 0, 0);
+				delegate.renderDebugDot(1, 0, 0, 1);
+				delegate.pop();
+				delegate.push();
+				delegate.translate(0, -part.ySize, 0);
+				delegate.renderDebugDot(0, 1, 0, 1);
+				delegate.pop();
+				delegate.push();
+				delegate.translate(0, 0, part.zSize);
+				delegate.renderDebugDot(0, 0, 1, 1);
+				delegate.pop();
+				delegate.pop();
+			}
+		}
 		
 		if (features != null && features.enabled) {
-			if (EarsLog.DEBUG) {
-				for (BodyPart part : BodyPart.values()) {
-					delegate.push();
-					delegate.anchorTo(part);
-					delegate.renderDebugDot(1, 1, 1, 1);
-					delegate.push();
-					delegate.translate(part.xSize, 0, 0);
-					delegate.renderDebugDot(1, 0, 0, 1);
-					delegate.pop();
-					delegate.push();
-					delegate.translate(0, -part.ySize, 0);
-					delegate.renderDebugDot(0, 1, 0, 1);
-					delegate.pop();
-					delegate.push();
-					delegate.translate(0, 0, part.zSize);
-					delegate.renderDebugDot(0, 0, 1, 1);
-					delegate.pop();
-					delegate.pop();
-				}
-			}
-			
 			EarMode earMode = features.earMode;
 			EarAnchor earAnchor = features.earAnchor;
 			
@@ -145,6 +145,28 @@ public class EarsCommon {
 				delegate.translate(0, 0, 0);
 				delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 				delegate.renderBack(56, 28, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+			} else if (earMode == EarMode.CROSS) {
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				if (earAnchor == EarAnchor.CENTER) {
+					delegate.translate(0, 0, 4);
+				} else if (earAnchor == EarAnchor.BACK) {
+					delegate.translate(0, 0, 8);
+				}
+				delegate.translate(4, -16, 0);
+				delegate.push();
+				delegate.rotate(45, 0, 1, 0);
+				delegate.translate(-4, 0, 0);
+				delegate.renderFront(24, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 28, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
+				delegate.push();
+				delegate.rotate(-45, 0, 1, 0);
+				delegate.translate(-4, 0, 0);
+				delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
 				delegate.pop();
 			}
 			

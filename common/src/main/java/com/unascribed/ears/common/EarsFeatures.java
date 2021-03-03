@@ -15,6 +15,7 @@ public class EarsFeatures {
 		PURPLE(0xB923D8),
 		CYAN(0x23D8C6),
 		ORANGE(0xD87823),
+		PINK(0xD823B7),
 		;
 		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<>();
 		static {
@@ -57,6 +58,7 @@ public class EarsFeatures {
 		BEHIND,
 		AROUND,
 		FLOPPY,
+		CROSS,
 		;
 		public static EarMode fromMP(MagicPixel mp) {
 			switch (mp) {
@@ -68,6 +70,7 @@ public class EarsFeatures {
 				case PURPLE: return BEHIND;
 				case CYAN: return AROUND;
 				case ORANGE: return FLOPPY;
+				case PINK: return CROSS;
 			}
 		}
 	}
@@ -93,7 +96,7 @@ public class EarsFeatures {
 		CLAWS_AND_HORN(true, true),
 		;
 		public final boolean claws, horn;
-		private Protrusions(boolean claws, boolean horn) {
+		Protrusions(boolean claws, boolean horn) {
 			this.claws = claws;
 			this.horn = horn;
 		}

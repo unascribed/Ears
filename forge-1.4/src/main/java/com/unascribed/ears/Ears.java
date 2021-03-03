@@ -53,12 +53,12 @@ public class Ears {
 	
 	@PreInit
 	public void onPreInit(FMLPreInitializationEvent e) {
-		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
 		layer = new LayerEars();
 	}
 		
 	
 	public static void amendPlayerRenderer(RenderPlayer rp) {
+		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
 		ModelBiped model = new ModelBiped(0, 0, 64, 64);
 		ReflectionHelper.setPrivateValue(RenderLiving.class, rp, model, "i", "mainModel");
 		setModelBipedMain(rp, model);
