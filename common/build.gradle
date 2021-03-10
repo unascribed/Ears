@@ -9,12 +9,12 @@ sourceCompatibility = targetCompatibility = '1.8'
 repositories {
 	mavenCentral()
 	maven { url = 'https://libraries.minecraft.net/' }
-	maven { url = 'https://dist.creeper.host/Sponge/maven' }
+	maven { url = 'https://repo.spongepowered.org/maven/' }
 }
 
 dependencies {
 	compile('org.spongepowered:mixin:0.7-SNAPSHOT') {
-		transitive = false
+		exclude group: 'net.minecraft'
 	}
 	compile 'org.apache.logging.log4j:log4j-core:2.0-beta9'
 }

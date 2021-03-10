@@ -18,7 +18,7 @@ repositories {
 	}
 	maven {
 		name = 'SpongePowered'
-		url = 'https://dist.creeper.host/Sponge/maven'
+		url = 'https://repo.spongepowered.org/maven'
 	}
 	maven {
 		name = 'mojang'

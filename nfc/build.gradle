@@ -1,0 +1,56 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+	}
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+apply plugin: 'java'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
+archivesBaseName = "ears-nfc"
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
+group = "com.unascribed.ears"
+
+configurations {
+	shade
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'org.ow2.asm:asm:9.0'
+	shade 'org.ow2.asm:asm:9.0'
+	compile 'org.ow2.asm:asm-tree:9.0'
+	shade 'org.ow2.asm:asm-tree:9.0'
+
+	compile(project('common')) { transitive = false }
+	shade(project('common')) { transitive = false }
+	
+	compile files('NFC.jar')
+	
+	compile 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+}
+
+jar {
+	manifest {
+		attributes(["Premain-Class": "com.unascribed.ears.NFCAgent"])
+	}
+}
+
+shadowJar {
+	configurations = [project.configurations.shade]
+	relocate 'org.objectweb', 'com.unascribed.ears.repackage.org.objectweb'
+	
+	exclude 'module-info.class'
+	exclude 'META-INF/maven/**'
+}

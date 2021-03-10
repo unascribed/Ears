@@ -2,7 +2,7 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven { url 'https://www.jitpack.io' }
-		maven { url='https://dist.creeper.host/Sponge/maven' }
+		maven { url='https://repo.spongepowered.org/maven' }
 		maven { url 'https://files.minecraftforge.net/maven' }
 	}
 	dependencies {

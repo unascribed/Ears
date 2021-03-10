@@ -1,0 +1,3 @@
+rootProject.name = 'ears-nfc'
+
+includeFlat 'common'

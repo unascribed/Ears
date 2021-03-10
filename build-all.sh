@@ -34,6 +34,10 @@ if [ "$exit" == "y" ]; then
 	echo "Exiting due to build failures."
 	exit 1
 fi
+echo 'Building NFC...'
+cd nfc
+TERM=dumb chronic ./gradlew clean shadow || exit 1
+cd ..
 echo 'All builds completed successfully.'
 mkdir -p artifacts
 cp */build/libs/* artifacts
