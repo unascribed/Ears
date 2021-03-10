@@ -25,9 +25,12 @@ import com.unascribed.ears.common.EarsLog;
 import static org.objectweb.asm.Opcodes.*;
 
 public class NFCAgent {
+	
+	public static boolean initialized = false;
 
 	public static void premain(String arg, Instrumentation ins) {
 		System.out.println("Hello from Ears!");
+		initialized = true;
 		EarsLog.debug("Platform:Inject", "Agent created");
 		ins.addTransformer(new ClassFileTransformer() {
 			@Override
