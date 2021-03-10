@@ -13,7 +13,6 @@ import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 
-// extension is to make protected methods accessible
 public class com_unascribed_ears_Ears implements EarsRenderDelegate {
 
 	private static final com_unascribed_ears_Ears INST = new com_unascribed_ears_Ears();
