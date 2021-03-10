@@ -242,16 +242,16 @@ public class com_unascribed_ears_Ears implements EarsRenderDelegate {
 		
 		glColor3f(brightness, brightness, brightness);
 		glBegin(GL_QUADS);
-			glNormal3f(0, 0, -1);
+			glNormal3f(0, 0, 1);
 			glTexCoord2f(uv[3][0], uv[3][1]);
 			glVertex3f(-g, -g, 0);
-			glNormal3f(0, 0, -1);
+			glNormal3f(0, 0, 1);
 			glTexCoord2f(uv[2][0], uv[2][1]);
 			glVertex3f(w+g, -g, 0);
-			glNormal3f(0, 0, -1);
+			glNormal3f(0, 0, 1);
 			glTexCoord2f(uv[1][0], uv[1][1]);
 			glVertex3f(w+g, h+g, 0);
-			glNormal3f(0, 0, -1);
+			glNormal3f(0, 0, 1);
 			glTexCoord2f(uv[0][0], uv[0][1]);
 			glVertex3f(-g, h+g, 0);
 		glEnd();
