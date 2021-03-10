@@ -109,7 +109,6 @@ public class com_unascribed_ears_Ears implements EarsRenderDelegate {
 		String skin = entity.bA;
 		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}", skin);
 		if (com_unascribed_ears_Ears.earsSkinFeatures.containsKey(skin)) {
-			if (!render.a(skin, null)) return; // bind the skin texture
 			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
 			this.render = render;
 			this.brightness = entity.a(partialTicks);
