@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public class EarsFeatures {
 
-	private enum MagicPixel {
+	enum MagicPixel {
 		UNKNOWN(-1),
 		BLUE(0x3F23D8),
 		GREEN(0x23D848),
@@ -25,7 +25,7 @@ public class EarsFeatures {
 				}
 			}
 		}
-		private final int rgb;
+		final int rgb;
 		MagicPixel(int rgb) {
 			this.rgb = rgb;
 		}
@@ -140,7 +140,7 @@ public class EarsFeatures {
 	public final float tailBend2;
 	public final float tailBend3;
 
-	private EarsFeatures(boolean enabled, EarMode earMode, EarAnchor earAnchor, Protrusions protrusions, TailMode tailMode, float tailBend1, float tailBend2, float tailBend3) {
+	EarsFeatures(boolean enabled, EarMode earMode, EarAnchor earAnchor, Protrusions protrusions, TailMode tailMode, float tailBend1, float tailBend2, float tailBend3) {
 		this.enabled = enabled;
 		this.earMode = earMode;
 		this.earAnchor = earAnchor;

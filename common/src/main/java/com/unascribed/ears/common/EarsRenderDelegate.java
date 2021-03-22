@@ -12,7 +12,7 @@ public interface EarsRenderDelegate {
 		;
 		public final int xSize, ySize, zSize;
 
-		private BodyPart(int xSize, int ySize, int zSize) {
+		BodyPart(int xSize, int ySize, int zSize) {
 			this.xSize = xSize;
 			this.ySize = ySize;
 			this.zSize = zSize;
@@ -27,7 +27,7 @@ public interface EarsRenderDelegate {
 		UPSIDE_DOWN(false),
 		;
 		public final boolean transpose;
-		private TexRotation(boolean transpose) {
+		TexRotation(boolean transpose) {
 			this.transpose = transpose;
 		}
 		

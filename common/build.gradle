@@ -1,6 +1,16 @@
+buildscript {
+	repositories {
+		maven { url "https://teavm.org/maven/repository/" }
+	}
+	dependencies {
+		classpath "org.teavm:teavm-tooling:0.7.0-dev-1192"
+	}
+}
+def newGradle = true
 try {
 	apply plugin: 'java-library'
 } catch (e) {
+	newGradle = false
 	apply plugin: 'java'
 }
 
@@ -8,13 +18,73 @@ sourceCompatibility = targetCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
-	maven { url = 'https://libraries.minecraft.net/' }
-	maven { url = 'https://repo.spongepowered.org/maven/' }
+	maven { url 'https://libraries.minecraft.net/' }
+	maven { url 'https://repo.spongepowered.org/maven/' }
+	maven { url "https://teavm.org/maven/repository/" }
+}
+
+configurations {
+	teavm
+}
+
+if (!newGradle) {
+	configurations {
+		implementation
+		compile.extendsFrom implementation
+		api
+		compile.extendsFrom api
+	}
 }
 
 dependencies {
-	compile('org.spongepowered:mixin:0.7-SNAPSHOT') {
+	implementation('org.spongepowered:mixin:0.7-SNAPSHOT') {
 		exclude group: 'net.minecraft'
 	}
-	compile 'org.apache.logging.log4j:log4j-core:2.0-beta9'
+	implementation 'org.apache.logging.log4j:log4j-core:2.0-beta9'
+	implementation 'org.teavm:teavm-classlib:0.7.0-dev-1192'
+	
+	teavm 'org.teavm:teavm-classlib:0.7.0-dev-1192'
+}
+
+import org.teavm.tooling.TeaVMTool
+import org.teavm.tooling.TeaVMTargetType
+import org.teavm.tooling.sources.DirectorySourceFileProvider
+import org.teavm.tooling.TeaVMProblemRenderer
+import org.teavm.tooling.ConsoleTeaVMToolLog
+if (rootProject == project) {
+	task teavm {
+		doFirst {
+			file('build/teavm').mkdirs()
+		}
+		dependsOn compileJava
+		inputs.dir file('src')
+		outputs.dir file('build/teavm')
+		
+		def tool = new TeaVMTool()
+		tool.targetDirectory = file('build/teavm')
+		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
+		tool.sourceMapsFileGenerated = true
+		tool.mainClass = 'com.unascribed.ears.common.EarsJS'
+		tool.entryPointName = 'rebuildQuads'
+		tool.targetType = TeaVMTargetType.JAVASCRIPT
+		tool.log = new ConsoleTeaVMToolLog(true)
+		tool.obfuscated = false
+		def urls = []
+		urls.add(file('build/classes/java/main').toURI().toURL())
+		configurations.teavm.files.each {
+			urls.add(it.toURI().toURL())
+		}
+		def ucl = new URLClassLoader(urls.toArray(new URL[0]), TeaVMTool.class.classLoader)
+		tool.classLoader = ucl
+		doLast {
+			tool.generate()
+			TeaVMProblemRenderer.describeProblems(tool.getDependencyInfo().getCallGraph(), tool.getProblemProvider(), tool.log)
+		}
+	}
+	task closure(type: Exec) {
+		dependsOn teavm
+		inputs.file file('build/teavm/classes.js')
+		outputs.file file('build/teavm/classes.min.js')
+		commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js'
+	}
 }
