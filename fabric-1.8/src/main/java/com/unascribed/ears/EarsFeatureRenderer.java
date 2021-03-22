@@ -52,7 +52,10 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 			this.entity = null;
@@ -72,7 +75,10 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 			this.permittedBodyPart = BodyPart.LEFT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 			this.entity = null;
@@ -92,7 +98,10 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 			this.entity = null;

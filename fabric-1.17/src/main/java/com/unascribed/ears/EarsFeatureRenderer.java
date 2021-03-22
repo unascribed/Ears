@@ -51,7 +51,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.m = m;
-			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(skin));
+			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(skin));
 			this.light = light;
 			this.overlay = LivingEntityRenderer.getOverlay(entity, 0);
 			this.skipRendering = 0;
@@ -70,7 +70,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
 			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
 			this.m = m;
-			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(skin));
+			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(skin));
 			this.light = light;
 			this.overlay = LivingEntityRenderer.getOverlay(entity, 0);
 			this.skipRendering = 0;
@@ -87,7 +87,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		if (tex instanceof EarsFeaturesHolder && !entity.isInvisible()) {
 			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
 			this.m = m;
-			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(skin));
+			this.vc = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(skin));
 			this.light = light;
 			this.overlay = LivingEntityRenderer.getOverlay(entity, 0);
 			this.skipRendering = 0;

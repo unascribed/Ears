@@ -3,6 +3,8 @@ package com.unascribed.ears;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
@@ -45,7 +47,10 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -62,7 +67,10 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.permittedBodyPart = BodyPart.LEFT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -79,7 +87,10 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}

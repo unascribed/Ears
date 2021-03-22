@@ -11,6 +11,8 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.ModelBox;
@@ -45,7 +47,10 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			this.stackDepth = 0;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -62,7 +67,10 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			this.permittedBodyPart = BodyPart.LEFT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
@@ -79,7 +87,10 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
 		}
