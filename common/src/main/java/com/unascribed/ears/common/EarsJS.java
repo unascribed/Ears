@@ -49,7 +49,10 @@ public class EarsJS {
 			
 			@Override
 			public int getARGB(int x, int y) {
-				return dv.getUint32(((y*64)+x)*4)>>8;
+				int c = dv.getUint32(((y*64)+x)*4);
+				int a = c & 0xFF;
+				c = ((c >> 8)&0x00FFFFFF) | (a << 24);
+				return c;
 			}
 		});
 		JSArray<JSObject> objects = JSArray.create();

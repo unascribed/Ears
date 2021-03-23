@@ -142,6 +142,12 @@ public class EarsLog {
 		}
 	}
 
+	public static void debug(String tag, String fmt, Object arg1, float arg2, float arg3, float arg4, float arg5) {
+		if (DEBUG) {
+			debugva(tag, fmt, arg1, arg2, arg3, arg4, arg5);
+		}
+	}
+	
 	public static void debug(String tag, String fmt, Object arg1, int arg2, int arg3, int arg4, int arg5) {
 		if (DEBUG) {
 			debugva(tag, fmt, arg1, arg2, arg3, arg4, arg5);

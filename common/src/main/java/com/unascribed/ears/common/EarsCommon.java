@@ -179,7 +179,11 @@ public class EarsCommon {
 					ang = 30;
 					swing = 40;
 				} else if (tailMode == TailMode.BACK) {
-					ang = 80;
+					if (features.tailBend0 != 0) {
+						ang = 90;
+					} else {
+						ang = 80;
+					}
 					swing = 20;
 				} else if (tailMode == TailMode.UP) {
 					ang = 130;
@@ -191,7 +195,7 @@ public class EarsCommon {
 				delegate.translate(0, -2, 4);
 				delegate.rotate(ang+(swingAmount*swing), 1, 0, 0);
 				int segments = 1;
-				float[] angles = {0, features.tailBend1, features.tailBend2, features.tailBend3};
+				float[] angles = {features.tailBend0, features.tailBend1, features.tailBend2, features.tailBend3};
 				if (features.tailBend1 != 0) {
 					segments++;
 					if (features.tailBend2 != 0) {
