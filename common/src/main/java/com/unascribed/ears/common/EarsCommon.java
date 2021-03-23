@@ -93,11 +93,11 @@ public class EarsCommon {
 				if (earMode == EarMode.AROUND) {
 					delegate.translate(-4, -8, 0);
 					delegate.renderFront(36, 16, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
-					delegate.renderBack(12, 16, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.renderBack(12, 16, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 					
 					delegate.translate(12, 0, 0);
 					delegate.renderFront(36, 32, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
-					delegate.renderBack(12, 32, 4, 8, TexRotation.CW, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.renderBack(12, 32, 4, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 				}
 				delegate.pop();
 			} else if (earMode == EarMode.SIDES) {
