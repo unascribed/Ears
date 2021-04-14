@@ -15,7 +15,7 @@ def conflicts = []
 switch (target) {
 	case "fabric-1.8":
 		prefix = "FABRIC 1.8"
-		stability = 'alpha'
+		stability = 'beta'
 		gameVersions = ['Fabric', '1.8.9']
 		break
 	case "fabric-1.14":
@@ -35,7 +35,7 @@ switch (target) {
 		break
 	case "forge-1.4":
 		prefix = "FORGE 1.4"
-		stability = 'alpha'
+		stability = 'beta'
 		gameVersions = ['Forge', '1.4.7']
 		conflicts = ['lumy-skin-patch']
 		break
@@ -74,7 +74,7 @@ switch (target) {
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13"
-		stability = 'alpha'
+		stability = 'beta'
 		gameVersions = ['Rift', '1.13.2']
 		break
 	default:

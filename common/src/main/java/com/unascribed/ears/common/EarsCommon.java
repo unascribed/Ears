@@ -269,12 +269,16 @@ public class EarsCommon {
 	}
 
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
+		return calculateUVs(u, v, w, h, rot, flip, 0);
+	}
+	
+	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, float pinch) {
 		EarsLog.debug("Common", "calculateUVs({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
-		float minU = u/64f;
-		float minV = v/64f;
+		float minU = (u/64f)+pinch;
+		float minV = (v/64f)+pinch;
 		
-		float maxU = (u+(rot.transpose ? h : w))/64f;
-		float maxV = (v+(rot.transpose ? w : h))/64f;
+		float maxU = ((u+(rot.transpose ? h : w))/64f)-pinch;
+		float maxV = ((v+(rot.transpose ? w : h))/64f)-pinch;
 		
 		if (rot.transpose) {
 			if (flip == TexFlip.HORIZONTAL) flip = TexFlip.VERTICAL;
