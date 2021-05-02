@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.Chocohead:Rift:jitpack-2d8bb9bd56-1:dev'
+	implementation 'com.github.unascribed:Rift:FINAL:dev'
 	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
 	
 	implementation(project('common')) { transitive = false }

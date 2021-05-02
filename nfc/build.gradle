@@ -54,3 +54,5 @@ shadowJar {
 	exclude 'module-info.class'
 	exclude 'META-INF/maven/**'
 }
+
+build.dependsOn shadowJar

@@ -39,15 +39,22 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 public abstract class MiniTransformer implements IClassTransformer {
 
 	@Override
-	public byte[] transform(String name, byte[] basicClass) {
+	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		boolean matched = false;
 		for (Patch.Class a : getClass().getAnnotationsByType(Patch.Class.class)) {
-			if (a.value().equals(name)) {
+			if (a.value().equals(transformedName)) {
 				matched = true;
 				break;
 			}
 		}
 		if (!matched) return basicClass;
+		
+//		File dir = new File("ears-debug-classes/"+transformedName);
+//		dir.mkdirs();
+//
+//		try (FileOutputStream fos = new FileOutputStream(new File(dir, "before.class"))) {
+//			fos.write(basicClass);
+//		} catch (Throwable t) {}
 		
 		ClassReader reader = new ClassReader(basicClass);
 		ClassNode clazz = new ClassNode();
@@ -67,7 +74,7 @@ public abstract class MiniTransformer implements IClassTransformer {
 								throw new RuntimeException("Failed to invoke transformer method for "+a.mcp()+a.descriptor()+" (SRG name "+a.srg()+")", e);
 							}
 							ctx.finish();
-							System.out.println("[Mini "+getClass().getName()+"] Successfully transformed "+name+"."+mn.name+mn.desc);
+							System.out.println("[Mini "+getClass().getName()+"] Successfully transformed "+transformedName+"."+mn.name+mn.desc);
 						}
 					}
 				}
@@ -77,6 +84,9 @@ public abstract class MiniTransformer implements IClassTransformer {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		clazz.accept(writer);
 		byte[] bys = writer.toByteArray();
+//		try (FileOutputStream fos = new FileOutputStream(new File(dir, "after.class"))) {
+//			fos.write(bys);
+//		} catch (Throwable t) {}
 		return bys;
 	}
 

@@ -1,5 +1,6 @@
 buildscript {
 	repositories {
+		mavenLocal()
 		mavenCentral()
 		jcenter()
 		maven { url 'https://maven.fabricmc.net' }
@@ -7,7 +8,7 @@ buildscript {
 		maven { url 'https://maven.minecraftforge.net/' }
 	}
 	dependencies {
-		classpath 'com.github.unascribed.voldeloom:fabric-loom:1.4.7-SNAPSHOT'
+		classpath 'com.github.unascribed.voldeloom:fabric-loom:1.5.2-SNAPSHOT'
 		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
 	}
@@ -20,7 +21,7 @@ apply plugin: 'fabric-loom'
 sourceCompatibility = 7
 targetCompatibility = 7
 
-def mcp = "mcp726a.zip";
+def mcp = "mcp751.zip";
 
 if (!file(mcp).exists()) {
 	println "Downloading ${mcp} from archive.org..."
@@ -38,7 +39,7 @@ repositories {
 		name = 'jitpack'
 		url = 'https://jitpack.io/'
 	}
-	maven { url = 'https://files.minecraftforge.net/maven' }
+	maven { url = 'https://maven.minecraftforge.net/' }
 	maven { url = 'https://repo.spongepowered.org/maven' }
 }
 
@@ -48,7 +49,7 @@ configurations {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	forge "net.minecraftforge:forge:1.4.7-6.6.2.534:universal@zip"
+	forge "net.minecraftforge:forge:1.5.2-7.8.1.738:universal@zip"
 	mappings files(mcp)
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
