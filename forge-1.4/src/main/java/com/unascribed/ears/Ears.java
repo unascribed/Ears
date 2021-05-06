@@ -27,7 +27,6 @@ import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.ImageBufferDownload;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelRenderer;
@@ -91,9 +90,8 @@ public class Ears {
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
 		EarsLog.debug("Platform", "renderSpecials player={}, partialTicks={}", player, f);
-		EntityPlayerSP sp = (EntityPlayerSP)player;
-		layer.doRenderLayer(render, sp,
-				sp.prevLegYaw + (player.legYaw - player.prevLegYaw) * f,
+		layer.doRenderLayer(render, player,
+				player.prevLegYaw + (player.legYaw - player.prevLegYaw) * f,
 				f);
 	}
 	
@@ -178,7 +176,7 @@ public class Ears {
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp, EntityPlayer player) {
-		layer.renderRightArm(rp, (EntityPlayerSP)player);
+		layer.renderRightArm(rp, player);
 	}
 	
 	private static final Method setAreaOpaque;

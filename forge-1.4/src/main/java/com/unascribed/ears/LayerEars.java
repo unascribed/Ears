@@ -7,7 +7,7 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayerSP;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelBox;
 import net.minecraft.src.ModelRenderer;
@@ -22,7 +22,7 @@ public class LayerEars implements EarsRenderDelegate {
 	private int stackDepth;
 	private BodyPart permittedBodyPart;
 	
-	public void doRenderLayer(RenderPlayer render, EntityPlayerSP entity, float limbDistance, float partialTicks) {
+	public void doRenderLayer(RenderPlayer render, EntityPlayer entity, float limbDistance, float partialTicks) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		String skin = entity.skinUrl;
 		EarsLog.debug("Platform:Renderer", "render(...): skin={}", skin);
@@ -48,7 +48,7 @@ public class LayerEars implements EarsRenderDelegate {
 		}
 	}
 	
-	public void renderRightArm(RenderPlayer render, EntityPlayerSP entity) {
+	public void renderRightArm(RenderPlayer render, EntityPlayer entity) {
 		String skin = entity.skinUrl;
 		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}", skin);
 		if (Ears.earsSkinFeatures.containsKey(skin)) {
