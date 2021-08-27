@@ -45,7 +45,7 @@ public class EarsCommon {
 		}
 	}
 	
-	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount) {
+	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount, boolean slim) {
 		EarsLog.debug("Common", "render({}, {}, {})", features, delegate, swingAmount);
 		
 		if (EarsLog.DEBUG) {
@@ -168,6 +168,25 @@ public class EarsCommon {
 				delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 				delegate.pop();
+			} else if (earMode == EarMode.OUT) {
+				// TODO
+				delegate.push();
+				delegate.anchorTo(BodyPart.HEAD);
+				delegate.rotate(90, 0, 1, 0);
+				if (earAnchor == EarAnchor.BACK) {
+					delegate.translate(-16, -8, 0);
+				} else if (earAnchor == EarAnchor.CENTER) {
+					delegate.translate(-8, -16, 0);
+				} else if (earAnchor == EarAnchor.FRONT) {
+					delegate.translate(0, -8, 0);
+				}
+				delegate.renderFront(24, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 28, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.rotate(180, 0, 1, 0);
+				delegate.translate(-8, 0, -8);
+				delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+				delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+				delegate.pop();
 			}
 			
 			TailMode tailMode = features.tailMode;
@@ -238,7 +257,7 @@ public class EarsCommon {
 				delegate.push();
 				delegate.anchorTo(BodyPart.LEFT_ARM);
 				delegate.rotate(90, 0, 1, 0);
-				delegate.translate(-4, 0, 4);
+				delegate.translate(-4, 0, slim ? 3 : 4);
 				renderDoubleSided(delegate, 44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				

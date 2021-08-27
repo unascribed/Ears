@@ -166,10 +166,11 @@ SOFTWARE.
 						<option value="red">None</option>
 						<option value="blue">Above</option>
 						<option value="green">Sides</option>
-						<option value="purple">Behind</option>
+						<option value="purple2">Out</option>
 						<option value="cyan">Around</option>
 						<option value="orange">Floppy</option>
 						<option value="pink">Cross</option>
+						<option value="purple">Behind (old, prefer Out)</option>
 					</select>
 				</td>
 				<td>
@@ -257,12 +258,23 @@ SOFTWARE.
 			<b><i>You've selected options that require new features added in v1.2.2.</i></b><br/>
 			Before v1.2.2, any custom first tail bend angle will be treated as 0°.
 		</div>
+		<div style="display: none;margin-bottom:8px" id="req-123-notice">
+			<b><i>You've selected options that require new features added in v1.2.3.</i></b><br/>
+			Before v1.2.3, Out ears mode will not render. <span id="out-anchor-back">As you're using
+			an Ear Anchor of "Back", you may use the legacy Behind ears mode instead for compatibility.</span>
+		</div>
 		<div style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
 			Before v1.2.2:
 			<ul>
 			<li id="sides-bad-uvs">Sides, Floppy, and Behind modes had their back face texture locations swapped</li>
 			<li id="around-bad-uvs">Around mode had the backs of the sides flipped horizontally</li>
+			</ul>
+		</div>
+		<div style="display: none;margin-bottom:8px" id="bug-123-notice">
+			<b><i>You've selected options that had bugs fixed in v1.2.3.</i></b><br/>
+			Before v1.2.3:
+			<ul>
 			<li id="claws-bad-pos">Claws rendered one pixel off on the left arm for slim models</li>
 			</ul>
 		</div>
@@ -349,17 +361,23 @@ SOFTWARE.
 	function updateNotices() {
 		let req121 = $("#req-121-notice");
 		let req122 = $("#req-122-notice");
+		let req123 = $("#req-123-notice");
 		let bug122 = $("#bug-122-notice");
+		let bug123 = $("#bug-123-notice");
 		req121.style.display = "none";
 		req122.style.display = "none";
+		req123.style.display = "none";
 		bug122.style.display = "none";
+		bug123.style.display = "none";
 		$("#sides-bad-uvs").style.display = "none";
 		$("#around-bad-uvs").style.display = "none";
 		$("#claws-bad-pos").style.display = "none";
+		$("#out-anchor-back").style.display = "none";
 		if ($("#tail-bend-0").value != 0) {
 			req122.style.display = "block";
 		}
 		let earMode = $("#ear-mode").value;
+		let earAnchor = $("#ear-anchor").value;
 		if (earMode === "pink") {
 			req121.style.display = "block";
 		}
@@ -371,9 +389,15 @@ SOFTWARE.
 			bug122.style.display = "block";
 			$("#sides-bad-uvs").style.display = "list-item";
 		}
+		if (earMode === "purple2") {
+			req123.style.display = "block";
+			if (earAnchor === "red") {
+				$("#out-anchor-back").style.display = "inline";
+			}
+		} 
 		let protrusions = $("#protrusions").value;
 		if ($("#slim-enabled").checked && (protrusions === "cyan" || protrusions === "green")) {
-			bug122.style.display = "block";
+			bug123.style.display = "block";
 			$("#claws-bad-pos").style.display = "list-item";
 		}
 	}
@@ -562,7 +586,7 @@ SOFTWARE.
 					ctx.drawImage(img, 192, 0, 64, 64, 0, 0, 64, 64);
 				} else if (earMode === "cyan") {
 					ctx.drawImage(img, 0, 64, 64, 64, 0, 0, 64, 64);
-				} else if (earMode === "green" || earMode == "purple" || earMode == "orange" || earMode == "pink") {
+				} else if (earMode === "green" || earMode == "purple" || earMode == "orange" || earMode == "pink" || earMode === "purple2") {
 					ctx.drawImage(img, 64, 64, 64, 64, 0, 0, 64, 64);
 				}
 				if ($("#tail-mode").value !== "red") {
@@ -751,7 +775,7 @@ SOFTWARE.
 		let meshes = {};
 		
 		function bodyPart(name, x, y, z, w, h, d, u, v, overlay, rotX, rotY, rotZ) {
-			let grow = overlay ? 0.5 : 0;
+			let grow = overlay ? name === "head2" ? 0.5 : 0.25 : 0;
 			
 			let top = makeUVs(u+d, v, u+d+w, v+d);
 			let bottom = makeUVs(u+d+w, v, u+d+w+w, v+d);

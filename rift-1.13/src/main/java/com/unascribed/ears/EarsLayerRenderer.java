@@ -6,6 +6,8 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.mixin.AccessorModelPlayer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -49,7 +51,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance, ((AccessorModelPlayer)render.getMainModel()).ears$isSmallArms());
 			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
@@ -69,7 +71,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorModelPlayer)render.getMainModel()).ears$isSmallArms());
 			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();
@@ -89,7 +91,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorModelPlayer)render.getMainModel()).ears$isSmallArms());
 			GlStateManager.disableBlend();
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableCull();

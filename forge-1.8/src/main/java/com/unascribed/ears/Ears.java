@@ -14,6 +14,7 @@ import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsLog;
 
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -79,6 +80,7 @@ public class Ears {
 	
 	private static final MethodHandle setAreaOpaque;
 	private static final MethodHandle imageHeight;
+	private static final MethodHandle smallArms;
 	static {
 		try {
 			Method jlr = ReflectionHelper.findMethod(ImageBufferDownload.class, null, new String[] {"func_78433_b", "setAreaOpaque"}, int.class, int.class, int.class, int.class);
@@ -88,6 +90,10 @@ public class Ears {
 			Field ihf = ReflectionHelper.findField(ImageBufferDownload.class, "field_78437_c", "imageHeight");
 			ihf.setAccessible(true);
 			imageHeight = MethodHandles.lookup().unreflectGetter(ihf);
+			
+			Field sa = ReflectionHelper.findField(ModelPlayer.class, "field_178735_y");
+			sa.setAccessible(true);
+			smallArms = MethodHandles.lookup().unreflectGetter(sa);
 		} catch (Throwable t) {
 			throw new Error(t);
 		}
@@ -104,6 +110,15 @@ public class Ears {
 	private static void setAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		try {
 			setAreaOpaque.invokeExact(subject, x1, y1, x2, y2);
+		} catch (Throwable e) {
+			if (e instanceof RuntimeException) throw (RuntimeException)e;
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static boolean isSmallArms(ModelPlayer subject) {
+		try {
+			return (boolean)smallArms.invokeExact(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);

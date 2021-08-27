@@ -9,7 +9,8 @@
   "client": [
     "MixinRenderPlayer",
     "MixinThreadDownloadImageData",
-    "MixinImageBufferDownload"
+    "MixinImageBufferDownload",
+    "AccessorModelPlayer"
   ],
   "injectors": {
     "defaultRequire": 1

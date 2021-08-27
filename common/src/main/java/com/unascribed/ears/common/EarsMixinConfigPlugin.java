@@ -18,7 +18,7 @@ public class EarsMixinConfigPlugin implements IMixinConfigPlugin {
 	public void onLoad(String mixinPackage) {
 		for (Config config : Mixins.getConfigs()) {
 			IMixinConfig imc = config.getConfig();
-			if (imc.getMixinPackage().startsWith("dev.tr7zw.firstperson.")) {
+			if (imc.getMixinPackage().startsWith("dev.tr7zw.firstperson.") || imc.getMixinPackage().startsWith("de.tr7zw.firstperson.")) {
 				LogManager.getLogger("Ears").info("Found FirstPersonModel. Scanning...");
 				// Broken conflict-y mixins that do the same thing as Ears' own mixins for reducing
 				// skin opacity overspill.

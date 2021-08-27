@@ -8,7 +8,8 @@
   ],
   "client": [
     "MixinPlayerEntityRenderer",
-    "MixinPlayerSkinTexture"
+    "MixinPlayerSkinTexture",
+    "AccessorPlayerEntityModel"
   ],
   "injectors": {
     "defaultRequire": 1

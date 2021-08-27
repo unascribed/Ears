@@ -4,12 +4,14 @@
   "package": "com.unascribed.ears.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "ears.refmap.json",
+  "plugin": "com.unascribed.ears.common.EarsMixinConfigPlugin",
   "mixins": [
   ],
   "client": [
     "MixinPlayerRenderer",
     "MixinDownloadingTexture",
-    "MixinDownloadImageBuffer"
+    "MixinDownloadImageBuffer",
+    "AccessorPlayerModel"
   ],
   "injectors": {
     "defaultRequire": 1

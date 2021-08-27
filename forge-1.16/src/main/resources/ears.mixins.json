@@ -9,7 +9,8 @@
   ],
   "client": [
     "MixinPlayerRenderer",
-    "MixinDownloadingTexture"
+    "MixinDownloadingTexture",
+    "AccessorPlayerModel"
   ],
   "injectors": {
     "defaultRequire": 1

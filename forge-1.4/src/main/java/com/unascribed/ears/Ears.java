@@ -47,7 +47,7 @@ public class Ears {
 	private static final ProfileService profileService = new ProfileService();
 	private static LayerEars layer;
 	
-	private static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	public static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	public static ModelRenderer slimLeftArm;
 	public static ModelRenderer slimRightArm;
 	public static ModelRenderer fatLeftArm;

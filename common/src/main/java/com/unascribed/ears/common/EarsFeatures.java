@@ -16,6 +16,7 @@ public class EarsFeatures {
 		CYAN(0x23D8C6),
 		ORANGE(0xD87823),
 		PINK(0xD823B7),
+		PURPLE2(0xD823FF),
 		;
 		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<>();
 		static {
@@ -59,6 +60,7 @@ public class EarsFeatures {
 		AROUND,
 		FLOPPY,
 		CROSS,
+		OUT,
 		;
 		public static EarMode fromMP(MagicPixel mp) {
 			switch (mp) {
@@ -71,6 +73,7 @@ public class EarsFeatures {
 				case CYAN: return AROUND;
 				case ORANGE: return FLOPPY;
 				case PINK: return CROSS;
+				case PURPLE2: return OUT;
 			}
 		}
 	}

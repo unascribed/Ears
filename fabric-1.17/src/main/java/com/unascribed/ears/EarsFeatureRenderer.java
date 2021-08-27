@@ -8,6 +8,8 @@ import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.NotRandom;
+import com.unascribed.ears.mixin.AccessorPlayerEntityModel;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPart.Cuboid;
@@ -57,7 +59,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = null;
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance, ((AccessorPlayerEntityModel)getContextModel()).ears$isThinArms());
 			this.m = null;
 			this.vc = null;
 		}
@@ -76,7 +78,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = BodyPart.LEFT_ARM;
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorPlayerEntityModel)getContextModel()).ears$isThinArms());
 		}
 	}
 	
@@ -93,7 +95,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			this.skipRendering = 0;
 			this.stackDepth = 0;
 			this.permittedBodyPart = BodyPart.RIGHT_ARM;
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0);
+			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorPlayerEntityModel)getContextModel()).ears$isThinArms());
 		}
 	}
 

@@ -146,11 +146,14 @@ public class EarsJS {
 				qm.set("part", JSString.valueOf(part.name().toLowerCase(Locale.ROOT)));
 				moves.push(qm);
 			}
-		}, 0);
+		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
 	}
 	
 	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
 	private static native void assignToWindow(String name, JSObject obj);
+	
+	@JSBody(script="return !!document.getElementById(\"slim-enabled\").checked;")
+	private static native boolean getSlimState();
 	
 }

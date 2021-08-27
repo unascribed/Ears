@@ -25,14 +25,15 @@ repositories {
 		url = 'https://libraries.minecraft.net/'
 	}
 	maven {
-		name = 'legacy-fabric'
-		url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+		name = "legacy-fabric"
+		url = "https://maven.legacyfabric.net"
 	}
 }
 
 minecraft {
+	// Comment out this block if you're using Chocoloom
 	intermediaryUrl = {
-		return "https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+		return "https://maven.legacyfabric.net/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
 	}
 }
 

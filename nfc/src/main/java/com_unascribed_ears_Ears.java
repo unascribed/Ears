@@ -100,7 +100,7 @@ public class com_unascribed_ears_Ears implements EarsRenderDelegate {
 			glEnable(GL_RESCALE_NORMAL);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(com_unascribed_ears_Ears.earsSkinFeatures.get(skin), this, 0);
+			EarsCommon.render(com_unascribed_ears_Ears.earsSkinFeatures.get(skin), this, 0, false);
 			glDisable(GL_BLEND);
 			glDisable(GL_RESCALE_NORMAL);
 			glDisable(GL_CULL_FACE);
@@ -122,7 +122,7 @@ public class com_unascribed_ears_Ears implements EarsRenderDelegate {
 			glEnable(GL_RESCALE_NORMAL);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(com_unascribed_ears_Ears.earsSkinFeatures.get(skin), this, 0);
+			EarsCommon.render(com_unascribed_ears_Ears.earsSkinFeatures.get(skin), this, 0, false);
 			glDisable(GL_BLEND);
 			glDisable(GL_RESCALE_NORMAL);
 			glDisable(GL_CULL_FACE);

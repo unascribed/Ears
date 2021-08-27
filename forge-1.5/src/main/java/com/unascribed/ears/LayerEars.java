@@ -41,7 +41,7 @@ public class LayerEars implements EarsRenderDelegate {
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(Ears.earsSkinFeatures.get(skin), this, limbDistance);
+			EarsCommon.render(Ears.earsSkinFeatures.get(skin), this, limbDistance, Ears.slimUsers.contains(entity.username));
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glDisable(GL11.GL_CULL_FACE);
@@ -67,7 +67,7 @@ public class LayerEars implements EarsRenderDelegate {
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(Ears.earsSkinFeatures.get(skin), this, 0);
+			EarsCommon.render(Ears.earsSkinFeatures.get(skin), this, 0, Ears.slimUsers.contains(entity.username));
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glDisable(GL11.GL_CULL_FACE);
