@@ -169,7 +169,6 @@ public class EarsCommon {
 				delegate.pop();
 				delegate.pop();
 			} else if (earMode == EarMode.OUT) {
-				// TODO
 				delegate.push();
 				delegate.anchorTo(BodyPart.HEAD);
 				delegate.rotate(90, 0, 1, 0);
