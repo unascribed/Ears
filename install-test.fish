@@ -1,6 +1,6 @@
 #!/usr/bin/fish
 set coremod ears-forge-1.4 ears-forge-1.5
-set agent ears-nfc
+set agent ears-nfc ears-forge-1.2
 for t in (ls -1 artifacts/ |rev |cut -d- -f 2- |rev)
 	if contains $t $agent
 		rm -f ~/MultiMC/instances/$t/.minecraft/ears.jar

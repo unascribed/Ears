@@ -39,6 +39,12 @@ switch (target) {
 		gameVersions = ['Forge', '1.5.2']
 		conflicts = ['lumy-skin-patch']
 		break
+	case "forge-1.2":
+		prefix = "FORGE 1.2"
+		stability = 'alpha'
+		gameVersions = ['Forge', '1.2.5']
+		conflicts = ['lumy-skin-patch']
+		break
 	case "forge-1.4":
 		prefix = "FORGE 1.4"
 		stability = 'beta'

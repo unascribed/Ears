@@ -1,0 +1,124 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+		maven { url 'https://maven.fabricmc.net' }
+		maven { url 'https://jitpack.io' }
+		maven { url 'https://maven.minecraftforge.net/' }
+	}
+	dependencies {
+		classpath 'com.github.unascribed.voldeloom:fabric-loom:1.2.5-SNAPSHOT'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
+	}
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+apply plugin: 'fabric-loom'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
+def mcp = "mcp62.zip";
+
+if (!file(mcp).exists()) {
+	println "Downloading ${mcp} from archive.org..."
+	file(mcp).withOutputStream {
+		it << new URL("https://archive.org/download/minecraftcoderpack/minecraftcoderpack.zip/minecraftcoderpack%2F${project.minecraft_version}%2F${mcp}").openStream()
+	}
+	println "Patching MCP..."
+	'./patch-mcp.sh'.execute()
+}
+
+archivesBaseName = project.archives_base_name
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
+group = project.maven_group
+
+repositories {
+	maven {
+		name = 'jitpack'
+		url = 'https://jitpack.io/'
+	}
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+//	maven { url = 'https://files.minecraftforge.net/maven' }
+	maven { url = 'https://repo.spongepowered.org/maven' }
+}
+
+configurations {
+	shade
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	forge "net.minecraftforge:forge:1.2.5-3.4.9.171:client@zip"
+	mappings files(mcp)
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	
+	modImplementation "com.github.Steveice10:MCAuthLib:1.3"
+	shade "com.github.Steveice10:MCAuthLib:1.3"
+	modImplementation "com.google.code.gson:gson:2.8.6"
+	shade "com.google.code.gson:gson:2.8.6"
+	
+	modImplementation 'org.ow2.asm:asm:9.0'
+	shade 'org.ow2.asm:asm:9.0'
+	modImplementation 'org.ow2.asm:asm-tree:9.0'
+	shade 'org.ow2.asm:asm-tree:9.0'
+	
+	compile(project('common')) { transitive = false }
+	shade(project('common')) { transitive = false } 
+}
+
+subprojects {
+	apply plugin: 'me.tatarka.retrolambda'
+}
+
+shadowJar {
+	configurations = [project.configurations.shade]
+	relocate 'com.github.steveice10', 'com.unascribed.ears.repackage.com.github.steveice10'
+	relocate 'com.google', 'com.unascribed.ears.repackage.com.google'
+	relocate 'org.objectweb', 'com.unascribed.ears.repackage.org.objectweb'
+	relocate 'net.minecraft.src.TDIAccess', 'TDIAccess'
+	
+	exclude 'module-info.class'
+	exclude 'META-INF/maven/**'
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	from(sourceSets.main.resources.srcDirs) {
+		include "mcmod.info"
+		expand "version": project.version
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "mcmod.info"
+	}
+}
+
+remapJar {
+	dependsOn shadowJar
+	input = file(shadowJar.archivePath)
+}
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+jar {
+	from "LICENSE"
+	manifest {
+		attributes(["Premain-Class": "com.unascribed.ears.OneteufyvAgent"])
+	}
+}
+
+build.doLast {
+	file(shadowJar.archivePath).delete()
+}

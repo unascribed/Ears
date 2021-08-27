@@ -4,7 +4,7 @@ all="fabric-1.8 fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1
 old="forge-1.7 forge-1.8"
 new="fabric-1.17"
 # these ones can't be built in parallel
-special="nfc forge-1.4 forge-1.5"
+special="nfc forge-1.2 forge-1.4 forge-1.5"
 
 rm -f artifacts/*
 (

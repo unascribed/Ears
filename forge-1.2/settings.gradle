@@ -1,0 +1,14 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		gradlePluginPortal()
+		maven { url 'https://jitpack.io' }
+	}
+}
+
+rootProject.name = "ears-forge-1.2"
+
+includeFlat 'common'

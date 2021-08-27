@@ -1,0 +1,9 @@
+3444c3444
+< func_320_h,sparkle,1,The redstone ore sparkles.
+---
+> func_320_h,sparkle2,1,The redstone ore sparkles.
+3554c3554
+< func_35201_a,setItemInUse,1,"sets the itemInUse when the use item button is clicked. Args: itemstack, int maxItemUseDuration"
+---
+> func_35201_a,setItemInUse2,1,"sets the itemInUse when the use item button is clicked. Args: itemstack, int maxItemUseDuration"
+
