@@ -5,10 +5,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.data.GameProfile.TextureModel;
 import com.github.steveice10.mc.auth.data.GameProfile.TextureType;
 import com.github.steveice10.mc.auth.service.ProfileService;
 import com.github.steveice10.mc.auth.service.ProfileService.ProfileLookupCallback;
@@ -27,7 +31,6 @@ import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.ImageBufferDownload;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelRenderer;
@@ -44,6 +47,12 @@ public class Ears {
 	private static final ProfileService profileService = new ProfileService();
 	private static LayerEars layer;
 	
+	private static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	public static ModelRenderer slimLeftArm;
+	public static ModelRenderer slimRightArm;
+	public static ModelRenderer fatLeftArm;
+	public static ModelRenderer fatRightArm;
+	
 	public Ears() {
 		if (EarsLog.DEBUG) {
 			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
@@ -55,13 +64,17 @@ public class Ears {
 	public void onPreInit(FMLPreInitializationEvent e) {
 		layer = new LayerEars();
 	}
-		
+	
 	
 	public static void amendPlayerRenderer(RenderPlayer rp) {
 		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
 		ModelBiped model = new ModelBiped(0, 0, 64, 64);
 		ReflectionHelper.setPrivateValue(RenderLiving.class, rp, model, "i", "mainModel");
 		setModelBipedMain(rp, model);
+		
+		// translucent head layer
+		model.bipedHeadwear.cubeList.remove(0);
+		ModelTransBox.addBoxTo(model.bipedHeadwear, 32, 0, -4, -8, -4, 8, 8, 8, 0.5f);
 		
 		// non-flipped left arm/leg
 		model.bipedLeftArm = new ModelRenderer(model, 32, 48);
@@ -73,20 +86,25 @@ public class Ears {
 		model.bipedLeftLeg.setRotationPoint(1.9f, 12, 0);
 		
 		// non-head secondary layers
-		model.bipedLeftArm.setTextureOffset(48, 48);
-		model.bipedLeftArm.addBox(-1, -2, -2, 4, 12, 4, 0.5f);
+		ModelTransBox.addBoxTo(model.bipedLeftArm, 48, 48, -1, -2, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedBody, 16, 32, -4, 0, -2, 8, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedRightArm, 40, 32, -3, -2, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedLeftLeg, 0, 48, -2, 0, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedRightLeg, 0, 32, -2, 0, -2, 4, 12, 4, 0.25f);
 		
-		model.bipedBody.setTextureOffset(16, 32);
-		model.bipedBody.addBox(-4, 0, -2, 8, 12, 4, 0.5f);
+		fatLeftArm = model.bipedLeftArm;
+		fatRightArm = model.bipedRightArm;
 		
-		model.bipedRightArm.setTextureOffset(40, 32);
-		model.bipedRightArm.addBox(-3, -2, -2, 4, 12, 4, 0.5f);
-		
-		model.bipedLeftLeg.setTextureOffset(0, 48);
-		model.bipedLeftLeg.addBox(-2, 0, -2, 4, 12, 4, 0.5f);
-		
-		model.bipedRightLeg.setTextureOffset(0, 32);
-		model.bipedRightLeg.addBox(-2, 0, -2, 4, 12, 4, 0.5f);
+		// slim arms
+		slimLeftArm = new ModelRenderer(model, 32, 48);
+	    slimLeftArm.addBox(-1, -2, -2, 3, 12, 4, 0);
+	    slimLeftArm.setRotationPoint(5, 2.5f, 0);
+	    ModelTransBox.addBoxTo(slimLeftArm, 48, 48, -1, -2, -2, 3, 12, 4, 0.25f);
+	    
+	    slimRightArm = new ModelRenderer(model, 40, 16);
+	    slimRightArm.addBox(-2, -2, -2, 3, 12, 4, 0);
+	    slimRightArm.setRotationPoint(-5, 2.5f, 0);
+	    ModelTransBox.addBoxTo(slimRightArm, 40, 32, -2, -2, -2, 3, 12, 4, 0.25f);
 	}
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
@@ -149,7 +167,7 @@ public class Ears {
 	
 	public static String amendSkinUrl(String url) {
 		if (url.startsWith("http://skins.minecraft.net/MinecraftSkins/") && url.endsWith(".png")) {
-			String username = url.substring(42, url.length()-4);
+			final String username = url.substring(42, url.length()-4);
 			// this is called in the download thread, so it's ok to block
 			final String[] newUrl = {null};
 			profileService.findProfilesByName(new String[] {username}, new ProfileLookupCallback() {
@@ -158,6 +176,11 @@ public class Ears {
 				public void onProfileLookupSucceeded(GameProfile profile) {
 					try {
 						sessionService.fillProfileProperties(profile);
+						if (profile.getTexture(TextureType.SKIN).getModel() == TextureModel.SLIM) {
+							slimUsers.add(username);
+						} else {
+							slimUsers.remove(username);
+						}
 						newUrl[0] = profile.getTexture(TextureType.SKIN, false).getURL();
 					} catch (Throwable t) {
 						t.printStackTrace();
@@ -174,6 +197,18 @@ public class Ears {
 			return newUrl[0];
 		}
 		return url;
+	}
+	
+	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
+		boolean slim = slimUsers.contains(player.username);
+		ModelBiped modelBipedMain = getModelBipedMain(rp);
+		if (slim) {
+			modelBipedMain.bipedLeftArm = slimLeftArm;
+			modelBipedMain.bipedRightArm = slimRightArm;
+		} else {
+			modelBipedMain.bipedLeftArm = fatLeftArm;
+			modelBipedMain.bipedRightArm = fatRightArm;
+		}
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp, EntityPlayer player) {
