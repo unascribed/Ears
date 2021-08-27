@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<!--
+MIT License
+
+Copyright (c) 2021 Una Thompson (unascribed)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ears Skin Manipulator</title>
+	<script>
+	/*
+	@licstart  The following is the entire license notice for the 
+	JavaScript code in this page.
+
+	MIT License
+
+	Copyright (c) 2021 Una Thompson (unascribed)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+	@licend  The above is the entire license notice
+	for the JavaScript code in this page.
+	*/
+	</script>
+	<style>
+		body {
+			font-family: system-ui, sans-serif;
+			background: #1A2327;
+			color: #ECEFF1;
+			line-height: 1.4;
+		}
+		body.loading {
+			cursor: wait;
+			background: #455A64;
+		}
+		body.loading:after {
+			content: "One moment...";
+			font-size: 32px;
+			font-weight: bold;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+		}
+		body.loading .inner {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+		.center {
+			text-align: center !important;
+		}
+		.inner {
+			max-width: 1280px;
+			padding: 0 16px;
+			margin: 0 auto;
+		}
+		h2 small {
+			font-weight: normal;
+			font-size: 0.6em;
+		}
+		#skin {
+			image-rendering: -moz-crisp-edges;
+			image-rendering: crisp-edges;
+			image-rendering: pixelated;
+			width: 128px;
+			height: 128px;
+		}
+		#three {
+			width: 512px;
+			height: 512px;
+			margin-left: 16px;
+		}
+		td {
+			padding: 2px;
+		}
+		.def-right td {
+			text-align: right;
+		}
+		td input[type="number"], td input[type="range"], td select {
+			width: 100%;
+		}
+		a:link {
+			color: #0FA;
+		}
+	</style>
+</head>
+<body>
+	<noscript><b>You must enable JavaScript to use the manipulator.</b></noscript>
+	<div class="inner">
+		<div id="three" style="float:right"></div>
+		<h1>Ears Skin Manipulator</h1>
+		<p>
+			Upload* a skin to get started. Legacy (pre-1.8, 64x32) skins will be converted to modern 64x64 skins. Once you're done, right-click the skin preview below and choose "Save image as..." to download it.<br/><br/>
+			For extreme clarity, because people keep asking: <b style="font-size:20px">This means when you're done configuring stuff on this page, <span style="color:#F44336">YOU MUST RIGHT-CLICK THE SKIN BELOW AND SAVE IT TO YOUR COMPUTER, AND <a style="color:#F44336" href="https://www.minecraft.net/en-us/profile/skin" rel="nofollow">UPLOAD IT TO MOJANG</a></span>.</b> This page does not magically reconfigure your skin via polarity-reversed quantum entropy entanglement. <i>All data for Ears is stored in the skin!</i>
+		</p>
+		<input type="file" id="skin-upload" accept="image/png,.png"></input><br/><br/>
+		Alternatively, you can <button id="sample">load a sample skin</button> which will change to demonstrate any options you select below.<br/>
+		<div>
+		<canvas id="skin" width="64" height="64"></canvas>
+		</div>
+		<small>* This entire thing is client-sided. You're not actually uploading or downloading anything, those are just the words people are familiar with.</small>
+		<h2>Vanilla Skin Customization<br/>
+		<small>Not stored in the skin. Only affects the render on the right.</small></h2>
+		<table>
+			<tr>
+				<td><input id="slim-enabled" type="checkbox"><label for="slim-enabled"> Slim Arms</label></td>
+			</tr>
+			<tr>
+				<td><input id="head2-enabled" type="checkbox" checked><label for="head2-enabled"> Hat</label></td>
+				<td><input id="torso2-enabled" type="checkbox" checked><label for="torso2-enabled"> Jacket</label></td>
+			</tr>
+			<tr>
+				<td><input id="left_arm2-enabled" type="checkbox" checked><label for="left_arm2-enabled"> Left Sleeve</label></td>
+				<td><input id="right_arm2-enabled" type="checkbox" checked><label for="right_arm2-enabled"> Right Sleeve</label></td>
+			</tr>
+			<tr>
+				<td><input id="left_leg2-enabled" type="checkbox" checked><label for="left_leg2-enabled"> Left Pants Leg</label></td>
+				<td><input id="right_leg2-enabled" type="checkbox" checked><label for="right_leg2-enabled"> Right Pants Leg</label></td>
+			</tr>
+		</table>
+		<h2>Ears Customization<br/>
+		<small>Stored in the skin. Changing options here will update the magic pixels in the skin above.</small></h2>
+		<input id="ears-enabled" type="checkbox"><label for="ears-enabled"> Enabled</label><br/><br/>
+		<table class="def-right">
+			<tr>
+				<td>
+					<label for="ear-mode">Ear Mode</label>
+				</td>
+				<td>
+					<select disabled id="ear-mode">
+						<option value="red">None</option>
+						<option value="blue">Above</option>
+						<option value="green">Sides</option>
+						<option value="purple">Behind</option>
+						<option value="cyan">Around</option>
+						<option value="orange">Floppy</option>
+						<option value="pink">Cross</option>
+					</select>
+				</td>
+				<td>
+					<label for="ear-anchor">Ear Anchor</label>
+				</td>
+				<td>
+					<select disabled id="ear-anchor">
+						<option value="blue">Center</option>
+						<option value="green">Front</option>
+						<option value="red">Back</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="protrusions">Protrusions</label>
+				</td>
+				<td>
+					<select disabled id="protrusions">
+						<option value="red">None</option>
+						<option value="green">Claws</option>
+						<option value="purple">Horn</option>
+						<option value="cyan">Claws &amp; Horn</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="tail-mode">Tail Mode</label>
+				</td>
+				<td>
+					<select disabled id="tail-mode">
+						<option value="red">None</option>
+						<option value="blue">Down</option>
+						<option value="green">Back</option>
+						<option value="purple">Up</option>
+					</select>
+				</td>
+				<td>
+					<label for="tail-segments">Tail Segments</label>
+				</td>
+				<td>
+					<input id="tail-segments" type="number" min="1" max="4" step="1" value="1" disabled>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Tail Bends
+				</td>
+				<td>
+					<input id="tail-bend-0" type="range" disabled value="0" min="-90" max="90" step="15">
+				</td>
+				<td>
+					<input id="tail-bend-1" type="range" disabled value="1" min="-90" max="90" step="15">
+				</td>
+				<td>
+					<input id="tail-bend-2" type="range" disabled value="1" min="-90" max="90" step="15">
+				</td>
+				<td>
+					<input id="tail-bend-3" type="range" disabled value="1" min="-90" max="90" step="15">
+				</td>
+			</tr>
+			<tr>
+				<td><input id="unlock-angles" disabled type="checkbox"><label for="unlock-angles"> Unlock</label></td>
+				<td class="center">
+					<span id="tail-bend-0-angle">0°</span><br/>
+				</td>
+				<td class="center">
+					<span id="tail-bend-1-angle"></span>
+				</td>
+				<td class="center">
+					<span id="tail-bend-2-angle"></span>
+				</td>
+				<td class="center">
+					<span id="tail-bend-3-angle"></span>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<div style="display: none;margin-bottom:8px" id="req-121-notice">
+			<b><i>You've selected options that require new features added in v1.2.1.</i></b><br/>
+			Before v1.2.1, Cross ears mode will not render.
+		</div>
+		<div style="display: none;margin-bottom:8px" id="req-122-notice">
+			<b><i>You've selected options that require new features added in v1.2.2.</i></b><br/>
+			Before v1.2.2, any custom first tail bend angle will be treated as 0°.
+		</div>
+		<div style="display: none;margin-bottom:8px" id="bug-122-notice">
+			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
+			Before v1.2.2:
+			<ul>
+			<li id="sides-bad-uvs">Sides, Floppy, and Behind modes had their back face texture locations swapped</li>
+			<li id="around-bad-uvs">Around mode had the backs of the sides flipped horizontally</li>
+			<li id="claws-bad-pos">Claws rendered one pixel off on the left arm for slim models</li>
+			</ul>
+		</div>
+		<br/><br/>
+		<small>
+			Copyright &copy; 2021 <a href="https://unascribed.com">Una "unascribed" Thompson</a><br/>
+			This webpage and the code therein (excluding three.js and the TeaVM runtime) is licensed under the <a href="https://github.com/unascribed/Ears/blob/trunk/LICENSE">MIT License</a><br/>
+			Powered by <a href="https://threejs.org">three.js</a> and <a href="https://teavm.org">TeaVM</a><br/>
+			Sample skins are licensed under the <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+		</small>
+	</div>
+	<script src="WebGL.js"></script>
+	<script src="three.min.js"></script>
+	<script src="ears-common.js"></script>
+	<script>
+	if (location.hash === "#debug") window.EarsDebug = true;
+	var $ = (s) => document.querySelector(s);
+	var $$ = (s) => document.querySelectorAll(s);
+	let skinTexNeedsUpdate = false;
+	function updateDpr() {
+		let s = (64*(3*Math.floor(devicePixelRatio)))/devicePixelRatio;
+		$("#skin").style.width = s+"px";
+		$("#skin").style.height = s+"px";
+	}
+	function drawImage(ctx, img,
+			dx1, dy1, dx2, dy2,
+			sx1, sy1, sx2, sy2,
+			observer) {
+		var dx = dx1;
+		var dy = dy1;
+		var dw = dx2-dx1;
+		var dh = dy2-dy1;
+		
+		var sx = sx1;
+		var sy = sy1;
+		var sw = sx2-sx1;
+		var sh = sy2-sy1;
+		
+		ctx.save();
+		ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+		ctx.restore();
+	}
+	function invert(obj) {
+		let out = {};
+		Object.entries(obj).forEach(([k, v]) => out[v] = k);
+		return out;
+	}
+	rebuildQuads();
+	
+	function renderDegrees(val) {
+		return val+"°";
+	}
+	
+	function encodeDegrees(deg, allowZero) {
+		if (deg == 0 && allowZero) return 0;
+		let val = Math.round((deg/90)*128);
+		if (val < 0) val++;
+		if (val > 0) val--;
+		val += 128;
+		if (val === 0xD8) {
+			// avoid running into Magic Blue by accident, which disables tail bending for compat
+			// nobody will notice a 0.7° inaccuracy
+			val--;
+		}
+		if (val === 0) {
+			// 0 means "this segment doesn't exist"
+			val = 1;
+		}
+		return val;
+	}
+	function decodeDegrees(val) {
+		if (val === 0) return 0;
+		let deg = val-128;
+		if (deg < 0) deg -= 1;
+		if (deg >= 0) deg += 1;
+		return (deg/128)*90;
+	}
+	
+	let usingSample = false;
+	let earsElements = [];
+	let tailBends = [$("#tail-bend-0"), $("#tail-bend-1"), $("#tail-bend-2"), $("#tail-bend-3")];
+	let tailBendAngles = [$("#tail-bend-0-angle"), $("#tail-bend-1-angle"), $("#tail-bend-2-angle"), $("#tail-bend-3-angle")];
+	
+	function updateNotices() {
+		let req121 = $("#req-121-notice");
+		let req122 = $("#req-122-notice");
+		let bug122 = $("#bug-122-notice");
+		req121.style.display = "none";
+		req122.style.display = "none";
+		bug122.style.display = "none";
+		$("#sides-bad-uvs").style.display = "none";
+		$("#around-bad-uvs").style.display = "none";
+		$("#claws-bad-pos").style.display = "none";
+		if ($("#tail-bend-0").value != 0) {
+			req122.style.display = "block";
+		}
+		let earMode = $("#ear-mode").value;
+		if (earMode === "pink") {
+			req121.style.display = "block";
+		}
+		if (earMode == "cyan") {
+			bug122.style.display = "block";
+			$("#around-bad-uvs").style.display = "list-item";
+		}
+		if (earMode === "green" || earMode == "purple" || earMode == "orange") {
+			bug122.style.display = "block";
+			$("#sides-bad-uvs").style.display = "list-item";
+		}
+		let protrusions = $("#protrusions").value;
+		if ($("#slim-enabled").checked && (protrusions === "cyan" || protrusions === "green")) {
+			bug122.style.display = "block";
+			$("#claws-bad-pos").style.display = "list-item";
+		}
+	}
+	
+	async function rebuild() {
+		if (usingSample) await rebuildSampleSkin();
+		rebuildQuads();
+		if (rebuildGeom) rebuildGeom();
+		updateNotices();
+		skinTexNeedsUpdate = true;
+	}
+	function wireElement(id, pixel) {
+		let ele = document.getElementById(id);
+		earsElements.push({ele, pixel});
+		if (ele.nodeName === "SELECT") {
+			ele.addEventListener("input", () => {
+				let ctx = $("#skin").getContext("2d");
+				ctx.fillStyle = magicPixelValues[ele.value];
+				ctx.fillRect(0+Math.floor(pixel%4), 32+Math.floor(pixel/4), 1, 1);
+				rebuild();
+			});
+		}
+	}
+	wireElement("ear-mode", 1);
+	wireElement("ear-anchor", 2);
+	wireElement("protrusions", 3);
+	wireElement("tail-mode", 4);
+	wireElement("tail-segments", -1);
+	wireElement("unlock-angles", -1);
+	async function updateSkin() {
+		usingSample = false;
+		let files = $("#skin-upload").files;
+		if (!files || files.length == 0) return;
+		let file = files[0];
+		document.body.classList.add("loading");
+		try {
+			let bitmap = await createImageBitmap(file);
+			if (bitmap.width != 64) {
+				alert("This doesn't look like a Minecraft skin; the width is wrong. Needs to be 64px.");
+				return;
+			}
+			if (bitmap.height != 64 && bitmap.height != 32) {
+				alert("This doesn't look like a Minecraft skin; the height is wrong. Needs to be 64px or 32px.");
+				return;
+			}
+			let ctx = $("#skin").getContext("2d");
+			ctx.clearRect(0, 0, 64, 64);
+			ctx.drawImage(bitmap, 0, 0);
+			if (bitmap.height == 32) {
+				console.log("Converting legacy skin.");
+				drawImage(ctx, bitmap, 24, 48, 20, 52, 4, 16, 8, 20, null);
+				drawImage(ctx, bitmap, 28, 48, 24, 52, 8, 16, 12, 20, null);
+				drawImage(ctx, bitmap, 20, 52, 16, 64, 8, 20, 12, 32, null);
+				drawImage(ctx, bitmap, 24, 52, 20, 64, 4, 20, 8, 32, null);
+				drawImage(ctx, bitmap, 28, 52, 24, 64, 0, 20, 4, 32, null);
+				drawImage(ctx, bitmap, 32, 52, 28, 64, 12, 20, 16, 32, null);
+				drawImage(ctx, bitmap, 40, 48, 36, 52, 44, 16, 48, 20, null);
+				drawImage(ctx, bitmap, 44, 48, 40, 52, 48, 16, 52, 20, null);
+				drawImage(ctx, bitmap, 36, 52, 32, 64, 48, 20, 52, 32, null);
+				drawImage(ctx, bitmap, 40, 52, 36, 64, 44, 20, 48, 32, null);
+				drawImage(ctx, bitmap, 44, 52, 40, 64, 40, 20, 44, 32, null);
+				drawImage(ctx, bitmap, 48, 52, 44, 64, 52, 20, 56, 32, null);
+			}
+			let earsEnabled = false;
+			let earsData = new DataView(ctx.getImageData(0, 32, 4, 4).data.buffer);
+			if (magicPixels[earsData.getUint32(0)] === "blue") {
+				earsEnabled = true;
+				earsElements.forEach((e) => {
+					let ele = e.ele;
+					ele.disabled = false;
+					if (e.pixel !== -1) {
+						let magic = magicPixels[String(earsData.getUint32(e.pixel*4))];
+						if (ele.nodeName === "SELECT") {
+							let valid = false;
+							ele.querySelectorAll("option").forEach((opt) => {
+								if (opt.value === magic) {
+									valid = true;
+								}
+							});
+							if (valid) {
+								ele.value = magic;
+							} else {
+								ele.selectedIndex = 0;
+							}
+						} else if (ele.nodeName === "INPUT") {
+							
+						}
+					}
+				});
+				let tailBend = earsData.getUint32(5*4);
+				let tailBend0 = decodeDegrees(255-(tailBend&0x000000FF));
+				let tailBend1 = 0;
+				let tailBend2 = 0;
+				let tailBend3 = 0;
+				if (magicPixels[tailBend] !== "blue") {
+					tailBend1 = decodeDegrees((tailBend&0xFF000000) >> 24);
+					tailBend2 = decodeDegrees((tailBend&0x00FF0000) >> 16);
+					tailBend3 = decodeDegrees((tailBend&0x0000FF00) >> 8);
+				}
+				$("#tail-bend-0").value = tailBend0;
+				$("#tail-bend-0-angle").textContent = renderDegrees(tailBend0);
+				for (let i = 1; i <= 3; i++) {
+					$("#tail-bend-"+i).disabled = true;
+					$("#tail-bend-"+i+"-angle").textContent = "";
+				}
+				let tailSegments = 1;
+				if (tailBend1 != 0) {
+					tailSegments++;
+					$("#tail-bend-1").disabled = false;
+					$("#tail-bend-1-angle").textContent = renderDegrees(tailBend1);
+					if (tailBend2 != 0) {
+						tailSegments++;
+						$("#tail-bend-2").disabled = false;
+						$("#tail-bend-2-angle").textContent = renderDegrees(tailBend2);
+						if (tailBend3 != 0) {
+							tailSegments++;
+							$("#tail-bend-3").disabled = false;
+							$("#tail-bend-3-angle").textContent = renderDegrees(tailBend3);
+						}
+					}
+				}
+				$("#tail-segments").value = tailSegments;
+				$("#tail-bend-1").value = tailBend1;
+				$("#tail-bend-2").value = tailBend2;
+				$("#tail-bend-3").value = tailBend3;
+			} else {
+				earsElements.forEach((e) => {
+					e.disabled = true;
+				});
+			}
+			$("#ears-enabled").checked = earsEnabled;
+			rebuild();
+		} finally {
+			document.body.classList.remove("loading");
+		}
+	}
+	$("#ears-enabled").addEventListener('input', () => {
+		let en = $("#ears-enabled").checked;
+		let ctx = $("#skin").getContext("2d");
+		if (en) {
+			ctx.fillStyle = magicPixelValues.blue;
+			ctx.fillRect(0, 32, 4, 4);
+		} else {
+			ctx.clearRect(0, 32, 4, 4);
+		}
+		earsElements.forEach((e) => {
+			e.ele.disabled = !en;
+			if (en) {
+				e.ele.dispatchEvent(new CustomEvent("input"));
+			}
+		});
+		rebuild();
+	});
+	function rebuildSampleSkin() {
+		return new Promise((resolve, reject) => {
+			let img = new Image();
+			img.onload = async () => {
+				let ctx = $("#skin").getContext("2d");
+				ctx.clearRect(4, 0, 60, 64);
+				ctx.clearRect(0, 0, 4, 32);
+				ctx.clearRect(0, 36, 4, 28);
+				ctx.drawImage(img, 0, 0, 64, 64, 0, 0, 64, 64);
+				let slim = $("#slim-enabled").checked;
+				ctx.drawImage(img, slim ? 128 : 64, 0, 64, 64, 0, 0, 64, 64);
+				if (!$("#head2-enabled").checked) {
+					ctx.clearRect(32, 0, 32, 16);
+				}
+				if (!$("#torso2-enabled").checked) {
+					ctx.clearRect(16, 32, 24, 16);
+				}
+				if (!$("#left_arm2-enabled").checked) {
+					ctx.clearRect(48, 48, 16, 16);
+				}
+				if (!$("#right_arm2-enabled").checked) {
+					ctx.clearRect(40, 32, 16, 16);
+				}
+				if (!$("#left_leg2-enabled").checked) {
+					ctx.clearRect(0, 48, 16, 16);
+				}
+				if (!$("#right_leg2-enabled").checked) {
+					ctx.clearRect(4, 32, 12, 16);
+					ctx.clearRect(0, 36, 4, 12);
+				}
+				let earMode = $("#ear-mode").value;
+				if (earMode === "blue") {
+					ctx.drawImage(img, 192, 0, 64, 64, 0, 0, 64, 64);
+				} else if (earMode === "cyan") {
+					ctx.drawImage(img, 0, 64, 64, 64, 0, 0, 64, 64);
+				} else if (earMode === "green" || earMode == "purple" || earMode == "orange" || earMode == "pink") {
+					ctx.drawImage(img, 64, 64, 64, 64, 0, 0, 64, 64);
+				}
+				if ($("#tail-mode").value !== "red") {
+					ctx.drawImage(img, 0, 128, 64, 64, 0, 0, 64, 64);
+				}
+				let protrusions = $("#protrusions").value;
+				if (protrusions === "cyan" || protrusions === "purple") {
+					ctx.drawImage(img, 128, 64, 64, 64, 0, 0, 64, 64);
+				}
+				if (protrusions === "cyan" || protrusions === "green") {
+					ctx.drawImage(img, 192, 64, 64, 64, 0, 0, 64, 64);
+				}
+				resolve();
+			};
+			img.src = 'sample_skin_atlas.png';
+		});
+	}
+	$("#sample").addEventListener('click', () => {
+		usingSample = true;
+		rebuild();
+	});
+	$("#slim-enabled").addEventListener("change", (e) => {
+		rebuild();
+	});
+	["head", "torso", "left_arm", "right_arm", "left_leg", "right_leg"].forEach((n) => {
+		$("#"+n+"2-enabled").addEventListener("change", (e) => {
+			if (usingSample) rebuild();
+		});
+	});
+	function updateTailBendPixel() {
+		let ctx = $("#skin").getContext("2d");
+		let scratch = ctx.createImageData(1, 1);
+		let segs = $("#tail-segments").value;
+		for (let i = 0; i < segs; i++) {
+			let v = encodeDegrees(tailBends[i].value, i == 0);
+			if (i > 0) {
+				scratch.data[i-1] = (v&0xFF);
+			} else {
+				let a = (255-v)&0xFF;
+				if (a < 0) a = 1;
+				scratch.data[3] = a;
+			}
+		}
+		ctx.putImageData(scratch, 1, 33);
+		rebuild();
+	}
+	$("#unlock-angles").addEventListener("input", () => {
+		let en = $("#unlock-angles").checked;
+		tailBends.forEach((e) => {
+			e.step = en ? 1 : 15;
+		});
+	});
+	$("#tail-segments").addEventListener("input", () => {
+		let en = $("#ears-enabled").checked;
+		tailBends.forEach((e, i) => {
+			if (en) {
+				e.disabled = $("#tail-segments").value <= i;
+				if (!e.disabled) {
+					tailBendAngles[i].textContent = renderDegrees(e.value);
+				} else {
+					tailBendAngles[i].textContent = "";
+				}
+			} else {
+				e.disabled = true;
+				tailBendAngles[i].textContent = "";
+			}
+		});
+		updateTailBendPixel();
+	});
+	tailBends.forEach((e, i) => {
+		e.addEventListener("input", () => {
+			tailBendAngles[i].textContent = renderDegrees(e.value);
+			updateTailBendPixel();
+		});
+	});
+	$("#skin-upload").addEventListener('change', () => updateSkin());
+	window.addEventListener("resize", () => updateDpr());
+	updateDpr();
+	updateSkin();
+
+	if (WEBGL.isWebGLAvailable()) {
+		let scene = new THREE.Scene();
+		let camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+		let renderer = new THREE.WebGLRenderer({
+			powerPreference: "low-power",
+			failIfMajorPerformanceCaveat: false,
+			antialias: false
+		});
+		window.addEventListener("resize", () => renderer.setPixelRatio(window.devicePixelRatio));
+		renderer.autoClear = true;
+		renderer.setClearAlpha(0);
+		renderer.setSize(512, 512);
+		let dragging = false;
+		let yaw = 60;
+		let pitch = 15;
+		let zoom = 55;
+		$("#three").addEventListener("mousedown", (e) => {
+			if (e.button === 0) {
+				e.preventDefault();
+				dragging = true;
+			}
+		});
+		$("#three").addEventListener("mousemove", (e) => {
+			if (e.button === 0) {
+				e.preventDefault();
+				if (dragging) {
+					yaw = (yaw+e.movementX)%360;
+					pitch = pitch+e.movementY;
+					if (pitch < -89) pitch = -89;
+					if (pitch > 89) pitch = 89;
+				}
+			}
+		});
+		$("#three").addEventListener("mouseup", (e) => {
+			if (e.button === 0) {
+				e.preventDefault();
+				dragging = false;
+			}
+		});
+		$("#three").addEventListener("wheel", (e) => {
+			e.preventDefault();
+			zoom += e.deltaY/8;
+			if (zoom < 10) zoom = 10;
+			if (zoom > 80) zoom = 80;
+		});
+		$("#three").appendChild(renderer.domElement);
+		
+		let skinTex = new THREE.CanvasTexture(
+			$("#skin"), THREE.UVMapping,
+			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
+			THREE.NearestFilter, THREE.NearestFilter);
+		
+		let mat = new THREE.MeshLambertMaterial({
+			reflectivity: -1,
+			flatShading: true,
+			fog: false,
+			refractionRatio: 0,
+			color: 0xFFFFFF,
+			map: skinTex
+		});
+		let matOverlay = new THREE.MeshLambertMaterial({
+			reflectivity: -1,
+			flatShading: true,
+			fog: false,
+			refractionRatio: 0,
+			color: 0xFFFFFF,
+			map: skinTex,
+			blending: THREE.NormalBlending,
+			side: THREE.DoubleSide,
+			alphaTest: 0.1,
+			transparent: true
+		});
+		
+		let earsMatParams = {
+			reflectivity: -1,
+			flatShading: true,
+			fog: false,
+			refractionRatio: 0,
+			color: 0xFFFFFF,
+			map: skinTex,
+			blending: THREE.NormalBlending,
+			alphaTest: 0.1,
+			transparent: true
+		};
+		
+		let matEarsFront = new THREE.MeshLambertMaterial({
+			...earsMatParams,
+			side: THREE.FrontSide
+		});
+		let matEarsBack = new THREE.MeshLambertMaterial({
+			...earsMatParams,
+			side: THREE.BackSide
+		});
+		
+		let uvDiv = 64;
+		
+		function makeUVs(minU, minV, maxU, maxV) {
+			return [
+				new THREE.Vector2(minU/uvDiv, 1-maxV/uvDiv),
+				new THREE.Vector2(maxU/uvDiv, 1-maxV/uvDiv),
+				new THREE.Vector2(maxU/uvDiv, 1-minV/uvDiv),
+				new THREE.Vector2(minU/uvDiv, 1-minV/uvDiv)
+			];
+		}
+		
+		let meshes = {};
+		
+		function bodyPart(name, x, y, z, w, h, d, u, v, overlay, rotX, rotY, rotZ) {
+			let grow = overlay ? 0.5 : 0;
+			
+			let top = makeUVs(u+d, v, u+d+w, v+d);
+			let bottom = makeUVs(u+d+w, v, u+d+w+w, v+d);
+			let left = makeUVs(u, v+d, u+d, v+d+h);
+			let front = makeUVs(u+d, v+d, u+d+w, v+d+h);
+			let right = makeUVs(u+d+w, v+d, u+d+w+d, v+d+h);
+			let back = makeUVs(u+d+w+d, v+d, u+d+w+d+w, v+d+h);
+			let geom = new THREE.BoxGeometry((w+(grow*2)), (h+(grow*2)), (d+(grow*2)));
+			geom.faceVertexUvs[0] = [
+					[right[3], right[0], right[2]],
+					[right[0], right[1], right[2]],
+					[left[3], left[0], left[2]],
+					[left[0], left[1], left[2]],
+					[top[3], top[0], top[2]],
+					[top[0], top[1], top[2]],
+					[bottom[0], bottom[3], bottom[1]],
+					[bottom[3], bottom[2], bottom[1]],
+					[front[3], front[0], front[2]],
+					[front[0], front[1], front[2]],
+					[back[3], back[0], back[2]],
+					[back[0], back[1], back[2]]
+			];
+			let mesh = new THREE.Mesh(geom, overlay ? matOverlay : mat);
+			mesh.renderOrder = overlay ? 1 : 0;
+			mesh.position.set(x, y, z);
+			if (rotX || rotY || rotZ) {
+				mesh.rotation.set(THREE.Math.degToRad(rotX), THREE.Math.degToRad(rotY), THREE.Math.degToRad(rotZ));
+			}
+			meshes[name] = mesh;
+			return mesh;
+		}
+		
+		scene.background = new THREE.Color("#1A2327");
+		
+		function addToScene(m) {
+			// so I can comment this out easily
+			scene.add(m);
+		}
+		
+		addToScene(bodyPart("head",
+				0, 10, 0,
+				8, 8, 8,
+				0, 0,
+				false));
+		addToScene(bodyPart("head2",
+				0, 10, 0,
+				8, 8, 8,
+				32, 0,
+				true));
+		
+		addToScene(bodyPart("torso",
+				0, 0, 0,
+				8, 12, 4,
+				16, 16,
+				false));
+		addToScene(bodyPart("torso2",
+				0, 0, 0,
+				8, 12, 4,
+				16, 32,
+				true));
+		
+		function addArms() {
+			if ($("#slim-enabled").checked) {
+				addToScene(bodyPart("right_arm",
+						-5.5, 0, 0,
+						3, 12, 4,
+						40, 16,
+						false));
+				addToScene(bodyPart("right_arm2",
+						-5.5, 0, 0,
+						3, 12, 4,
+						40, 32,
+						true));
+				
+				addToScene(bodyPart("left_arm",
+						5.5, 0, 0,
+						3, 12, 4,
+						32, 48,
+						false));
+				addToScene(bodyPart("left_arm2",
+						5.5, 0, 0,
+						3, 12, 4,
+						48, 48,
+						true));
+			} else {
+				addToScene(bodyPart("right_arm",
+						-6, 0, 0,
+						4, 12, 4,
+						40, 16,
+						false));
+				addToScene(bodyPart("right_arm2",
+						-6, 0, 0,
+						4, 12, 4,
+						40, 32,
+						true));
+				
+				addToScene(bodyPart("left_arm",
+						6, 0, 0,
+						4, 12, 4,
+						32, 48,
+						false));
+				addToScene(bodyPart("left_arm2",
+						6, 0, 0,
+						4, 12, 4,
+						48, 48,
+						true));
+			}
+		}
+		
+		addArms();
+		
+		addToScene(bodyPart("right_leg",
+				-2, -12, 0,
+				4, 12, 4,
+				0, 16,
+				false));
+		addToScene(bodyPart("right_leg2",
+				-2, -12, 0,
+				4, 12, 4,
+				0, 32,
+				true));
+		
+		addToScene(bodyPart("left_leg",
+				2, -12, 0,
+				4, 12, 4,
+				16, 48,
+				false));
+		addToScene(bodyPart("left_leg2",
+				2, -12, 0,
+				4, 12, 4,
+				0, 48,
+				true));
+		
+		$("#slim-enabled").addEventListener("change", (e) => {
+			scene.remove(meshes["left_arm"]);
+			scene.remove(meshes["left_arm2"]);
+			scene.remove(meshes["right_arm"]);
+			scene.remove(meshes["right_arm2"]);
+			addArms();
+			rebuildQuads();
+			if (rebuildGeom) rebuildGeom();
+		});
+
+		function convertUV(arr) {
+			return new THREE.Vector2(arr[0], 1-arr[1]);
+		}
+		
+		let earsMeshes = [];
+		rebuildGeom = function() {
+			earsMeshes.forEach((mesh) => {
+				scene.remove(mesh);
+			});
+			earsMeshes = [];
+			renderObjects.forEach((o) => {
+				let mat = new THREE.Matrix4().makeScale(1, 1, -1);
+				o.moves.forEach((m) => {
+					if (m.type === "anchor") {
+						let tgt = meshes[m.part];
+						if (!tgt) {
+							console.warn("Unknown body part "+m.part+" while processing render object move", m);
+							return;
+						}
+						mat.multiply(new THREE.Matrix4().makeTranslation(tgt.position.x, tgt.position.y, tgt.position.z));
+						mat.multiply(new THREE.Matrix4().makeRotationZ(tgt.rotation.z));
+						mat.multiply(new THREE.Matrix4().makeRotationY(tgt.rotation.y));
+						mat.multiply(new THREE.Matrix4().makeRotationX(tgt.rotation.x));
+						mat.multiply(new THREE.Matrix4().makeTranslation(-tgt.geometry.parameters.width/2, -tgt.geometry.parameters.height/2, -tgt.geometry.parameters.depth/2));
+					} else if (m.type === "translate") {
+						mat.multiply(new THREE.Matrix4().makeTranslation(m.x, -m.y, m.z));
+					} else if (m.type === "rotate") {
+						mat.multiply(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(-m.x, m.y, m.z), THREE.Math.degToRad(m.ang)));
+					} else {
+						console.warn("Unknown type "+m.type+" while processing render object move", m);
+					}
+				});
+				if (o.type === "quad") {
+					let geom = new THREE.PlaneGeometry(o.width, o.height);
+					geom.faceVertexUvs[0] = [
+						[convertUV(o.uvs[3]), convertUV(o.uvs[0]), convertUV(o.uvs[2])],
+						[convertUV(o.uvs[0]), convertUV(o.uvs[1]), convertUV(o.uvs[2])]
+					];
+					geom.translate(o.width/2, -o.height/2, 0);
+					geom.applyMatrix4(mat);
+					geom.computeVertexNormals();
+					let mesh = new THREE.Mesh(geom, o.back ? matEarsBack : matEarsFront);
+					mesh.renderOrder = 2;
+					earsMeshes.push(mesh);
+					scene.add(mesh);
+				} else if (o.type === "point") {
+					let geom = new THREE.Geometry();
+					geom.vertices.push(new THREE.Vector3(0, 0, 0));
+					geom.applyMatrix4(mat);
+					let points = new THREE.Points(geom, new THREE.PointsMaterial({
+						color: o.color,
+						size: 2
+					}));
+					earsMeshes.push(points);
+					scene.add(points);
+				} else {
+					console.warn("Unknown type "+o.type+" while processing render object", o);
+				}
+			});
+		};
+		rebuildGeom();
+		
+		// standard item lighting
+
+		scene.add(new THREE.AmbientLight(new THREE.Color(0.2, 0.2, 0.2)));
+				
+		let light0 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
+		light0.position.set(0.2, 1, -0.7);
+		light0.position.normalize();
+		scene.add(light0);
+		let light1 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
+		light1.position.set(-0.2, 1, 0.7);
+		light1.position.normalize();
+		scene.add(light1);
+		
+		let lastRender = performance.now();
+		
+		function render() {
+			let t = performance.now()/1000;
+			let d = (performance.now()-lastRender)/1000;
+			lastRender = performance.now();
+			requestAnimationFrame(render);
+			
+			if (skinTexNeedsUpdate) {
+				skinTex.needsUpdate = true;
+				skinTexNeedsUpdate = false;
+			}
+			
+			Object.entries(meshes).forEach(([name, mesh]) => {
+				let ele = document.getElementById(name+"-enabled");
+				if (ele) {
+					mesh.visible = ele.checked;
+				}
+			});
+			
+			let pRot = Math.sin(THREE.Math.degToRad(pitch));
+			let p = 1-Math.abs(pRot);
+			camera.position.set(Math.cos(THREE.Math.degToRad(yaw))*p, pRot, Math.sin(THREE.Math.degToRad(yaw))*p);
+			camera.position.normalize();
+			camera.position.x *= zoom;
+			camera.position.y *= zoom;
+			camera.position.z *= zoom;
+			camera.lookAt(new THREE.Vector3(0, 0, 0));
+			
+			renderer.render(scene, camera);
+		}
+		requestAnimationFrame(render);
+	} else {
+		$("#three").appendChild(WEBGL.getWebGLErrorMessage());
+	}
+	</script>
+</body>
+</html>
