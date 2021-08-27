@@ -10,7 +10,7 @@ rm -f artifacts/*
 (
 	echo 'Building common...'
 	cd common
-	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build
+	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build teavm
 	# The broken hacked up version of ForgeGradle used by Rift is looking for the common jar here
 	cp build/libs/ears-common.jar build/libs/common.jar
 	# 1.7 uses an old version of gradle that expects slightly different artifacts
