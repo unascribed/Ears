@@ -202,7 +202,7 @@ public class PatchContext {
 	
 	private void setPointer(int pointer) {
 		if (pointer < 0) throw pointerOutOfBoundsException(pointer);
-		if (pointer >= method.instructions.size()) throw pointerOutOfBoundsException(pointer);
+		if (pointer >= code.size()) throw pointerOutOfBoundsException(pointer);
 		this.pointer = pointer;
 	}
 	
@@ -254,7 +254,7 @@ public class PatchContext {
 	 * Update the code pointer to the end of the method.
 	 */
 	public void jumpToEnd() {
-		pointer = method.instructions.size()-1;
+		pointer = code.size()-1;
 	}
 	
 	/**

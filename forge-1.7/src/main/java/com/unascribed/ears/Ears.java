@@ -10,10 +10,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsLog;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.Iterables;
+import com.google.common.io.BaseEncoding;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -42,6 +51,11 @@ public class Ears {
 	
 	private static LayerEars layer;
 	
+	public static ModelRenderer slimLeftArm;
+	public static ModelRenderer slimRightArm;
+	public static ModelRenderer fatLeftArm;
+	public static ModelRenderer fatRightArm;
+	
 	public Ears() {
 		if (EarsLog.DEBUG) {
 			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
@@ -62,6 +76,10 @@ public class Ears {
 		ReflectionHelper.setPrivateValue(RendererLivingEntity.class, rp, model, "field_77045_g", "mainModel");
 		rp.modelBipedMain = model;
 		
+		// translucent head layer
+		model.bipedHeadwear.cubeList.remove(0);
+		ModelTransBox.addBoxTo(model.bipedHeadwear, 32, 0, -4, -8, -4, 8, 8, 8, 0.5f);
+		
 		// non-flipped left arm/leg
 		model.bipedLeftArm = new ModelRenderer(model, 32, 48);
 		model.bipedLeftArm.addBox(-1, -2, -2, 4, 12, 4, 0);
@@ -72,20 +90,30 @@ public class Ears {
 		model.bipedLeftLeg.setRotationPoint(1.9f, 12, 0);
 		
 		// non-head secondary layers
-		model.bipedLeftArm.setTextureOffset(48, 48);
-		model.bipedLeftArm.addBox(-1, -2, -2, 4, 12, 4, 0.5f);
+		ModelTransBox.addBoxTo(model.bipedLeftArm, 48, 48, -1, -2, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedBody, 16, 32, -4, 0, -2, 8, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedRightArm, 40, 32, -3, -2, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedLeftLeg, 0, 48, -2, 0, -2, 4, 12, 4, 0.25f);
+		ModelTransBox.addBoxTo(model.bipedRightLeg, 0, 32, -2, 0, -2, 4, 12, 4, 0.25f);
 		
-		model.bipedBody.setTextureOffset(16, 32);
-		model.bipedBody.addBox(-4, 0, -2, 8, 12, 4, 0.5f);
+		fatLeftArm = model.bipedLeftArm;
+		fatRightArm = model.bipedRightArm;
 		
-		model.bipedRightArm.setTextureOffset(40, 32);
-		model.bipedRightArm.addBox(-3, -2, -2, 4, 12, 4, 0.5f);
-		
-		model.bipedLeftLeg.setTextureOffset(0, 48);
-		model.bipedLeftLeg.addBox(-2, 0, -2, 4, 12, 4, 0.5f);
-		
-		model.bipedRightLeg.setTextureOffset(0, 32);
-		model.bipedRightLeg.addBox(-2, 0, -2, 4, 12, 4, 0.5f);
+		// slim arms
+		slimLeftArm = new ModelRenderer(model, 32, 48);
+        slimLeftArm.addBox(-1, -2, -2, 3, 12, 4, 0);
+        slimLeftArm.setRotationPoint(5, 2.5f, 0);
+        ModelTransBox.addBoxTo(slimLeftArm, 48, 48, -1, -2, -2, 3, 12, 4, 0.25f);
+        
+        slimRightArm = new ModelRenderer(model, 40, 16);
+        slimRightArm.addBox(-2, -2, -2, 3, 12, 4, 0);
+        slimRightArm.setRotationPoint(-5, 2.5f, 0);
+        ModelTransBox.addBoxTo(slimRightArm, 40, 32, -2, -2, -2, 3, 12, 4, 0.25f);
+	}
+	
+	@SubscribeEvent
+	public void onRenderPlayerPre(RenderPlayerEvent.Pre e) {
+		beforeRender(e.renderer, e.entityPlayer);
 	}
 	
 	@SubscribeEvent
@@ -140,6 +168,44 @@ public class Ears {
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
+	}
+	
+	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
+		boolean slim = false;
+		PropertyMap props = player.getGameProfile().getProperties();
+		if (props.containsKey("textures")) {
+			if (props.containsKey("com.unascribed.ears.legacySlim")) {
+				Property p = Iterables.getFirst(props.get("com.unascribed.ears.legacySlim"), null);
+				slim = (p != null && p.getValue().equals("true"));
+			} else {
+				Property p = Iterables.getFirst(props.get("textures"), null);
+				if (p != null) {
+					JsonObject payload = new Gson().fromJson(new String(BaseEncoding.base64().decode(p.getValue()), Charsets.UTF_8), JsonObject.class);
+					// aaaaaAAAAAAAAAAAAAAA
+					// where's Jankson's recursiveGet when you need it
+					if (payload.has("textures")) {
+						JsonElement ele = payload.get("textures");
+						if (ele.isJsonObject() && ele.getAsJsonObject().has("SKIN")) {
+							JsonElement skin = ele.getAsJsonObject().get("SKIN");
+							if (skin.isJsonObject() && skin.getAsJsonObject().has("metadata")) {
+								JsonElement meta = skin.getAsJsonObject().get("metadata");
+								if (meta.isJsonObject() && meta.getAsJsonObject().has("model")) {
+									slim = "slim".equals(meta.getAsJsonObject().get("model").getAsString());
+								}
+							}
+						}
+					}
+					props.put("com.unascribed.ears.legacySlim", new Property("com.unascribed.ears.legacySlim", slim ? "true" : "false"));
+				}
+			}
+		}
+		if (slim) {
+			rp.modelBipedMain.bipedLeftArm = slimLeftArm;
+			rp.modelBipedMain.bipedRightArm = slimRightArm;
+		} else {
+			rp.modelBipedMain.bipedLeftArm = fatLeftArm;
+			rp.modelBipedMain.bipedRightArm = fatRightArm;
+		}
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp, EntityPlayer player) {
