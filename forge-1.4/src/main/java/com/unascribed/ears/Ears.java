@@ -27,6 +27,7 @@ import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.ImageBufferDownload;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelRenderer;

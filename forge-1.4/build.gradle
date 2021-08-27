@@ -1,7 +1,7 @@
 buildscript {
 	repositories {
 		mavenCentral()
-		jcenter()
+		gradlePluginPortal()
 		maven { url 'https://maven.fabricmc.net' }
 		maven { url 'https://jitpack.io' }
 		maven { url 'https://maven.minecraftforge.net/' }
@@ -38,7 +38,11 @@ repositories {
 		name = 'jitpack'
 		url = 'https://jitpack.io/'
 	}
-	maven { url = 'https://files.minecraftforge.net/maven' }
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+//	maven { url = 'https://files.minecraftforge.net/maven' }
 	maven { url = 'https://repo.spongepowered.org/maven' }
 }
 

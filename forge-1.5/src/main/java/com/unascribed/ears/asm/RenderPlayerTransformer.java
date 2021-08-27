@@ -25,6 +25,12 @@ public class RenderPlayerTransformer extends MiniTransformer {
 	@Patch.Method(srg="b", mcp="renderFirstPersonArm", descriptor="(Lsq;)V")
 	public void patchRenderFirstPersonArm(PatchContext ctx) {
 		EarsLog.debug("Platform:Inject", "Patching player renderer arm");
+		ctx.jumpToStart();
+		ctx.add(new IntInsnNode(Opcodes.ALOAD, 0));
+		ctx.add(new IntInsnNode(Opcodes.ALOAD, 1));
+		ctx.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/unascribed/ears/Ears",
+				"beforeRender", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;Lnet/minecraft/entity/player/EntityPlayer;)V"));
+		
 		ctx.search(new InsnNode(Opcodes.RETURN)).jumpBefore();
 		// Ears.renderFirstPersonArm(this, arg1);
 		ctx.add(new IntInsnNode(Opcodes.ALOAD, 0));
