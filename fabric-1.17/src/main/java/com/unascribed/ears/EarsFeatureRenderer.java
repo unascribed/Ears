@@ -1,8 +1,5 @@
 package com.unascribed.ears;
 
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsLog;
@@ -23,11 +20,10 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
 
 public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> implements EarsRenderDelegate {
 	
@@ -132,7 +128,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 				model = getContextModel().head;
 				break;
 			case LEFT_ARM:
-				model = getContextModel().field_27433;
+				model = getContextModel().leftArm;
 				break;
 			case LEFT_LEG:
 				model = getContextModel().leftLeg;
@@ -144,7 +140,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 				model = getContextModel().rightLeg;
 				break;
 			case TORSO:
-				model = getContextModel().torso;
+				model = getContextModel().body;
 				break;
 			default: return;
 		}
@@ -170,7 +166,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	@Override
 	public void rotate(float ang, float x, float y, float z) {
 		if (skipRendering > 0) return;
-		m.multiply(new Vector3f(x, y, z).getDegreesQuaternion(ang));
+		m.multiply(new Vec3f(x, y, z).getDegreesQuaternion(ang));
 	}
 
 	@Override
@@ -205,17 +201,18 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 
 	@Override
 	public void renderDebugDot(float r, float g, float b, float a) {
-		if (skipRendering > 0) return;
-		Matrix4f mv = m.peek().getModel();
-		
-		GL11.glPointSize(8);
-		GlStateManager.disableTexture();
-		GL11.glBegin(GL11.GL_POINTS);
-		GL11.glColor4f(r, g, b, a);
-		Vector4f v = new Vector4f(0, 0, 0, 0);
-		v.transform(mv);
-		GL11.glVertex3f(v.getX(), v.getY(), v.getZ());
-		GL11.glEnd();
-		GlStateManager.enableTexture();
+		// TODO port this to Core profile
+//		if (skipRendering > 0) return;
+//		Matrix4f mv = m.peek().getModel();
+//
+//		GL11.glPointSize(8);
+//		RenderSystem.disableTexture();
+//		GL11.glBegin(GL11.GL_POINTS);
+//		GL11.glColor4f(r, g, b, a);
+//		Vector4f v = new Vector4f(0, 0, 0, 0);
+//		v.transform(mv);
+//		GL11.glVertex3f(v.getX(), v.getY(), v.getZ());
+//		GL11.glEnd();
+//		RenderSystem.enableTexture();
 	}
 }

@@ -26,12 +26,12 @@ switch (target) {
 	case "fabric-1.16":
 		prefix = "FABRIC 1.15/16"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.15', '1.15.1', '1.15.2', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4']
+		gameVersions = ['Fabric', '1.15', '1.15.1', '1.15.2', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4', '1.16.5']
 		break
 	case "fabric-1.17":
 		prefix = "FABRIC 1.17"
-		stability = 'alpha'
-		gameVersions = ['Fabric', '1.17']
+		stability = 'release'
+		gameVersions = ['Fabric', '1.17', '1.17.1']
 		break
 	case "forge-1.5":
 		prefix = "FORGE 1.5"
@@ -76,7 +76,7 @@ switch (target) {
 	case "forge-1.16":
 		prefix = "FORGE 1.16"
 		stability = 'beta'
-		gameVersions = ['Forge', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4']
+		gameVersions = ['Forge', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4', '1.16.5']
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13"
