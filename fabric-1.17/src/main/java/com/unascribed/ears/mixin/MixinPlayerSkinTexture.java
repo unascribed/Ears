@@ -12,8 +12,8 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsImage;
-import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.RawEarsImage;
+import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;

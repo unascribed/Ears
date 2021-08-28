@@ -2,9 +2,9 @@ package com.unascribed.ears;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.NotRandom;
+import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.mixin.AccessorPlayerEntityModel;
 
 import net.minecraft.client.MinecraftClient;

@@ -6,7 +6,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import com.unascribed.ears.asm.mini.MiniTransformer;
 import com.unascribed.ears.asm.mini.PatchContext;
 import com.unascribed.ears.asm.mini.annotation.Patch;
-import com.unascribed.ears.common.EarsLog;
+import com.unascribed.ears.common.debug.EarsLog;
 
 @Patch.Class("net.minecraft.client.renderer.entity.RenderPlayer")
 public class RenderPlayerTransformer extends MiniTransformer {

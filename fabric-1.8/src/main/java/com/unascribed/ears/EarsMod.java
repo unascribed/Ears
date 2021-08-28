@@ -1,6 +1,6 @@
 package com.unascribed.ears;
 
-import com.unascribed.ears.common.EarsLog;
+import com.unascribed.ears.common.debug.EarsLog;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;

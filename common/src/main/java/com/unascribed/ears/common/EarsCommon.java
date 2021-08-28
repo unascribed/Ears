@@ -7,6 +7,8 @@ import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.EarsRenderDelegate.TexRotation;
+import com.unascribed.ears.common.debug.DebuggingDelegate;
+import com.unascribed.ears.common.debug.EarsLog;
 
 public class EarsCommon {
 

@@ -41,11 +41,11 @@ jar {
 }
 
 dependencies {
-	compile(project('common')) { transitive = false }
+	compile(project('ears-common')) { transitive = false }
 }
 
 jar {
-	from '../common/build/classes/main'
+	from zipTree('../common/build/libs/ears-common-legacy.jar')
 }
 
 processResources {

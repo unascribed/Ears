@@ -68,8 +68,8 @@ dependencies {
 	modImplementation 'org.ow2.asm:asm-tree:9.0'
 	shade 'org.ow2.asm:asm-tree:9.0'
 	
-	compile(project('common')) { transitive = false }
-	shade(project('common')) { transitive = false } 
+	compile(project(path: ":ears-common", configuration: 'legacy'))
+	shade(project(path: ":ears-common", configuration: 'legacy'))
 }
 
 subprojects {

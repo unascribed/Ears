@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.unascribed.ears.common.debug.EarsLog;
+
 public class EarsFeatures {
 
 	enum MagicPixel {

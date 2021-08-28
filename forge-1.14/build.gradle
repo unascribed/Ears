@@ -119,7 +119,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
     compile files('MixinBootstrap.jar')
-    compile(project('common')) { transitive = false }
+    implementation(project(path: ":ears-common", configuration: 'mixinModern'))
 
 }
 // Example configuration to allow publishing using the maven-publish task
@@ -127,7 +127,7 @@ dependencies {
 jar.finalizedBy('reobfJar') 
 
 jar {
-	from '../common/build/classes/java/main'
+	from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
     manifest {
         attributes(["Specification-Title": "ears",
                     "Specification-Vendor": "unascribed",

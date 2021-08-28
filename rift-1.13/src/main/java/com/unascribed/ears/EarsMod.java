@@ -5,7 +5,7 @@ import org.dimdev.riftloader.listener.InitializationListener;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
-import com.unascribed.ears.common.EarsLog;
+import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraft.client.Minecraft;
 

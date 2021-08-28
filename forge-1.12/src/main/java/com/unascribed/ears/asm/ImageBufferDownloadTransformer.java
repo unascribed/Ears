@@ -12,7 +12,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import com.elytradev.mini.MiniTransformer;
 import com.elytradev.mini.PatchContext;
 import com.elytradev.mini.annotation.Patch;
-import com.unascribed.ears.common.EarsLog;
+import com.unascribed.ears.common.debug.EarsLog;
 
 @Patch.Class("net.minecraft.client.renderer.ImageBufferDownload")
 public class ImageBufferDownloadTransformer extends MiniTransformer {

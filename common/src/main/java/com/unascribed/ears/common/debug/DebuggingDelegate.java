@@ -1,4 +1,10 @@
-package com.unascribed.ears.common;
+package com.unascribed.ears.common.debug;
+
+import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
+import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
+import com.unascribed.ears.common.EarsRenderDelegate.TexFlip;
+import com.unascribed.ears.common.EarsRenderDelegate.TexRotation;
 
 public class DebuggingDelegate implements EarsRenderDelegate {
 

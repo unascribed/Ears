@@ -12,4 +12,5 @@ pluginManagement {
 
 rootProject.name = "ears-forge-1.5"
 
-includeFlat 'common'
+include ':ears-common'
+project(':ears-common').projectDir = new File(rootProject.projectDir, '../common')

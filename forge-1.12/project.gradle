@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-	compile(project('common')) { transitive = false }
-	shadow(project('common')) { transitive = false }
+	implementation(project(path: ":ears-common", configuration: 'legacy'))
+	shadow(project(path: ":ears-common", configuration: 'legacy'))
 }
 }

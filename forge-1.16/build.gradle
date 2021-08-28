@@ -103,7 +103,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.16'
 
-    compile(project('common')) { transitive = false }
+    implementation(project(path: ":ears-common", configuration: 'mixinModern'))
 
 }
 // Example configuration to allow publishing using the maven-publish task
@@ -111,7 +111,7 @@ dependencies {
 jar.finalizedBy('reobfJar') 
 
 jar {
-	from '../common/build/classes/java/main'
+	from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
     manifest {
         attributes(["Specification-Title": "ears",
                     "Specification-Vendor": "unascribed",

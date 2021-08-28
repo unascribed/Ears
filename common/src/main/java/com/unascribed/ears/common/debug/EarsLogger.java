@@ -1,4 +1,4 @@
-package com.unascribed.ears.common;
+package com.unascribed.ears.common.debug;
 
 interface EarsLogger {
 

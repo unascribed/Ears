@@ -7,9 +7,9 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.NotRandom;
+import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.mixin.AccessorPlayerModel;
 
 import net.minecraft.client.Minecraft;

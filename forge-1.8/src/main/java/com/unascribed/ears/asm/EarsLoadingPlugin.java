@@ -2,7 +2,7 @@ package com.unascribed.ears.asm;
 
 
 import com.unascribed.ears.asm.mini.MiniCoremod;
-import com.unascribed.ears.common.EarsLog;
+import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 

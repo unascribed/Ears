@@ -34,6 +34,105 @@ if (!newGradle) {
 		api
 		compile.extendsFrom api
 	}
+	sourceSets {
+		main {
+			java.srcDirs += 'src/legacy/java'
+		}
+	}
+	jar {
+		classifier 'legacy'
+	}
+} else {
+	configurations {
+		mixinLegacy {
+			canBeConsumed = true
+			canBeResolved = false
+		}
+		mixinModern {
+			canBeConsumed = true
+			canBeResolved = false
+		}
+		legacy {
+			canBeConsumed = true
+			canBeResolved = false
+		}
+		modern {
+			canBeConsumed = true
+			canBeResolved = false
+		}
+	}
+	sourceSets {
+		legacy {
+			compileClasspath += sourceSets.main.output
+			compileClasspath += sourceSets.main.compileClasspath
+			runtimeClasspath += sourceSets.main.output
+			runtimeClasspath += sourceSets.main.runtimeClasspath
+		}
+		mixin {
+			compileClasspath += sourceSets.main.output
+			compileClasspath += sourceSets.main.compileClasspath
+			runtimeClasspath += sourceSets.main.output
+			runtimeClasspath += sourceSets.main.runtimeClasspath
+		}
+		js {
+			compileClasspath += sourceSets.main.output
+			compileClasspath += sourceSets.main.compileClasspath
+			runtimeClasspath += sourceSets.main.output
+			runtimeClasspath += sourceSets.main.runtimeClasspath
+		}
+		modern {
+			compileClasspath += sourceSets.main.output
+			compileClasspath += sourceSets.main.compileClasspath
+			runtimeClasspath += sourceSets.main.output
+			runtimeClasspath += sourceSets.main.runtimeClasspath
+		}
+	}
+	
+	jar {
+		classifier 'base'
+	}
+	
+	task mixinLegacyJar(type: Jar) {
+		from sourceSets.main.output
+		from sourceSets.mixin.output
+		from sourceSets.legacy.output
+		
+		classifier 'mixin-legacy'
+	}
+	
+	task mixinModernJar(type: Jar) {
+		from sourceSets.main.output
+		from sourceSets.mixin.output
+		from sourceSets.modern.output
+		
+		classifier 'mixin-modern'
+	}
+	
+	task legacyJar(type: Jar) {
+		from sourceSets.main.output
+		from sourceSets.legacy.output
+		
+		classifier 'legacy'
+	}
+	
+	task modernJar(type: Jar) {
+		from sourceSets.main.output
+		from sourceSets.modern.output
+		
+		classifier 'modern'
+	}
+	
+	build.dependsOn mixinLegacyJar
+	build.dependsOn mixinModernJar
+	build.dependsOn legacyJar
+	build.dependsOn modernJar
+	
+	artifacts {
+		mixinLegacy mixinLegacyJar
+		mixinModern mixinModernJar
+		legacy legacyJar
+		modern modernJar
+	}
 }
 
 dependencies {
@@ -56,7 +155,7 @@ if (rootProject == project) {
 		doFirst {
 			file('build/teavm').mkdirs()
 		}
-		dependsOn compileJava
+		dependsOn compileJsJava
 		inputs.dir file('src')
 		outputs.dir file('build/teavm')
 		
@@ -86,5 +185,11 @@ if (rootProject == project) {
 		inputs.file file('build/teavm/classes.js')
 		outputs.file file('build/teavm/classes.min.js')
 		commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js'
+	}
+} else {
+	gradle.taskGraph.whenReady {
+		gradle.taskGraph.allTasks.each {
+			it.onlyIf { false }
+		}
 	}
 }

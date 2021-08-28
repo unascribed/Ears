@@ -1,4 +1,4 @@
-package com.unascribed.ears.common;
+package com.unascribed.ears.common.debug;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

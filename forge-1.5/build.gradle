@@ -58,8 +58,8 @@ dependencies {
 	modImplementation "com.google.code.gson:gson:2.8.6"
 	shade "com.google.code.gson:gson:2.8.6"
 	
-	compile(project('common')) { transitive = false }
-	shade(project('common')) { transitive = false } 
+	compile(project(path: ":ears-common", configuration: 'legacy'))
+	shade(project(path: ":ears-common", configuration: 'legacy'))
 }
 
 subprojects {

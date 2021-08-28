@@ -45,7 +45,7 @@ dependencies {
 		exclude module: "guava"
 	}
 	
-	compile(project('common')) { transitive = false }
+	implementation(project(path: ":ears-common", configuration: 'mixinLegacy'))
 }
 
 processResources {
@@ -78,5 +78,5 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "../LICENSE"
-	from '../common/build/classes/java/main'
+	from zipTree('../common/build/libs/ears-common-mixin-legacy.jar')
 }

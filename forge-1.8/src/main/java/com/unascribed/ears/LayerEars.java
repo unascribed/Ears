@@ -3,8 +3,9 @@ package com.unascribed.ears;
 import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.common.debug.EarsLog;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBox;

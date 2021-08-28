@@ -1,4 +1,4 @@
-package com.unascribed.ears.common;
+package com.unascribed.ears.common.debug;
 
 import java.io.File;
 import java.io.FileNotFoundException;

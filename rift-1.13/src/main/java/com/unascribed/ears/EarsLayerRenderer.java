@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.EarsLog;
 import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.mixin.AccessorModelPlayer;
 
 import net.minecraft.client.Minecraft;

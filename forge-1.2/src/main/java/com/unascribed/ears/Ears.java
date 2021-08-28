@@ -20,9 +20,8 @@ import com.github.steveice10.mc.auth.service.SessionService;
 import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
-
+import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsLog;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;

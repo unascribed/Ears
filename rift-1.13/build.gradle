@@ -45,11 +45,11 @@ dependencies {
 	implementation 'com.github.unascribed:Rift:FINAL:dev'
 	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
 	
-	implementation(project('common')) { transitive = false }
+	implementation(project(path: ":ears-common", configuration: 'mixinModern'))
 }
 
 jar {
-	from '../common/build/classes/java/main'
+	from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
 }
 
 minecraft {
