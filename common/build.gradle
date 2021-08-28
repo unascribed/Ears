@@ -189,7 +189,9 @@ if (rootProject == project) {
 } else {
 	gradle.taskGraph.whenReady {
 		gradle.taskGraph.allTasks.each {
-			it.onlyIf { false }
+			if (it.project == project) {
+				it.onlyIf { false }
+			}
 		}
 	}
 }
