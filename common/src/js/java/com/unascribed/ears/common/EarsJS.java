@@ -59,7 +59,7 @@ public class EarsJS {
 		EarsCommon.render(feat, new EarsRenderDelegate() {
 			
 			private JSArray<JSObject> moves = JSArray.create();
-			private JSArray<JSArray<JSObject>> movesStack = JSArray.of();
+			private JSArray<JSArray<JSObject>> movesStack = JSArray.create();
 			
 			@Override
 			public void translate(float x, float y, float z) {

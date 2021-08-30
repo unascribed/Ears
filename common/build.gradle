@@ -226,14 +226,18 @@ dependencies {
 	implementation('org.spongepowered:mixin:0.7-SNAPSHOT') {
 		transitive = false
 	}
-	compileOnly 'org.teavm:teavm-classlib:0.7.0-dev-1192'
+	compileOnly('org.teavm:teavm-classlib:0.7.0-dev-1196') {
+		exclude group: 'com.google.code.gson'
+		exclude group: 'com.jcraft'
+		exclude group: 'joda-time'
+	}
 	
-	implementation 'org.ow2.asm:asm:9.0'
-	implementation 'org.ow2.asm:asm-tree:9.0'
-	agentShade 'org.ow2.asm:asm:9.0'
-	agentShade 'org.ow2.asm:asm-tree:9.0'
+	implementation 'org.ow2.asm:asm:9.2'
+	implementation 'org.ow2.asm:asm-tree:9.2'
+	agentShade 'org.ow2.asm:asm:9.2'
+	agentShade 'org.ow2.asm:asm-tree:9.2'
 	
-	teavm 'org.teavm:teavm-classlib:0.7.0-dev-1192'
+	teavm 'org.teavm:teavm-classlib:0.7.0-dev-1196'
 }
 
 import org.teavm.tooling.TeaVMTool
