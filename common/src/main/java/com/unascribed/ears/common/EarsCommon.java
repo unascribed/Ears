@@ -213,8 +213,23 @@ public class EarsCommon {
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -2, 4);
 					delegate.rotate(ang+(swingAmount*swing), 1, 0, 0);
+					boolean vert = tailMode == TailMode.VERTICAL;
+					if (vert) {
+						delegate.translate(4, 0, 0);
+						delegate.rotate(90, 0, 0, 1);
+						if (features.tailBend0 < 0) {
+							delegate.translate(4, 0, 0);
+							delegate.rotate(features.tailBend0, 0, 1, 0);
+							delegate.translate(-4, 0, 0);
+						}
+						delegate.translate(-4, 0, 0);
+						if (features.tailBend0 > 0) {
+							delegate.rotate(features.tailBend0, 0, 1, 0);
+						}
+						delegate.rotate(90, 1, 0, 0);
+					}
 					int segments = 1;
-					float[] angles = {features.tailBend0, features.tailBend1, features.tailBend2, features.tailBend3};
+					float[] angles = {vert ? 0 : features.tailBend0, features.tailBend1, features.tailBend2, features.tailBend3};
 					if (features.tailBend1 != 0) {
 						segments++;
 						if (features.tailBend2 != 0) {

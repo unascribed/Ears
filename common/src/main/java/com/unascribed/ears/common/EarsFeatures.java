@@ -112,12 +112,14 @@ public class EarsFeatures {
 		DOWN,
 		BACK,
 		UP,
+		VERTICAL,
 		;
 		public static final Map<MagicPixel, TailMode> BY_MAGIC = buildMap(
 				MagicPixel.RED, NONE,
 				MagicPixel.BLUE, DOWN,
 				MagicPixel.GREEN, BACK,
-				MagicPixel.PURPLE, UP
+				MagicPixel.PURPLE, UP,
+				MagicPixel.ORANGE, VERTICAL
 		);
 	}
 

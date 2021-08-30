@@ -207,6 +207,7 @@ SOFTWARE.
 						<option value="blue">Down</option>
 						<option value="green">Back</option>
 						<option value="purple">Up</option>
+						<option value="orange">Vertical</option>
 					</select>
 				</td>
 				<td>
@@ -262,6 +263,10 @@ SOFTWARE.
 			<b><i>You've selected options that require new features added in v1.2.3.</i></b><br/>
 			Before v1.2.3, Out ears mode will not render. <span id="out-anchor-back">As you're using
 			an Ear Anchor of "Back", you may use the legacy Behind ears mode instead for compatibility.</span>
+		</div>
+		<div style="display: none;margin-bottom:8px" id="req-124-notice">
+			<b><i>You've selected options that require new features added in v1.2.4.</i></b><br/>
+			Before v1.2.4, Vertical tail mode will not render.
 		</div>
 		<div style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
@@ -370,20 +375,19 @@ SOFTWARE.
 		let req121 = $("#req-121-notice");
 		let req122 = $("#req-122-notice");
 		let req123 = $("#req-123-notice");
+		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
 		req121.style.display = "none";
 		req122.style.display = "none";
 		req123.style.display = "none";
+		req124.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		$("#sides-bad-uvs").style.display = "none";
 		$("#around-bad-uvs").style.display = "none";
 		$("#claws-bad-pos").style.display = "none";
 		$("#out-anchor-back").style.display = "none";
-		if ($("#tail-bend-0").value != 0) {
-			req122.style.display = "block";
-		}
 		let earMode = $("#ear-mode").value;
 		let earAnchor = $("#ear-anchor").value;
 		if (earMode === "pink") {
@@ -407,6 +411,12 @@ SOFTWARE.
 		if ($("#slim-enabled").checked && (protrusions === "cyan" || protrusions === "green")) {
 			bug123.style.display = "block";
 			$("#claws-bad-pos").style.display = "list-item";
+		}
+		let tailMode = $("#tail-mode").value;
+		if (tailMode === "orange") {
+			req124.style.display = "block";
+		} else if ($("#tail-bend-0").value != 0) {
+			req122.style.display = "block";
 		}
 	}
 	
