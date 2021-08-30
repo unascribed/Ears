@@ -103,7 +103,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.16'
 
-    implementation(project(path: ":ears-common", configuration: 'mixinModern'))
+    implementation files('../common/build/libs/ears-common-mixin-modern.jar')
 
 }
 // Example configuration to allow publishing using the maven-publish task

@@ -1,1 +1,1 @@
-../common/build/teavm/classes.js
+../common/build/teavm/classes.min.js

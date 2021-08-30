@@ -10,8 +10,8 @@ ext {
 	concreteVersion = ''
 	concreteModules = [ ]
 
-	coremod = 'com.unascribed.ears.asm.EarsLoadingPlugin'
-	miniVersion = '0.2-SNAPSHOT'
+	coremod = 'com.unascribed.ears.common.agent.NewForgeCoremod'
+	miniVersion = null
 
 	language = 'java'
 
@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-	implementation(project(path: ":ears-common", configuration: 'legacy'))
-	shadow(project(path: ":ears-common", configuration: 'legacy'))
+	implementation files('../common/build/libs/ears-common-agent-legacy.jar')
+	shadow files('../common/build/libs/ears-common-agent-legacy.jar')
 }
 }

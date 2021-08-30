@@ -10,14 +10,14 @@ rm -f artifacts/*
 (
 	echo 'Building common...'
 	cd common
-	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build teavm
+	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build closure --stacktrace
 )
 build() {
 	for proj in $@; do
 		(
 			cd $proj
 			rm -f build-ok
-			TERM=dumb chronic ./gradlew clean build && touch build-ok
+			TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
 			rm -f build/libs/*-dev.jar
 		) &
 	done
@@ -31,7 +31,7 @@ for proj in $special; do
 	(
 		cd $proj
 		rm -f build-ok
-		TERM=dumb chronic ./gradlew clean build && touch build-ok
+		TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
 		rm -f build/libs/*-dev.jar
 	)
 done

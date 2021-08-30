@@ -8,13 +8,13 @@ import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.ModelBiped;
-import net.minecraft.src.ModelBox;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.RenderPlayer;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 
 public class LayerEars implements EarsRenderDelegate {
 	

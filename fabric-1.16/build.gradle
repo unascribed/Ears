@@ -15,7 +15,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
-	implementation(project(path: ":ears-common", configuration: 'mixinModern'))
+	implementation files('../common/build/libs/ears-common-mixin-modern.jar')
 }
 
 processResources {

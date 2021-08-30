@@ -1,33 +1,29 @@
 package com.unascribed.ears.asm;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-
-import com.unascribed.ears.asm.mini.annotation.Patch;
-import com.unascribed.ears.common.debug.EarsLog;
-import com.unascribed.ears.asm.mini.MiniTransformer;
-import com.unascribed.ears.asm.mini.PatchContext;
+import com.unascribed.ears.common.agent.mini.annotation.Patch;
+import com.unascribed.ears.common.agent.mini.MiniTransformer;
+import com.unascribed.ears.common.agent.mini.PatchContext;
 
 @Patch.Class("bas") // net/minecraft/src/ThreadDownloadImage
 public class ThreadDownloadImageTransformer extends MiniTransformer {
 
-	@Patch.Method(descriptor="()V", mcp="run", srg="run")
-	public void patchSetBufferedImage(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching run");
-		ctx.search(new FieldInsnNode(Opcodes.GETFIELD, "bas", "a", "Ljava/lang/String;")).jumpAfter();
+	@Patch.Method("run()V")
+	public void patchRun(PatchContext ctx) {
+		ctx.search(GETFIELD("bas", "a", "Ljava/lang/String;")).jumpAfter();
 		// new URL(location) -> new URL(EarsMod.amendSkinUrl(location))
-		ctx.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/unascribed/ears/Ears",
-				"amendSkinUrl", "(Ljava/lang/String;)Ljava/lang/String;"));
-		ctx.search(new FieldInsnNode(Opcodes.PUTFIELD, "bar", "a", "Ljava/awt/image/BufferedImage;")).next().jumpAfter();
+		ctx.add(
+			INVOKESTATIC("com/unascribed/ears/Ears", "amendSkinUrl", "(Ljava/lang/String;)Ljava/lang/String;")
+		);
+		
+		ctx.search(PUTFIELD("bar", "a", "Ljava/awt/image/BufferedImage;")).next().jumpAfter();
 		// EarsMod.checkSkin(this, this.imageData.image);
-		ctx.add(new IntInsnNode(Opcodes.ALOAD, 0));
-		ctx.add(new IntInsnNode(Opcodes.ALOAD, 0));
-		ctx.add(new FieldInsnNode(Opcodes.GETFIELD, "bas", "c", "Lbar;"));
-		ctx.add(new FieldInsnNode(Opcodes.GETFIELD, "bar", "a", "Ljava/awt/image/BufferedImage;"));
-		ctx.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/unascribed/ears/Ears",
-				"checkSkin", "(Ljava/lang/Object;Ljava/awt/image/BufferedImage;)V"));
+		ctx.add(
+			ALOAD(0),
+			ALOAD(0),
+			GETFIELD("bas", "c", "Lbar;"),
+			GETFIELD("bar", "a", "Ljava/awt/image/BufferedImage;"),
+			INVOKESTATIC("com/unascribed/ears/Ears", "checkSkin", "(Ljava/lang/Object;Ljava/awt/image/BufferedImage;)V")
+		);
 	}
 	
 }

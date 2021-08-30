@@ -30,6 +30,9 @@ if (!file(mcp).exists()) {
 	println "Patching MCP..."
 	'./patch-mcp.sh'.execute()
 }
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/mod_Ears.java'.execute()
+}
 
 archivesBaseName = project.archives_base_name
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
@@ -40,10 +43,10 @@ repositories {
 		name = 'jitpack'
 		url = 'https://jitpack.io/'
 	}
-		maven {
-			name = 'Fabric'
-			url = 'https://maven.fabricmc.net/'
-		}
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
 //	maven { url = 'https://files.minecraftforge.net/maven' }
 	maven { url = 'https://repo.spongepowered.org/maven' }
 }
@@ -68,8 +71,8 @@ dependencies {
 	modImplementation 'org.ow2.asm:asm-tree:9.0'
 	shade 'org.ow2.asm:asm-tree:9.0'
 	
-	compile(project(path: ":ears-common", configuration: 'legacy'))
-	shade(project(path: ":ears-common", configuration: 'legacy'))
+	compile files('../common/build/libs/ears-common-agent-legacy.jar')
+	shade files('../common/build/libs/ears-common-agent-legacy.jar')
 }
 
 subprojects {
@@ -115,7 +118,7 @@ tasks.withType(JavaCompile) {
 jar {
 	from "LICENSE"
 	manifest {
-		attributes(["Premain-Class": "com.unascribed.ears.OneteufyvAgent"])
+		attributes(["Premain-Class": "com.unascribed.ears.common.agent.EarsAgent"])
 	}
 }
 

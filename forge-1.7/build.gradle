@@ -34,18 +34,18 @@ minecraft {
 jar {
 	manifest {
 		attributes (
-			'FMLCorePlugin': 'com.unascribed.ears.asm.EarsLoadingPlugin',
+			'FMLCorePlugin': 'com.unascribed.ears.common.agent.OldForgeCoremod',
 			'FMLCorePluginContainsFMLMod': true
 		)
 	}
 }
 
 dependencies {
-	compile(project('ears-common')) { transitive = false }
+	compile files('../common/build/libs/ears-common-agent-legacy.jar')
 }
 
 jar {
-	from zipTree('../common/build/libs/ears-common-legacy.jar')
+	from zipTree('../common/build/libs/ears-common-agent-legacy.jar')
 }
 
 processResources {

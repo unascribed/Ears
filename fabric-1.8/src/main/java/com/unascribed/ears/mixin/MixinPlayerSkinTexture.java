@@ -7,11 +7,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsImage;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.texture.ResourceTexture;

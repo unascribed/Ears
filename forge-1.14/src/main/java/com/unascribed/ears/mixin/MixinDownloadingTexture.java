@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.RawEarsImage;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.modern.RawEarsImage;
 
 import net.minecraft.client.renderer.texture.DownloadingTexture;
 import net.minecraft.client.renderer.texture.NativeImage;

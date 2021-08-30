@@ -33,8 +33,8 @@ public class EarsJS {
 		assignToWindow("magicPixels", magicPixels);
 		assignToWindow("magicPixelValues", magicPixelValues);
 		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
-		ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
-		DataView dv = DataView.create(skin.getData().getBuffer());
+		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
+		final DataView dv = DataView.create(skin.getData().getBuffer());
 		EarsFeatures feat = EarsFeatures.detect(new EarsImage() {
 			
 			@Override
@@ -55,7 +55,7 @@ public class EarsJS {
 				return c;
 			}
 		});
-		JSArray<JSObject> objects = JSArray.create();
+		final JSArray<JSObject> objects = JSArray.create();
 		EarsCommon.render(feat, new EarsRenderDelegate() {
 			
 			private JSArray<JSObject> moves = JSArray.create();

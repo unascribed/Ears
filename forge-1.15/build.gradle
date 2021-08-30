@@ -119,7 +119,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
     compile files('MixinBootstrap.jar')
-    implementation(project(path: ":ears-common", configuration: 'mixinModern'))
+    implementation files('../common/build/libs/ears-common-mixin-modern.jar')
 
 }
 // Example configuration to allow publishing using the maven-publish task

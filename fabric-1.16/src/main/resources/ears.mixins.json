@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "com.unascribed.ears.mixin",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "com.unascribed.ears.common.EarsMixinConfigPlugin",
+  "plugin": "com.unascribed.ears.common.mixin.EarsMixinConfigPlugin",
   "mixins": [
   ],
   "client": [

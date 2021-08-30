@@ -15,10 +15,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
@@ -118,7 +118,7 @@ public class Ears {
 	
 	@SubscribeEvent
 	public void onRenderPlayerPost(RenderPlayerEvent.Specials.Post e) {
-		EarsLog.debug("Platform", "RenderPlayerEvent.Specials.Post player={}, renderer={}, partialTicks={}", e.entityPlayer, e.renderer, e.partialRenderTick);
+		EarsLog.debug("Platform:Renderer", "RenderPlayerEvent.Specials.Post player={}, renderer={}, partialTicks={}", e.entityPlayer, e.renderer, e.partialRenderTick);
 		layer.doRenderLayer(e.renderer, (AbstractClientPlayer)e.entityPlayer,
 				e.entityPlayer.prevLimbSwingAmount + (e.entityPlayer.limbSwingAmount - e.entityPlayer.prevLimbSwingAmount) * e.partialRenderTick,
 				e.partialRenderTick);

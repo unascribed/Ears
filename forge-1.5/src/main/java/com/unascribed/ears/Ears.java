@@ -17,10 +17,10 @@ import com.github.steveice10.mc.auth.data.GameProfile.TextureType;
 import com.github.steveice10.mc.auth.service.ProfileService;
 import com.github.steveice10.mc.auth.service.ProfileService.ProfileLookupCallback;
 import com.github.steveice10.mc.auth.service.SessionService;
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -29,19 +29,19 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.ImageBufferDownload;
-import net.minecraft.src.ModelBiped;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.RenderLiving;
-import net.minecraft.src.RenderPlayer;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.ImageBufferDownload;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.2.3"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
@@ -121,7 +121,7 @@ public class Ears {
 		EntityPlayer player = e.entityPlayer;
 		float f = e.partialTicks;
 		RenderPlayer render = e.renderer;
-		EarsLog.debug("Platform", "renderSpecials player={}, partialTicks={}", player, f);
+		EarsLog.debug("Platform:Renderer", "renderSpecials player={}, partialTicks={}", player, f);
 		EntityPlayerSP sp = (EntityPlayerSP)player;
 		layer.doRenderLayer(render, sp,
 				sp.prevLimbYaw + (player.limbYaw - player.prevLimbYaw) * f,

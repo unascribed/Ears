@@ -17,10 +17,10 @@ import com.github.steveice10.mc.auth.data.GameProfile.TextureType;
 import com.github.steveice10.mc.auth.service.ProfileService;
 import com.github.steveice10.mc.auth.service.ProfileService.ProfileLookupCallback;
 import com.github.steveice10.mc.auth.service.SessionService;
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -52,7 +52,7 @@ public class Ears {
 	
 	public static void init() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft 1.2.5 / Forge {}; Side={}", MinecraftForge.getVersionString(), FMLCommonHandler.instance().getSide());
+			EarsLog.debugva("Platform", "Initialized - Minecraft 1.2.5 / Forge {}; Side={}", MinecraftForge.getVersionString().replace("Minecraft Forge ", ""), FMLCommonHandler.instance().getSide());
 		}
 		layer = new LayerEars();
 	}

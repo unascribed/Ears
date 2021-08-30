@@ -45,7 +45,7 @@ dependencies {
 		exclude module: "guava"
 	}
 	
-	implementation(project(path: ":ears-common", configuration: 'mixinLegacy'))
+	implementation files('../common/build/libs/ears-common-mixin-legacy.jar')
 }
 
 processResources {

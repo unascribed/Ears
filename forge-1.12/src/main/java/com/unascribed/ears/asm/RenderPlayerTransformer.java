@@ -1,46 +1,42 @@
 package com.unascribed.ears.asm;
 
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import com.elytradev.mini.MiniTransformer;
-import com.elytradev.mini.PatchContext;
-import com.elytradev.mini.annotation.Patch;
-import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.agent.mini.annotation.Patch;
+import com.unascribed.ears.common.agent.mini.MiniTransformer;
+import com.unascribed.ears.common.agent.mini.PatchContext;
 
 @Patch.Class("net.minecraft.client.renderer.entity.RenderPlayer")
 public class RenderPlayerTransformer extends MiniTransformer {
 	
-	@Patch.Method(srg="<init>", mcp="<init>", descriptor="(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
+	@Patch.Method("<init>(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
 	public void patchConstructor(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer constructor");
-		ctx.search(new InsnNode(RETURN)).jumpBefore();
+		ctx.jumpToLastReturn();
 		// EarsMod.addLayer(this);
-		ctx.add(new IntInsnNode(ALOAD, 0));
-		ctx.add(new MethodInsnNode(INVOKESTATIC, "com/unascribed/ears/Ears",
-				"addLayer", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;)V", false));
+		ctx.add(
+			ALOAD(0),
+			INVOKESTATIC("com/unascribed/ears/Ears", "addLayer", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;)V")
+		);
 	}
 	
-	@Patch.Method(srg="func_177139_c", mcp="renderLeftArm", descriptor="(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+	@Patch.Method("func_177139_c(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
 	public void patchRenderLeftArm(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer left arm");
-		ctx.search(new InsnNode(RETURN)).jumpBefore();
+		ctx.jumpToLastReturn();
 		// EarsMod.renderLeftArm(this, arg1);
-		ctx.add(new IntInsnNode(ALOAD, 0));
-		ctx.add(new IntInsnNode(ALOAD, 1));
-		ctx.add(new MethodInsnNode(INVOKESTATIC, "com/unascribed/ears/Ears",
-				"renderLeftArm", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", false));
+		ctx.add(
+			ALOAD(0),
+			ALOAD(1),
+			INVOKESTATIC("com/unascribed/ears/Ears", "renderLeftArm", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+		);
 	}
 	
-	@Patch.Method(srg="func_177138_b", mcp="renderRightArm", descriptor="(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+	@Patch.Method("func_177138_b(Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
 	public void patchRenderRightArm(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer right arm");
-		ctx.search(new InsnNode(RETURN)).jumpBefore();
+		ctx.jumpToLastReturn();
 		// EarsMod.renderRightArm(this, arg1);
-		ctx.add(new IntInsnNode(ALOAD, 0));
-		ctx.add(new IntInsnNode(ALOAD, 1));
-		ctx.add(new MethodInsnNode(INVOKESTATIC, "com/unascribed/ears/Ears",
-				"renderRightArm", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", false));
+		ctx.add(
+			ALOAD(0),
+			ALOAD(1),
+			INVOKESTATIC("com/unascribed/ears/Ears", "renderRightArm", "(Lnet/minecraft/client/renderer/entity/RenderPlayer;Lnet/minecraft/client/entity/AbstractClientPlayer;)V")
+		);
 	}
 
 }

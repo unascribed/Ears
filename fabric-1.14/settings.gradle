@@ -10,6 +10,3 @@ pluginManagement {
 }
 
 rootProject.name = "ears-fabric-1.14"
-
-include ':ears-common'
-project(':ears-common').projectDir = new File(rootProject.projectDir, '../common')

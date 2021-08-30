@@ -45,7 +45,7 @@ dependencies {
 	implementation 'com.github.unascribed:Rift:FINAL:dev'
 	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
 	
-	implementation(project(path: ":ears-common", configuration: 'mixinModern'))
+	implementation files('../common/build/libs/ears-common-mixin-modern.jar')
 }
 
 jar {

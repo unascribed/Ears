@@ -21,13 +21,30 @@ apply plugin: 'fabric-loom'
 sourceCompatibility = 7
 targetCompatibility = 7
 
+def forgeVersion = '1.5.2-7.8.1.738'
+
 def mcp = "mcp751.zip";
+def forgeZip = "forge${forgeVersion}.zip"
+def mcpForged = "mcp751-forged.zip"
 
 if (!file(mcp).exists()) {
 	println "Downloading ${mcp} from archive.org..."
 	file(mcp).withOutputStream {
 		it << new URL("https://archive.org/download/minecraftcoderpack/minecraftcoderpack.zip/minecraftcoderpack%2F${project.minecraft_version}%2F${mcp}").openStream()
 	}
+}
+if (!file(forgeZip).exists()) {
+	println "Downloading Forge ${forgeVersion} source..."
+	file(forgeZip).withOutputStream {
+		it << new URL("https://maven.minecraftforge.net/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-src.zip").openStream()
+	}
+}
+if (!file(mcpForged).exists()) {
+	println "Merging Forge config into MCP..."
+	'./merge-forge.sh'.execute()
+}
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java'.execute()
 }
 
 archivesBaseName = project.archives_base_name
@@ -49,8 +66,8 @@ configurations {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	forge "net.minecraftforge:forge:1.5.2-7.8.1.738:universal@zip"
-	mappings files(mcp)
+	forge "net.minecraftforge:forge:${forgeVersion}:universal@zip"
+	mappings files(mcpForged)
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
 	modImplementation "com.github.Steveice10:MCAuthLib:1.3"
@@ -58,8 +75,8 @@ dependencies {
 	modImplementation "com.google.code.gson:gson:2.8.6"
 	shade "com.google.code.gson:gson:2.8.6"
 	
-	compile(project(path: ":ears-common", configuration: 'legacy'))
-	shade(project(path: ":ears-common", configuration: 'legacy'))
+	compile files('../common/build/libs/ears-common-agent-legacy.jar')
+	shade files('../common/build/libs/ears-common-agent-legacy.jar')
 }
 
 subprojects {
@@ -104,7 +121,7 @@ jar {
 	from "LICENSE"
 	manifest {
 		attributes (
-			'FMLCorePlugin': 'com.unascribed.ears.asm.EarsLoadingPlugin'
+			'FMLCorePlugin': 'com.unascribed.ears.common.agent.OldForgeCoremod'
 		)
 	}
 }

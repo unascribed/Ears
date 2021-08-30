@@ -1,4 +1,4 @@
-import com.unascribed.ears.NFCAgent;
+import com.unascribed.ears.common.agent.EarsAgent;
 
 import net.minecraft.client.*;
 
@@ -8,7 +8,7 @@ public class kg extends Thread {
 	
 	public kg(Minecraft mc, String name) {
 		super(name);
-		if (!NFCAgent.initialized) {
+		if (!EarsAgent.initialized) {
 			System.err.println();
 			System.err.println("ERROR: Ears for NFC is not a jar mod, it is a Java agent, and requires special installation.");
 			System.err.println("Please read this: https://github.com/unascribed/Ears/wiki/New-Frontier-Craft-Installation");

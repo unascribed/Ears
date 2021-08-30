@@ -8,10 +8,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelPlayer;
@@ -67,13 +67,13 @@ public class Ears {
 	}
 	
 	public static void renderLeftArm(RenderPlayer rp, AbstractClientPlayer player) {
-		EarsLog.debug("Platform:Inject", "renderLeftArm({}, {})", rp, player);
+		EarsLog.debug("Platform:Renderer", "renderLeftArm({}, {})", rp, player);
 		LayerEars le = earsLayers.get(rp);
 		if (le != null) le.renderLeftArm(player);
 	}
 	
 	public static void renderRightArm(RenderPlayer rp, AbstractClientPlayer player) {
-		EarsLog.debug("Platform:Inject", "renderRightArm({}, {})", rp, player);
+		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", rp, player);
 		LayerEars le = earsLayers.get(rp);
 		if (le != null) le.renderRightArm(player);
 	}

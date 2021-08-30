@@ -17,10 +17,10 @@ import com.github.steveice10.mc.auth.data.GameProfile.TextureType;
 import com.github.steveice10.mc.auth.service.ProfileService;
 import com.github.steveice10.mc.auth.service.ProfileService.ProfileLookupCallback;
 import com.github.steveice10.mc.auth.service.SessionService;
-import com.unascribed.ears.common.AWTEarsImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -37,7 +37,7 @@ import net.minecraft.src.RenderLiving;
 import net.minecraft.src.RenderPlayer;
 import net.minecraftforge.common.ForgeVersion;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"@VERSION@"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
@@ -107,7 +107,7 @@ public class Ears {
 	}
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
-		EarsLog.debug("Platform", "renderSpecials player={}, partialTicks={}", player, f);
+		EarsLog.debug("Platform:Renderer", "renderSpecials player={}, partialTicks={}", player, f);
 		layer.doRenderLayer(render, player,
 				player.prevLegYaw + (player.legYaw - player.prevLegYaw) * f,
 				f);

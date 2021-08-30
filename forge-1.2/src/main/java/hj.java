@@ -1,4 +1,4 @@
-import com.unascribed.ears.OneteufyvAgent;
+import com.unascribed.ears.common.agent.EarsAgent;
 
 import net.minecraft.client.Minecraft;
 
@@ -8,7 +8,7 @@ public class hj extends Thread {
 	
 	public hj(Minecraft mc, String name) {
 		super(name);
-		if (!OneteufyvAgent.initialized) {
+		if (!EarsAgent.initialized) {
 			System.err.println();
 			System.err.println("ERROR: Ears for 1.2.5 is not a jar mod, it is a Java agent, and requires special installation.");
 			System.err.println("Please read this: https://github.com/unascribed/Ears/wiki/1.2.5-Installation");

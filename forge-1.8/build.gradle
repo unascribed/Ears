@@ -43,13 +43,13 @@ minecraft {
     replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
 	replace '@VERSION@', project.version
     
-	coreMod = 'com.unascribed.ears.asm.EarsLoadingPlugin'
+	coreMod = 'com.unascribed.ears.common.agent.NewForgeCoremod'
 }
 
 jar {
 	manifest {
 		attributes (
-			'FMLCorePlugin': 'com.unascribed.ears.asm.EarsLoadingPlugin',
+			'FMLCorePlugin': 'com.unascribed.ears.common.agent.NewForgeCoremod',
 			'FMLCorePluginContainsFMLMod': true
 		)
 	}
@@ -64,8 +64,8 @@ repositories {
 }
 
 dependencies {
-    compile(project(path: ":ears-common", configuration: 'legacy'))
-    shadow(project(path: ":ears-common", configuration: 'legacy'))
+    compile files('../common/build/libs/ears-common-agent-legacy.jar')
+    shadow files('../common/build/libs/ears-common-agent-legacy.jar')
 
 }
 

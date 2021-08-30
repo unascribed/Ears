@@ -1,10 +1,9 @@
 package com.unascribed.ears.common;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
-
 import com.unascribed.ears.common.debug.EarsLog;
 
 public class EarsFeatures {
@@ -20,7 +19,7 @@ public class EarsFeatures {
 		PINK(0xD823B7),
 		PURPLE2(0xD823FF),
 		;
-		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<>();
+		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<Integer, MagicPixel>();
 		static {
 			for (MagicPixel mp : values()) {
 				if (mp.rgb != -1) {
@@ -64,35 +63,29 @@ public class EarsFeatures {
 		CROSS,
 		OUT,
 		;
-		public static EarMode fromMP(MagicPixel mp) {
-			switch (mp) {
-				default:
-					EarsLog.debug("Common:Features", "detect(...): {} is not valid for the ear mode pixel; pretending it's Magic Red", mp);
-				case RED: return NONE;
-				case BLUE: return ABOVE;
-				case GREEN: return SIDES;
-				case PURPLE: return BEHIND;
-				case CYAN: return AROUND;
-				case ORANGE: return FLOPPY;
-				case PINK: return CROSS;
-				case PURPLE2: return OUT;
-			}
-		}
+		
+		public static final Map<MagicPixel, EarMode> BY_MAGIC = buildMap(
+				MagicPixel.RED, NONE,
+				MagicPixel.BLUE, ABOVE,
+				MagicPixel.GREEN, SIDES,
+				MagicPixel.PURPLE, BEHIND,
+				MagicPixel.CYAN, AROUND,
+				MagicPixel.ORANGE, FLOPPY,
+				MagicPixel.PINK, CROSS,
+				MagicPixel.PURPLE2, OUT
+		);
 	}
 	public enum EarAnchor {
 		CENTER,
 		FRONT,
 		BACK,
 		;
-		public static EarAnchor fromMP(MagicPixel mp) {
-			switch (mp) {
-				default:
-					EarsLog.debug("Common:Features", "detect(...): {} is not valid for the ear anchor pixel; pretending it's Magic Blue", mp);
-				case BLUE: return CENTER;
-				case GREEN: return FRONT;
-				case RED: return BACK;
-			}
-		}
+		
+		public static final Map<MagicPixel, EarAnchor> BY_MAGIC = buildMap(
+				MagicPixel.BLUE, CENTER,
+				MagicPixel.GREEN, FRONT,
+				MagicPixel.RED, BACK
+		);
 	}
 	public enum Protrusions {
 		NONE(false, false),
@@ -105,16 +98,14 @@ public class EarsFeatures {
 			this.claws = claws;
 			this.horn = horn;
 		}
-		public static Protrusions fromMP(MagicPixel mp) {
-			switch (mp) {
-				default:
-					EarsLog.debug("Common:Features", "detect(...): {} is not valid for the protrusions pixel; pretending it's Magic Red", mp);
-				case BLUE: case RED: return NONE;
-				case GREEN: return CLAWS;
-				case PURPLE: return HORN;
-				case CYAN: return CLAWS_AND_HORN;
-			}
-		}
+		
+		public static final Map<MagicPixel, Protrusions> BY_MAGIC = buildMap(
+				MagicPixel.BLUE, NONE,
+				MagicPixel.RED, NONE,
+				MagicPixel.GREEN, CLAWS,
+				MagicPixel.PURPLE, HORN,
+				MagicPixel.CYAN, CLAWS_AND_HORN
+		);
 	}
 	public enum TailMode {
 		NONE,
@@ -122,16 +113,12 @@ public class EarsFeatures {
 		BACK,
 		UP,
 		;
-		public static TailMode fromMP(MagicPixel mp) {
-			switch (mp) {
-				default:
-					EarsLog.debug("Common:Features", "detect(...): {} is not valid for the tail mode pixel; pretending it's Magic Red", mp);
-				case RED: return NONE;
-				case BLUE: return DOWN;
-				case GREEN: return BACK;
-				case PURPLE: return UP;
-			}
-		}
+		public static final Map<MagicPixel, TailMode> BY_MAGIC = buildMap(
+				MagicPixel.RED, NONE,
+				MagicPixel.BLUE, DOWN,
+				MagicPixel.GREEN, BACK,
+				MagicPixel.PURPLE, UP
+		);
 	}
 
 	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0);
@@ -163,10 +150,10 @@ public class EarsFeatures {
 		if (img.getHeight() == 64) {
 			MagicPixel first = getMagicPixel(img, 0);
 			if (first == MagicPixel.BLUE) {
-				EarMode earMode = getMagicPixel(img, 1, EarMode::fromMP, "ear mode");
-				EarAnchor earAnchor = getMagicPixel(img, 2, EarAnchor::fromMP, "ear anchor", earMode != EarMode.NONE && earMode != EarMode.BEHIND);
-				Protrusions protrusions = getMagicPixel(img, 3, Protrusions::fromMP, "protrusions");
-				TailMode tailMode = getMagicPixel(img, 4, TailMode::fromMP, "tail mode");
+				EarMode earMode = getMagicPixel(img, 1, EarMode.BY_MAGIC, EarMode.NONE, "ear mode");
+				EarAnchor earAnchor = getMagicPixel(img, 2, EarAnchor.BY_MAGIC, EarAnchor.CENTER, "ear anchor", earMode != EarMode.NONE && earMode != EarMode.BEHIND);
+				Protrusions protrusions = getMagicPixel(img, 3, Protrusions.BY_MAGIC, Protrusions.NONE, "protrusions");
+				TailMode tailMode = getMagicPixel(img, 4, TailMode.BY_MAGIC, TailMode.NONE, "tail mode");
 				int tailBend = getPixel(img, 5);
 				float tailBend0 = 0;
 				float tailBend1 = 0;
@@ -228,21 +215,27 @@ public class EarsFeatures {
 		return mp;
 	}
 	
-	private static <T> T getMagicPixel(EarsImage img, int idx, Function<MagicPixel, T> converter, String what) {
-		return getMagicPixel(img, idx, converter, what, true);
+	private static <T> T getMagicPixel(EarsImage img, int idx, Map<MagicPixel, T> map, T def, String what) {
+		return getMagicPixel(img, idx, map, def, what, true);
 	}
 	
-	private static <T> T getMagicPixel(EarsImage img, int idx, Function<MagicPixel, T> converter, String what, boolean relevant) {
+	private static <T> T getMagicPixel(EarsImage img, int idx, Map<MagicPixel, T> map, T def, String what, boolean relevant) {
 		if (!relevant) {
 			EarsLog.debug("Common:Features", "detect(...): The {} pixel is not relevant; skipping it", what);
 			return null;
 		}
 		MagicPixel mp = getMagicPixel(img, idx);
-		T t = converter.apply(mp);
+		T t = map.get(mp);
+		if (t == null) {
+			if (def == null) return null;
+			EarsLog.debug("Common:Features", "detect(...): {} is not valid for the {} pixel; pretending it's {}", mp, what, def);
+			return def;
+		}
 		EarsLog.debug("Common:Features", "detect(...): The {} pixel is {} - setting {} to {}", what, mp, what, t);
 		return t;
 	}
 	
+	@SuppressWarnings("unused")
 	private static boolean getMagicPixel(EarsImage img, int idx, MagicPixel truePixel, String what) {
 		MagicPixel mp = getMagicPixel(img, idx);
 		boolean b = mp == truePixel;
@@ -250,6 +243,7 @@ public class EarsFeatures {
 		return b;
 	}
 
+	@SuppressWarnings("unused")
 	private static String upperHex32f8Dbg(int col) {
 		return EarsLog.DEBUG ? Integer.toHexString(((col>>24)&0xFF)|0xFF00).substring(2).toUpperCase(Locale.ROOT) : "";
 	}
@@ -276,6 +270,16 @@ public class EarsFeatures {
 				+ ", earAnchor=" + earAnchor + ", protrusions=" + protrusions
 				+ ", tailMode=" + tailMode + ", tailBend={" + tailBend0
 				+ ", " + tailBend1 + ", " + tailBend2 + ", " + tailBend3 + "}]";
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <S, K extends S, V extends S> Map<K, V> buildMap(S... arr) {
+		if (arr.length%2 != 0) throw new IllegalArgumentException("Must have a multiple of 2 arguments");
+		Map<K, V> map = new HashMap<K, V>();
+		for (int i = 0; i < arr.length; i += 2) {
+			map.put((K)arr[i], (V)arr[i+1]);
+		}
+		return Collections.unmodifiableMap(map);
 	}
 
 }

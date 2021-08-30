@@ -126,7 +126,7 @@ if (project.ext.enforceLicenseHeaders) {
 
 def needsShadow = !project.ext.concreteModules.isEmpty() || project.ext.miniVersion
 
-if (needsShadow) {
+if (true) {
 	apply plugin: 'com.github.johnrengelman.shadow'
 
 	jar {

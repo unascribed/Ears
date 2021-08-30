@@ -10,12 +10,25 @@ public interface EarsRenderDelegate {
 		LEFT_LEG(4, 12, 4),
 		RIGHT_LEG(4, 12, 4),
 		;
-		public final int xSize, ySize, zSize;
+		private final int xSize, ySize, zSize;
 
 		BodyPart(int xSize, int ySize, int zSize) {
 			this.xSize = xSize;
 			this.ySize = ySize;
 			this.zSize = zSize;
+		}
+		
+		public int getXSize(boolean slim) {
+			if (slim && (this == LEFT_ARM || this == RIGHT_ARM)) return 3;
+			return xSize;
+		}
+		
+		public int getYSize(boolean slim) {
+			return ySize;
+		}
+		
+		public int getZSize(boolean slim) {
+			return zSize;
 		}
 		
 	}
