@@ -46,3 +46,7 @@ jar {
 	from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
 	from "../LICENSE"
 }
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

@@ -43,9 +43,6 @@ if (!file(mcpForged).exists()) {
 	println "Merging Forge config into MCP..."
 	'./merge-forge.sh'.execute()
 }
-compileJava.doFirst {
-	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java'.execute()
-}
 
 archivesBaseName = project.archives_base_name
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
@@ -128,4 +125,8 @@ jar {
 
 build.doLast {
 	file(shadowJar.archivePath).delete()
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
 }

@@ -66,3 +66,7 @@ processResources {
 		exclude 'mcmod.info'
 	}
 }
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

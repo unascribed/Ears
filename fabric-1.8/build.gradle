@@ -80,3 +80,7 @@ jar {
 	from "../LICENSE"
 	from zipTree('../common/build/libs/ears-common-mixin-legacy.jar')
 }
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

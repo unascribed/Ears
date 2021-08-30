@@ -28,9 +28,6 @@ if (!file(mcp).exists()) {
 		it << new URL("https://archive.org/download/minecraftcoderpack/minecraftcoderpack.zip/minecraftcoderpack%2F${project.minecraft_version}%2F${mcp}").openStream()
 	}
 }
-compileJava.doFirst {
-	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java'.execute()
-}
 
 archivesBaseName = project.archives_base_name
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
@@ -117,4 +114,8 @@ jar {
 
 build.doLast {
 	file(shadowJar.archivePath).delete()
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
 }

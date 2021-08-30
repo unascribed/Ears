@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.unascribed.ears.common.EarsVersion;
+
 public class EarsLog {
 	
 	public static final boolean DEBUG = EarsLogImpl.checkDebug();
@@ -18,7 +20,7 @@ public class EarsLog {
 	
 	static {
 		if (DEBUG) {
-			debug("Common", "Hello, World!");
+			debug("Common", "Hello, World! Ears Common v{}, {} Platform v{}", EarsVersion.COMMON, EarsVersion.PLATFORM_KIND, EarsVersion.PLATFORM);
 		}
 	}
 

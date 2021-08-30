@@ -65,3 +65,7 @@ mixin {
     defaultObfuscationEnv notch
     add sourceSets.main, 'ears.refmap.json'
 }
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

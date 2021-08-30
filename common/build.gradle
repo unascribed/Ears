@@ -9,217 +9,183 @@ buildscript {
 	}
 }
 
-def newGradle = true
-try {
-	apply plugin: 'java-library'
-} catch (e) {
-	newGradle = false
-	apply plugin: 'java'
-}
-if (newGradle) {
-	apply plugin: 'com.github.johnrengelman.shadow'
-}
+apply plugin: 'java-library'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = targetCompatibility = '1.6'
 
+repositories {
+	// Gradle will throw a "helpful" error about the dependencies not supporting Java 6 if not
+	// forced to ignore metadata
+	maven { url 'https://repo1.maven.org/maven2/'; metadataSources { artifact() } }
+	maven { url 'https://libraries.minecraft.net/'; metadataSources { artifact() } }
+	maven { url 'https://repo.spongepowered.org/maven/'; metadataSources { artifact() } }
+	maven { url 'https://teavm.org/maven/repository/' }
+}
 configurations {
 	teavm
 	agentShade
+	mixinLegacy {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+	mixinModern {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+	legacy {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+	modern {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+	agentLegacy {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+	agentModern {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+}
+sourceSets {
+	normal {}
+	main {
+		compileClasspath += sourceSets.normal.output
+		compileClasspath += sourceSets.normal.compileClasspath
+		runtimeClasspath += sourceSets.normal.output
+		runtimeClasspath += sourceSets.normal.runtimeClasspath
+	}
+	legacy {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+	mixin {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+	js {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+	modern {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+	dummy {}
+	agent {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.main.compileClasspath
+		compileClasspath += sourceSets.dummy.output
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
 }
 
-if (!newGradle) {
-	repositories {
-		mavenCentral()
-		maven { url 'https://libraries.minecraft.net/' }
-		maven { url 'https://repo.spongepowered.org/maven/' }
-		maven { url "https://teavm.org/maven/repository/" }
-	}
-	configurations {
-		implementation
-		compile.extendsFrom implementation
-		api
-		compile.extendsFrom api
-	}
-	sourceSets {
-		main {
-			java.srcDirs += 'src/legacy/java'
-		}
-	}
-	jar {
-		classifier 'legacy'
-	}
-} else {
-	repositories {
-		// Gradle will throw a "helpful" error about the dependencies not supporting Java 6 if not
-		// forced to ignore metadata
-		maven { url 'https://repo1.maven.org/maven2/'; metadataSources { artifact() } }
-		maven { url 'https://libraries.minecraft.net/'; metadataSources { artifact() } }
-		maven { url 'https://repo.spongepowered.org/maven/'; metadataSources { artifact() } }
-		maven { url 'https://teavm.org/maven/repository/' }
-	}
-	configurations {
-		mixinLegacy {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-		mixinModern {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-		legacy {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-		modern {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-		agentLegacy {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-		agentModern {
-			canBeConsumed = true
-			canBeResolved = false
-		}
-	}
-	sourceSets {
-		normal {}
-		main {
-			compileClasspath += sourceSets.normal.output
-			compileClasspath += sourceSets.normal.compileClasspath
-			runtimeClasspath += sourceSets.normal.output
-			runtimeClasspath += sourceSets.normal.runtimeClasspath
-		}
-		legacy {
-			compileClasspath += sourceSets.main.output
-			compileClasspath += sourceSets.main.compileClasspath
-			runtimeClasspath += sourceSets.main.output
-			runtimeClasspath += sourceSets.main.runtimeClasspath
-		}
-		mixin {
-			compileClasspath += sourceSets.main.output
-			compileClasspath += sourceSets.main.compileClasspath
-			runtimeClasspath += sourceSets.main.output
-			runtimeClasspath += sourceSets.main.runtimeClasspath
-		}
-		js {
-			compileClasspath += sourceSets.main.output
-			compileClasspath += sourceSets.main.compileClasspath
-			runtimeClasspath += sourceSets.main.output
-			runtimeClasspath += sourceSets.main.runtimeClasspath
-		}
-		modern {
-			compileClasspath += sourceSets.main.output
-			compileClasspath += sourceSets.main.compileClasspath
-			runtimeClasspath += sourceSets.main.output
-			runtimeClasspath += sourceSets.main.runtimeClasspath
-		}
-		dummy {}
-		agent {
-			compileClasspath += sourceSets.main.output
-			compileClasspath += sourceSets.main.compileClasspath
-			compileClasspath += sourceSets.dummy.output
-			runtimeClasspath += sourceSets.main.output
-			runtimeClasspath += sourceSets.main.runtimeClasspath
-		}
-	}
+jar {
+	from sourceSets.normal.output
+
+	classifier 'base'
 	
-	jar {
-		from sourceSets.normal.output
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task mixinLegacyJar(type: Jar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.mixin.output
+	from sourceSets.legacy.output
 	
-		classifier 'base'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	classifier 'mixin-legacy'
 	
-	task mixinLegacyJar(type: Jar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.mixin.output
-		from sourceSets.legacy.output
-		
-		classifier 'mixin-legacy'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task mixinModernJar(type: Jar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.mixin.output
+	from sourceSets.modern.output
 	
-	task mixinModernJar(type: Jar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.mixin.output
-		from sourceSets.modern.output
-		
-		classifier 'mixin-modern'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	classifier 'mixin-modern'
 	
-	task legacyJar(type: Jar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.legacy.output
-		
-		classifier 'legacy'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task legacyJar(type: Jar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.legacy.output
 	
-	task modernJar(type: Jar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.modern.output
-		
-		classifier 'modern'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	classifier 'legacy'
 	
-	task agentLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.legacy.output
-		from sourceSets.agent.output
-		
-		configurations = [project.configurations.agentShade]
-		relocate 'org.objectweb.asm', 'com.unascribed.ears.common.mini.asm'
-		exclude 'module-info.class'
-		
-		classifier 'agent-legacy'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task modernJar(type: Jar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.modern.output
 	
-	task agentModernJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-		from sourceSets.main.output
-		from sourceSets.normal.output
-		from sourceSets.modern.output
-		from sourceSets.agent.output
-		
-		configurations = [project.configurations.agentShade]
-		relocate 'org.objectweb.asm', 'com.unascribed.ears.common.mini.asm'
-		exclude 'module-info.class'
-		
-		classifier 'agent-modern'
-		
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+	classifier 'modern'
 	
-	build.dependsOn mixinLegacyJar
-	build.dependsOn mixinModernJar
-	build.dependsOn legacyJar
-	build.dependsOn modernJar
-	build.dependsOn agentLegacyJar
-	build.dependsOn agentModernJar
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task agentLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.legacy.output
+	from sourceSets.agent.output
 	
-	artifacts {
-		mixinLegacy mixinLegacyJar
-		mixinModern mixinModernJar
-		legacy legacyJar
-		modern modernJar
-		agentLegacy agentLegacyJar
-		agentModern agentModernJar
-	}
+	configurations = [project.configurations.agentShade]
+	relocate 'org.objectweb.asm', 'com.unascribed.ears.common.mini.asm'
+	exclude 'module-info.class'
+	
+	classifier 'agent-legacy'
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task agentModernJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.modern.output
+	from sourceSets.agent.output
+	
+	configurations = [project.configurations.agentShade]
+	relocate 'org.objectweb.asm', 'com.unascribed.ears.common.mini.asm'
+	exclude 'module-info.class'
+	
+	classifier 'agent-modern'
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+build.dependsOn mixinLegacyJar
+build.dependsOn mixinModernJar
+build.dependsOn legacyJar
+build.dependsOn modernJar
+build.dependsOn agentLegacyJar
+build.dependsOn agentModernJar
+
+artifacts {
+	mixinLegacy mixinLegacyJar
+	mixinModern mixinModernJar
+	legacy legacyJar
+	modern modernJar
+	agentLegacy agentLegacyJar
+	agentModern agentModernJar
 }
 
 dependencies {
@@ -245,46 +211,41 @@ import org.teavm.tooling.TeaVMTargetType
 import org.teavm.tooling.sources.DirectorySourceFileProvider
 import org.teavm.tooling.TeaVMProblemRenderer
 import org.teavm.tooling.ConsoleTeaVMToolLog
-if (rootProject == project) {
-	task teavm {
-		dependsOn compileJsJava
-		inputs.dir file('src')
-		outputs.dir file('build/teavm')
-		doFirst {
-			file('build/teavm').mkdirs()
-			def tool = new TeaVMTool()
-			tool.targetDirectory = file('build/teavm')
-			tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
-			tool.sourceMapsFileGenerated = true
-			tool.mainClass = 'com.unascribed.ears.common.EarsJS'
-			tool.entryPointName = 'rebuildQuads'
-			tool.targetType = TeaVMTargetType.JAVASCRIPT
-			tool.log = new ConsoleTeaVMToolLog(true)
-			tool.obfuscated = false
-			def urls = []
-			urls.add(file('build/classes/java/main').toURI().toURL())
-			urls.add(file('build/classes/java/js').toURI().toURL())
-			configurations.teavm.files.each {
-				urls.add(it.toURI().toURL())
-			}
-			def ucl = new URLClassLoader(urls.toArray(new URL[0]), TeaVMTool.class.classLoader)
-			tool.classLoader = ucl
-			tool.generate()
-			TeaVMProblemRenderer.describeProblems(tool.getDependencyInfo().getCallGraph(), tool.getProblemProvider(), tool.log)
+
+task teavm {
+	dependsOn compileJsJava
+	inputs.dir file('src')
+	outputs.dir file('build/teavm')
+	doFirst {
+		file('build/teavm').mkdirs()
+		def tool = new TeaVMTool()
+		tool.targetDirectory = file('build/teavm')
+		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
+		tool.sourceMapsFileGenerated = true
+		tool.mainClass = 'com.unascribed.ears.common.EarsJS'
+		tool.entryPointName = 'rebuildQuads'
+		tool.targetType = TeaVMTargetType.JAVASCRIPT
+		tool.log = new ConsoleTeaVMToolLog(true)
+		tool.obfuscated = false
+		def urls = []
+		urls.add(file('build/classes/java/main').toURI().toURL())
+		urls.add(file('build/classes/java/js').toURI().toURL())
+		configurations.teavm.files.each {
+			urls.add(it.toURI().toURL())
 		}
+		def ucl = new URLClassLoader(urls.toArray(new URL[0]), TeaVMTool.class.classLoader)
+		tool.classLoader = ucl
+		tool.generate()
+		TeaVMProblemRenderer.describeProblems(tool.getDependencyInfo().getCallGraph(), tool.getProblemProvider(), tool.log)
 	}
-	task closure(type: Exec) {
-		dependsOn teavm
-		inputs.file file('build/teavm/classes.js')
-		outputs.file file('build/teavm/classes.min.js')
-		commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js'
-	}
-} else {
-	gradle.taskGraph.whenReady {
-		gradle.taskGraph.allTasks.each {
-			if (it.project == project) {
-				it.onlyIf { false }
-			}
-		}
-	}
+}
+task closure(type: Exec) {
+	dependsOn teavm
+	inputs.file file('build/teavm/classes.js')
+	outputs.file file('build/teavm/classes.min.js')
+	commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js'
+}
+
+compileJava.doFirst {
+	'./replace-version.sh src/main/java/com/unascribed/ears/common/EarsVersion.java'.execute()
 }

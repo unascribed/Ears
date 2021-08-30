@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.unascribed.ears.common.EarsVersion;
 import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.debug.EarsLog;
 
@@ -24,6 +25,7 @@ public class EarsAgent {
 	
 	public static void premain(String arg, Instrumentation ins) {
 		EarsLog.debug("Common:Agent", "Agent initialized");
+		System.out.println("Hello from Ears v"+EarsVersion.PLATFORM+" for "+EarsVersion.PLATFORM_KIND+"!");
 		initialized = true;
 		ins.addTransformer(new ClassFileTransformer() {
 			@Override

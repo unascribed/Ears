@@ -30,9 +30,6 @@ if (!file(mcp).exists()) {
 	println "Patching MCP..."
 	'./patch-mcp.sh'.execute()
 }
-compileJava.doFirst {
-	'../common/replace-version.sh src/main/java/mod_Ears.java'.execute()
-}
 
 archivesBaseName = project.archives_base_name
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
@@ -124,4 +121,8 @@ jar {
 
 build.doLast {
 	file(shadowJar.archivePath).delete()
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/mod_Ears.java src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
 }
