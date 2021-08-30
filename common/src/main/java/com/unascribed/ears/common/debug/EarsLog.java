@@ -20,7 +20,16 @@ public class EarsLog {
 	
 	static {
 		if (DEBUG) {
-			debug("Common", "Hello, World! Ears Common v{}, {} Platform v{}", EarsVersion.COMMON, EarsVersion.PLATFORM_KIND, EarsVersion.PLATFORM);
+			if (EarsVersion.PLATFORM != null) {
+				debug("Common", "Hello, World! Ears Common v{}, {} Platform v{}", EarsVersion.COMMON, EarsVersion.PLATFORM_KIND, EarsVersion.PLATFORM);
+			} else {
+				debug("Common", "Hello, World! Ears Common v{}", EarsVersion.COMMON);
+			}
+			if (ONLY_DEBUG != null) {
+				debug("Common", "Debugging is enabled with allowed tags {}", ONLY_DEBUG);
+			} else {
+				debug("Common", "Debugging is enabled with all tags");
+			}
 		}
 	}
 

@@ -290,7 +290,15 @@ SOFTWARE.
 	<script src="three.min.js"></script>
 	<script src="ears-common.js"></script>
 	<script>
-	if (location.hash === "#debug") window.EarsDebug = true;
+	if (location.hash === "#debug") {
+		window.EarsDebug = true;
+	} else if (location.hash.indexOf("#debug=") === 0) {
+		var li = location.hash.substring(7).split(",");
+		window.EarsDebug = li;
+	} else {
+		window.EarsDebug = false;
+	}
+	window.addEventListener('hashchange', () => window.location.reload());
 	var $ = (s) => document.querySelector(s);
 	var $$ = (s) => document.querySelectorAll(s);
 	let skinTexNeedsUpdate = false;

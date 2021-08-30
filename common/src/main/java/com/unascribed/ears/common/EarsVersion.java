@@ -7,8 +7,8 @@ public class EarsVersion {
 	public static final String PLATFORM_KIND;
 	
 	static {
-		String v = COMMON;
-		String k = "Unknown";
+		String v = null;
+		String k = null;
 		try {
 			Class<?> clazz = Class.forName("com.unascribed.ears.EarsPlatformVersion");
 			v = (String)clazz.getField("VERSION").get(null);
