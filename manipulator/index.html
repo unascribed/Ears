@@ -117,6 +117,18 @@ SOFTWARE.
 		a:link {
 			color: #0FA;
 		}
+		.notice {
+			border-left: #F00 5px solid;
+			padding: 8px;
+			padding-left: 58px;
+			background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTEyIDJMMSAyMWgyMk0xMiA2bDcuNTMgMTNINC40N00xMSAxMHY0aDJ2LTRtLTIgNnYyaDJ2LTIiIGZpbGw9IiNGRkYiLz48L3N2Zz4K');
+			background-position: 12px 12px;
+			background-repeat: no-repeat;
+			background-size: 32px 32px;
+		}
+		.notice.bug {
+			background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTIwIDhoLTIuODFjLS40NS0uOC0xLjA3LTEuNS0xLjgyLTJMMTcgNC40MSAxNS41OSAzbC0yLjE3IDIuMTdhNi4wMDIgNi4wMDIgMCAwMC0yLjgzIDBMOC40MSAzIDcgNC40MSA4LjYyIDZjLS43NS41LTEuMzYgMS4yMS0xLjgxIDJINHYyaDIuMDljLS4wNi4zMy0uMDkuNjYtLjA5IDF2MUg0djJoMnYxYzAgLjM0LjAzLjY3LjA5IDFINHYyaDIuODFBNS45ODggNS45ODggMCAwMDE1IDIwLjE4Yy45MS0uNTIgMS42Ny0xLjI4IDIuMTktMi4xOEgyMHYtMmgtMi4wOWMuMDYtLjMzLjA5LS42Ni4wOS0xdi0xaDJ2LTJoLTJ2LTFjMC0uMzQtLjAzLS42Ny0uMDktMUgyMFY4bS00IDdhNCA0IDAgMDEtNCA0IDQgNCAwIDAxLTQtNHYtNGE0IDQgMCAwMTQtNCA0IDQgMCAwMTQgNHY0bS0yLTV2MmgtNHYtMmg0bS00IDRoNHYyaC00di0yeiIgZmlsbD0iI0ZGRiIvPjwvc3ZnPgo=');
+		}
 	</style>
 </head>
 <body>
@@ -125,8 +137,9 @@ SOFTWARE.
 		<div id="three" style="float:right"></div>
 		<h1>Ears Skin Manipulator</h1>
 		<p>
-			Upload* a skin to get started. Legacy (pre-1.8, 64x32) skins will be converted to modern 64x64 skins. Once you're done, right-click the skin preview below and choose "Save image as..." to download it.<br/><br/>
-			For extreme clarity, because people keep asking: <b style="font-size:20px">This means when you're done configuring stuff on this page, <span style="color:#F44336">YOU MUST RIGHT-CLICK THE SKIN BELOW AND SAVE IT TO YOUR COMPUTER, AND <a style="color:#F44336" href="https://www.minecraft.net/en-us/profile/skin" rel="nofollow">UPLOAD IT TO MOJANG</a></span>.</b> This page does not magically reconfigure your skin via polarity-reversed quantum entropy entanglement. <i>All data for Ears is stored in the skin!</i>
+			Upload* a skin to get started. Legacy (pre-1.8, 64x32) skins will be converted to modern 64x64 skins.<br/><br/>
+			<b>Once you're done, right-click the skin preview below and choose "Save image as..." to download it.</b><br/><br/>
+			<b>This tool helps you to set up the "magic pixels" in your skin that are read by the Ears mod.</b> You can see it as the various colors on the left center of the skin shown below. <b><i style="color:#F44336">This means that in order for changes made here to apply, you must save the skin below and <a style="color:#F44336" href="https://www.minecraft.net/en-us/profile/skin" rel="nofollow">upload it to Mojang</a>!</i></b> If you do not do this, <i>no Ears features will appear in-game</i>. There is no in-game configuration GUI or anything for Ears, all the options are encoded into those magic pixels.
 		</p>
 		<input type="file" id="skin-upload" accept="image/png,.png"></input><br/><br/>
 		Alternatively, you can <button id="sample">load a sample skin</button> which will change to demonstrate any options you select below.<br/>
@@ -251,24 +264,24 @@ SOFTWARE.
 			</tr>
 		</table>
 		<br/>
-		<div style="display: none;margin-bottom:8px" id="req-121-notice">
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-121-notice">
 			<b><i>You've selected options that require new features added in v1.2.1.</i></b><br/>
 			Before v1.2.1, Cross ears mode will not render.
 		</div>
-		<div style="display: none;margin-bottom:8px" id="req-122-notice">
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-122-notice">
 			<b><i>You've selected options that require new features added in v1.2.2.</i></b><br/>
 			Before v1.2.2, any custom first tail bend angle will be treated as 0°.
 		</div>
-		<div style="display: none;margin-bottom:8px" id="req-123-notice">
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-123-notice">
 			<b><i>You've selected options that require new features added in v1.2.3.</i></b><br/>
 			Before v1.2.3, Out ears mode will not render. <span id="out-anchor-back">As you're using
 			an Ear Anchor of "Back", you may use the legacy Behind ears mode instead for compatibility.</span>
 		</div>
-		<div style="display: none;margin-bottom:8px" id="req-124-notice">
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-124-notice">
 			<b><i>You've selected options that require new features added in v1.2.4.</i></b><br/>
 			Before v1.2.4, Vertical tail mode will not render.
 		</div>
-		<div style="display: none;margin-bottom:8px" id="bug-122-notice">
+		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
 			Before v1.2.2:
 			<ul>
@@ -276,7 +289,7 @@ SOFTWARE.
 			<li id="around-bad-uvs">Around mode had the backs of the sides flipped horizontally</li>
 			</ul>
 		</div>
-		<div style="display: none;margin-bottom:8px" id="bug-123-notice">
+		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-123-notice">
 			<b><i>You've selected options that had bugs fixed in v1.2.3.</i></b><br/>
 			Before v1.2.3:
 			<ul>
