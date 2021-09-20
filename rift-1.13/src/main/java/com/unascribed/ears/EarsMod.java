@@ -8,8 +8,6 @@ import org.spongepowered.asm.mixin.Mixins;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.item.EntityEnderEye;
 
 
 public class EarsMod implements InitializationListener {
@@ -22,7 +20,6 @@ public class EarsMod implements InitializationListener {
 		}
 		MixinBootstrap.init();
 		Mixins.addConfiguration("ears.mixins.json");
-		Render<Entity>
 	}
 	
 }
