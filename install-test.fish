@@ -17,3 +17,5 @@ for t in (ls -1 artifacts/ |rev |cut -d- -f 2- |rev)
 end
 rm -f ~/MultiMC/instances/ears-fabric-1.15/.minecraft/mods/ears-*.jar
 cp artifacts/ears-fabric-1.16*.jar ~/MultiMC/instances/ears-fabric-1.15/.minecraft/mods
+rm -f ~/MultiMC/instances/ears-fabric-1.18/.minecraft/mods/ears-*.jar
+cp artifacts/ears-fabric-1.17*.jar ~/MultiMC/instances/ears-fabric-1.18/.minecraft/mods
