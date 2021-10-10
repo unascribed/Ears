@@ -15,21 +15,21 @@ rm -f artifacts/*
 build() {
 	for proj in $@; do
 		(
-			cd $proj
+			cd platform-$proj
 			rm -f build-ok
 			TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
 			rm -f build/libs/*-dev.jar
 		) &
 	done
 }
-echo 'Building everything...'
+echo 'Building platforms...'
 build $all
 JAVA_HOME=$JAVA8_HOME build $old
 JAVA_HOME=$JAVA16_HOME build $new
 wait
 for proj in $special; do
 	(
-		cd $proj
+		cd platform-$proj
 		rm -f build-ok
 		TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
 		rm -f build/libs/*-dev.jar
@@ -37,11 +37,11 @@ for proj in $special; do
 done
 exit=
 for proj in $all $old $new $special; do
-	if [ ! -e "$proj/build-ok" ]; then
-		echo "Build failure in $proj."
+	if [ ! -e "platform-$proj/build-ok" ]; then
+		echo "Build failure in platform $proj."
 		exit=y
 	fi
-	rm -f "$proj/build-ok"
+	rm -f "platform-$proj/build-ok"
 done
 if [ "$exit" == "y" ]; then
 	echo "Exiting due to build failures."
@@ -49,8 +49,8 @@ if [ "$exit" == "y" ]; then
 fi
 echo 'All builds completed successfully.'
 mkdir -p artifacts
-cp */build/libs/* artifacts
-rm -f artifacts/*-sources{,-dev}.jar artifacts/ears-common*.jar
+cp platform-*/build/libs/* artifacts
+rm -f artifacts/*-sources{,-dev}.jar
 if [ -n "$1" ]; then
 	echo "Proceeding to publish..."
 	./publish.sh $1
