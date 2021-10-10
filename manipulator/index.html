@@ -978,7 +978,7 @@ SOFTWARE.
 					} else if (m.type === "translate") {
 						mat.multiply(new THREE.Matrix4().makeTranslation(m.x, -m.y, m.z));
 					} else if (m.type === "rotate") {
-						mat.multiply(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(-m.x, m.y, m.z), THREE.Math.degToRad(m.ang)));
+						mat.multiply(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(-m.x, m.y, -m.z), THREE.Math.degToRad(m.ang)));
 					} else {
 						console.warn("Unknown type "+m.type+" while processing render object move", m);
 					}
