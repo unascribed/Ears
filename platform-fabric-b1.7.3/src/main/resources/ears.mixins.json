@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "com.unascribed.ears.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [
+    "MixinMinecraft",
+    "MixinClass130",
+    "MixinClass130Thread",
+    "MixinClass130Thread$LookupCallback",
+    "MixinImageProcessorImpl",
+    "MixinPlayerRenderer",
+    "MixinBipedModel",
+    "MixinClass552",
+    "MixinModelPart",
+    "accessor.AccessorImageProcessorImpl",
+    "accessor.AccessorLivingEntityRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

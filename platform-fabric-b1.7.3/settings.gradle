@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "ears-platform-fabric-b1.7.3"
