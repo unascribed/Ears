@@ -3,10 +3,10 @@ plugins {
 }
 
 def target = project.getProperty("target")
-def version = file('../version.txt').text.trim()+file("../${target}/version-suffix.txt").text.trim()
+def version = file('../version.txt').text.trim()+file("../platform-${target}/version-suffix.txt").text.trim()
 
 def prefix = ""
-def artifact = "../${target}/build/libs/ears-${target}-${version}.jar"
+def artifact = "../platform-${target}/build/libs/ears-${target}-${version}.jar"
 def stability = ""
 def gameVersions = []
 def requires = []

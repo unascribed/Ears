@@ -1,6 +1,6 @@
 #!/bin/bash -e
-if [ -z "$1" ]; then
-	echo "Need a Curse API key to publish."
+if [ -z "$1" -o -z "$2" ]; then
+	echo "Need a Curse API key and Modrinth API key to publish."
 	exit 2
 fi
 if [ ! -s "changelog.html" ]; then
@@ -8,11 +8,22 @@ if [ ! -s "changelog.html" ]; then
 	exit 1
 fi
 
-all="fabric-1.8 fabric-1.14 fabric-1.16 fabric-1.17 forge-1.2 forge-1.4 forge-1.5 forge-1.7 forge-1.8 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17 rift-1.13"
+common="fabric-1.8 fabric-1.14 fabric-1.16 fabric-1.17 forge-1.2 forge-1.4 forge-1.5 forge-1.7 forge-1.8 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17"
+curse="$common rift-1.13"
+modrinth="$common fabric-b1.7.3"
 
-cd publish
-for proj in $all; do
-	echo Publishing $proj...
-	TERM=dumb chronic ./gradlew -PcurseApiKey=$1 -Ptarget=$proj curseforge
-done
+cd publish-curseforge
+if [ "$1" != "-" ]; then
+	for proj in $curse; do
+		echo Publishing $proj to CurseForge...
+		TERM=dumb chronic ./gradlew -PcurseApiKey=$1 -Ptarget=$proj curseforge
+	done
+fi
+cd ../publish-modrinth
+if [ "$2" != "-" ]; then
+	for proj in $modrinth; do
+		echo Publishing $proj to Modrinth...
+		TERM=dumb chronic ./gradlew -PmodrinthApiKey=$2 -Ptarget=$proj modrinth
+	done
+fi
 

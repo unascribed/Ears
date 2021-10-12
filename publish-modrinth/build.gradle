@@ -1,0 +1,130 @@
+plugins {
+	id 'com.modrinth.minotaur' version '1.2.1'
+}
+
+def target = project.getProperty("target")
+def baseVersion = file('../version.txt').text.trim()
+def versionSuffix = file("../platform-${target}/version-suffix.txt").text.trim()
+def version = baseVersion+versionSuffix
+def versionSuffixDot = versionSuffix.replace('_', '.')
+
+def prefix = ""
+def artifact = "../platform-${target}/build/libs/ears-${target}-${version}.jar"
+def stability = ""
+def loaders = []
+def gameVersions = []
+
+switch (target) {
+	case "fabric-1.8":
+		prefix = "FABRIC 1.8"
+		stability = 'beta'
+		loaders = ['fabric']
+		gameVersions = ['1.8.9']
+		break
+	case "fabric-1.14":
+		prefix = "FABRIC 1.14"
+		stability = 'release'
+		loaders = ['fabric']
+		gameVersions = ['1.14', '1.14.1', '1.14.2', '1.14.3', '1.14.4']
+		break
+	case "fabric-1.16":
+		prefix = "FABRIC 1.15/16"
+		stability = 'release'
+		loaders = ['fabric']
+		gameVersions = ['1.15', '1.15.1', '1.15.2', '1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4', '1.16.5']
+		break
+	case "fabric-1.17":
+		prefix = "FABRIC 1.17/18"
+		stability = 'release'
+		loaders = ['fabric']
+		gameVersions = ['1.17', '1.17.1', '21w37a', '21w38a', '21w39a', '21w40a']
+		break
+	case "forge-1.5":
+		prefix = "FORGE 1.5"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.5.2']
+		break
+	case "forge-1.2":
+		prefix = "FORGE 1.2"
+		stability = 'alpha'
+		loaders = ['forge']
+		gameVersions = ['1.2.5']
+		break
+	case "forge-1.4":
+		prefix = "FORGE 1.4"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.4.7']
+		break
+	case "forge-1.7":
+		prefix = "FORGE 1.7"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.7.10']
+		break
+	case "forge-1.8":
+		prefix = "FORGE 1.8"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.8.9']
+		break
+	case "forge-1.12":
+		prefix = "FORGE 1.12"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.12.2']
+		break
+	case "forge-1.14":
+		prefix = "FORGE 1.14"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.14', '1.14.1', '1.14.2', '1.14.3', '1.14.4']
+		break
+	case "forge-1.15":
+		prefix = "FORGE 1.15"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.15', '1.15.1', '1.15.2']
+		break
+	case "forge-1.16":
+		prefix = "FORGE 1.16"
+		stability = 'release'
+		loaders = ['forge']
+		gameVersions = ['1.16', '1.16.1', '1.16.2', '1.16.3', '1.16.4', '1.16.5']
+		break
+	case "forge-1.17":
+		prefix = "FORGE 1.17"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.17', '1.17.1']
+		break
+	case "fabric-b1.7.3":
+		prefix = "FABRIC b1.7.3"
+		stability = 'alpha'
+		loaders = ['fabric']
+		gameVersions = ['b1.7.3']
+		break
+	default:
+		throw new Exception("Unknown target ${target}")
+}
+
+task build {}
+task assemble {}
+
+task modrinth(type: com.modrinth.minotaur.TaskModrinthUpload) {
+	token = project.getProperty("modrinthApiKey")
+	projectId = 'mfzaZK3Z'
+	changelog = file('../changelog.html').text
+
+	versionType = stability.toUpperCase()
+	detectLoaders = false
+	
+	loaders.each { addLoader(it) }
+	gameVersions.each { addGameVersion(it) }
+	
+	uploadFile = file(artifact)
+	
+	versionName = "[${prefix}] v${version}"
+	versionNumber = "${version}+${target}${versionSuffixDot}"
+}
