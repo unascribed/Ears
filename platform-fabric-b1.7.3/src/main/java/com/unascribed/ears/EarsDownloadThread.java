@@ -34,6 +34,11 @@ public class EarsDownloadThread {
 						public void onProfileLookupSucceeded(GameProfile profile) {
 							try {
 								EarsMod.sessionService.fillProfileProperties(profile);
+								if (profile.getTexture(GameProfile.TextureType.SKIN).getModel() == GameProfile.TextureModel.SLIM) {
+									EarsMod.slimUsers.add(username);
+								} else {
+									EarsMod.slimUsers.remove(username);
+								}
 								newUrl[0] = profile.getTexture(GameProfile.TextureType.SKIN, false).getURL();
 							} catch (Throwable t) {
 								t.printStackTrace();
