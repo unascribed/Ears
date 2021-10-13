@@ -33,12 +33,6 @@ switch (target) {
 		stability = 'release'
 		gameVersions = ['Fabric', '1.17', '1.17.1', '1.18-Snapshot']
 		break
-	case "forge-1.5":
-		prefix = "FORGE 1.5"
-		stability = 'beta'
-		gameVersions = ['Forge', '1.5.2']
-		conflicts = ['lumy-skin-patch']
-		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
 		stability = 'alpha'
@@ -49,6 +43,18 @@ switch (target) {
 		prefix = "FORGE 1.4"
 		stability = 'beta'
 		gameVersions = ['Forge', '1.4.7']
+		conflicts = ['lumy-skin-patch']
+		break
+	case "forge-1.5":
+		prefix = "FORGE 1.5"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.5.2']
+		conflicts = ['lumy-skin-patch']
+		break
+	case "forge-1.6":
+		prefix = "FORGE 1.6"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.6.4']
 		conflicts = ['lumy-skin-patch']
 		break
 	case "forge-1.7":

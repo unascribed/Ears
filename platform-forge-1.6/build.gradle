@@ -1,0 +1,103 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
+group= "com.unascribed.ears" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "ears-forge-1.6"
+
+sourceCompatibility = targetCompatibility = 6
+
+minecraft {
+	version = "1.6.4-9.11.1.964"
+	replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
+	replace '@VERSION@', project.version
+	
+	//srgExtra "PK: com/github/steveice10 com/unascribed/ears/repackage/com/github/steveice10"
+	//srgExtra "PK: com/google com/unascribed/ears/repackage/com/google"
+}
+
+jar {
+	manifest {
+		attributes (
+			'FMLCorePlugin': 'com.unascribed.ears.common.agent.OldForgeCoremod',
+			'FMLCorePluginContainsFMLMod': true
+		)
+	}
+}
+
+repositories {
+	mavenLocal()
+	maven { url 'https://jitpack.io' }
+	ivy {
+		artifactPattern 'https://version99.qos.ch/commons-logging/commons-logging/[revision]/commons-logging-[revision].[ext]'
+	}
+}
+
+configurations {
+	shade
+}
+
+dependencies {
+	compile "com.github.Steveice10:MCAuthLib:1.3"
+	shade "com.github.Steveice10:MCAuthLib:1.3"
+	compile "com.google.code.gson:gson:2.8.6"
+	shade "com.google.code.gson:gson:2.8.6"
+	
+	compile files('../common/build/libs/ears-common-agent-legacy.jar')
+	shade files('../common/build/libs/ears-common-agent-legacy.jar')
+	
+	compile 'net.sourceforge.argo:argo:99-empty'
+	minecraft 'net.sourceforge.argo:argo:99-empty'
+}
+
+jar {
+	from(zipTree('../common/build/libs/ears-common-agent-legacy.jar')) {
+		
+	}
+	configurations.shade.each { dep ->
+		from(project.zipTree(dep)){
+			exclude 'META-INF', 'META-INF/**'
+			exclude 'module-info.class'
+		}
+	}
+}
+
+processResources {
+	// this will ensure that this task is redone when the versions change.
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+
+	// replace stuff in mcmod.info, nothing else
+	from(sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+
+		// replace version and mcversion
+		expand 'version':project.version, 'mcversion':project.minecraft.version
+	}
+
+	// copy everything else, thats not the mcmod.info
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

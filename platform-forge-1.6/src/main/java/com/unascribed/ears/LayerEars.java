@@ -1,0 +1,200 @@
+package com.unascribed.ears;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsRenderDelegate;
+import com.unascribed.ears.common.debug.EarsLog;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.texture.TextureObject;
+import net.minecraft.util.ResourceLocation;
+
+public class LayerEars implements EarsRenderDelegate {
+	
+	private RenderPlayer render;
+	private int skipRendering;
+	private int stackDepth;
+	private BodyPart permittedBodyPart;
+	
+	public LayerEars() {
+		EarsLog.debug("Platform:Renderer", "Constructed");
+	}
+	
+	public void doRenderLayer(RenderPlayer render, AbstractClientPlayer entity, float limbDistance, float partialTicks) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
+		ResourceLocation skin = entity.getLocationSkin();
+		TextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
+		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
+			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
+			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.render = render;
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = null;
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, limbDistance, Ears.getModelBipedMain(render).bipedLeftArm == Ears.slimLeftArm);
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+			GL11.glDisable(GL11.GL_CULL_FACE);
+			this.render = null;
+		}
+	}
+	
+	public void renderRightArm(RenderPlayer render, AbstractClientPlayer entity) {
+		ResourceLocation skin = entity.getLocationSkin();
+		TextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
+		if (!entity.isInvisible() && Ears.earsSkinFeatures.containsKey(tex)) {
+			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
+			Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+			this.render = render;
+			this.skipRendering = 0;
+			this.stackDepth = 0;
+			this.permittedBodyPart = BodyPart.RIGHT_ARM;
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			EarsCommon.render(Ears.earsSkinFeatures.get(tex), this, 0, Ears.getModelBipedMain(render).bipedLeftArm == Ears.slimLeftArm);
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+			GL11.glDisable(GL11.GL_CULL_FACE);
+			this.render = null;
+		}
+	}
+
+	@Override
+	public void push() {
+		stackDepth++;
+		GL11.glPushMatrix();
+		if (skipRendering > 0) skipRendering++;
+	}
+
+	@Override
+	public void pop() {
+		if (stackDepth <= 0) {
+			new Exception("STACK UNDERFLOW").printStackTrace();
+			return;
+		}
+		stackDepth--;
+		GL11.glPopMatrix();
+		if (skipRendering > 0) skipRendering--;
+	}
+
+	@Override
+	public void anchorTo(BodyPart part) {
+		if (permittedBodyPart != null && part != permittedBodyPart) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
+		ModelBiped biped = Ears.getModelBipedMain(render);
+		ModelRenderer model;
+		switch (part) {
+			case HEAD:
+				model = biped.bipedHead;
+				break;
+			case LEFT_ARM:
+				model = biped.bipedLeftArm;
+				break;
+			case LEFT_LEG:
+				model = biped.bipedLeftLeg;
+				break;
+			case RIGHT_ARM:
+				model = biped.bipedRightArm;
+				break;
+			case RIGHT_LEG:
+				model = biped.bipedRightLeg;
+				break;
+			case TORSO:
+				model = biped.bipedBody;
+				break;
+			default: return;
+		}
+		if (!model.showModel) {
+			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
+			if (skipRendering == 0) {
+				skipRendering = 1;
+			}
+			return;
+		}
+		model.postRender(1/16f);
+		ModelBox cuboid = (ModelBox)model.cubeList.get(0);
+		GL11.glScalef(1/16f, 1/16f, 1/16f);
+		GL11.glTranslatef(cuboid.posX1, cuboid.posY2, cuboid.posZ1);
+	}
+
+	@Override
+	public void translate(float x, float y, float z) {
+		if (skipRendering > 0) return;
+		GL11.glTranslatef(x, y, z);
+	}
+
+	@Override
+	public void rotate(float ang, float x, float y, float z) {
+		if (skipRendering > 0) return;
+		GL11.glRotatef(ang, x, y, z);
+	}
+
+	@Override
+	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		if (skipRendering > 0) return;
+		Tessellator tess = Tessellator.instance;
+		
+		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
+		float g = grow.grow;
+		
+		tess.startDrawing(GL11.GL_QUADS);
+		tess.setNormal(0, 0, -1);
+		tess.addVertexWithUV(-g, h+g, 0, uv[0][0], uv[0][1]);
+		tess.addVertexWithUV(w+g, h+g, 0, uv[1][0], uv[1][1]);
+		tess.addVertexWithUV(w+g, -g, 0, uv[2][0], uv[2][1]);
+		tess.addVertexWithUV(-g, -g, 0, uv[3][0], uv[3][1]);
+		tess.draw();
+	}
+
+	@Override
+	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
+		if (skipRendering > 0) return;
+		Tessellator tess = Tessellator.instance;
+		
+		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
+		float g = grow.grow;
+		
+		tess.startDrawing(GL11.GL_QUADS);
+		tess.setNormal(0, 0, 1);
+		tess.addVertexWithUV(-g, -g, 0, uv[3][0], uv[3][1]);
+		tess.addVertexWithUV(w+g, -g, 0, uv[2][0], uv[2][1]);
+		tess.addVertexWithUV(w+g, h+g, 0, uv[1][0], uv[1][1]);
+		tess.addVertexWithUV(-g, h+g, 0, uv[0][0], uv[0][1]);
+		tess.draw();
+	}
+
+	@Override
+	public void renderDebugDot(float r, float g, float b, float a) {
+		if (skipRendering > 0) return;
+		
+		GL11.glPointSize(8);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		Tessellator tess = Tessellator.instance;
+		tess.startDrawing(GL11.GL_POINTS);
+		tess.setColorRGBA_F(r, g, b, a);
+		tess.addVertex(0, 0, 0);
+		tess.draw();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+}

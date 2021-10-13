@@ -39,12 +39,6 @@ switch (target) {
 		loaders = ['fabric']
 		gameVersions = ['1.17', '1.17.1', '21w37a', '21w38a', '21w39a', '21w40a']
 		break
-	case "forge-1.5":
-		prefix = "FORGE 1.5"
-		stability = 'beta'
-		loaders = ['forge']
-		gameVersions = ['1.5.2']
-		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
 		stability = 'alpha'
@@ -56,6 +50,18 @@ switch (target) {
 		stability = 'beta'
 		loaders = ['forge']
 		gameVersions = ['1.4.7']
+		break
+	case "forge-1.5":
+		prefix = "FORGE 1.5"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.5.2']
+		break
+	case "forge-1.6":
+		prefix = "FORGE 1.6"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.6.4']
 		break
 	case "forge-1.7":
 		prefix = "FORGE 1.7"

@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 all="fabric-1.8 fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 rift-1.13 fabric-b1.7.3"
-old="forge-1.7 forge-1.8"
+old="forge-1.6 forge-1.7 forge-1.8"
 new="fabric-1.17 forge-1.17"
 # these ones can't be built in parallel
 special="nfc forge-1.2 forge-1.4 forge-1.5"
@@ -53,7 +53,7 @@ cp platform-*/build/libs/* artifacts
 rm -f artifacts/*-sources{,-dev}.jar
 if [ -n "$1" ]; then
 	echo "Proceeding to publish..."
-	./publish.sh $1
+	./publish.sh "$@"
 	echo 'All OK.'
 else
 	echo "Not publishing as no Curse API key was specified."
