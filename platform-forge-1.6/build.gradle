@@ -28,9 +28,6 @@ minecraft {
 	version = "1.6.4-9.11.1.964"
 	replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
 	replace '@VERSION@', project.version
-	
-	//srgExtra "PK: com/github/steveice10 com/unascribed/ears/repackage/com/github/steveice10"
-	//srgExtra "PK: com/google com/unascribed/ears/repackage/com/google"
 }
 
 jar {
@@ -50,33 +47,15 @@ repositories {
 	}
 }
 
-configurations {
-	shade
-}
-
 dependencies {
-	compile "com.github.Steveice10:MCAuthLib:1.3"
-	shade "com.github.Steveice10:MCAuthLib:1.3"
-	compile "com.google.code.gson:gson:2.8.6"
-	shade "com.google.code.gson:gson:2.8.6"
-	
-	compile files('../common/build/libs/ears-common-agent-legacy.jar')
-	shade files('../common/build/libs/ears-common-agent-legacy.jar')
+	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
 	
 	compile 'net.sourceforge.argo:argo:99-empty'
 	minecraft 'net.sourceforge.argo:argo:99-empty'
 }
 
 jar {
-	from(zipTree('../common/build/libs/ears-common-agent-legacy.jar')) {
-		
-	}
-	configurations.shade.each { dep ->
-		from(project.zipTree(dep)){
-			exclude 'META-INF', 'META-INF/**'
-			exclude 'module-info.class'
-		}
-	}
+	from zipTree('../common/build/libs/ears-common-agent-vlegacy.jar')
 }
 
 processResources {
