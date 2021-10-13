@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.unascribed.ears.BipedModelLayers;
 import com.unascribed.ears.EarsMod;
 import com.unascribed.ears.ModelPartTextureFixer;
+import com.unascribed.ears.ModelPartTrans;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import net.minecraft.client.model.ModelPart;
@@ -37,7 +38,7 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 		((ModelPartTextureFixer) model.head).setTextureHeight(64);
 		model.head.addCuboid(-4.0F, -8.0F, -4.0F, 8, 8, 8, 0.0F);
 		model.head.setPivot(0.0F, 0.0F, 0.0F);
-		model.helmet = new ModelPart(32, 0);
+		model.helmet = new ModelPartTrans(32, 0);
 		((ModelPartTextureFixer) model.helmet).setTextureHeight(64);
 		model.helmet.addCuboid(-4.0F, -8.0F, -4.0F, 8, 8, 8, 0.5F);
 		model.helmet.setPivot(0.0F, 0.0F, 0.0F);
@@ -66,31 +67,31 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 		model.leftLeg.setPivot(2.0F, 12.0F, 0.0F);
 
 		// non-head secondary layers
-		ModelPart leftSleeve = new ModelPart(48, 48);
+		ModelPart leftSleeve = new ModelPartTrans(48, 48);
 		((ModelPartTextureFixer) leftSleeve).setTextureHeight(64);
 		leftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.5F);
 		leftSleeve.setPivot(5.0F, 2.0F, 0.0F);
 		((BipedModelLayers) model).setLeftSleeve(leftSleeve);
 
-		ModelPart rightSleeve = new ModelPart(40, 32);
+		ModelPart rightSleeve = new ModelPartTrans(40, 32);
 		((ModelPartTextureFixer) rightSleeve).setTextureHeight(64);
 		rightSleeve.addCuboid(-3.0F, -2.0F, -2.0F, 4, 12, 4, 0.5F);
 		rightSleeve.setPivot(-5.0F, 2.0F, 0.0F);
 		((BipedModelLayers) model).setRightSleeve(rightSleeve);
 
-		ModelPart jacket = new ModelPart(16, 32);
+		ModelPart jacket = new ModelPartTrans(16, 32);
 		((ModelPartTextureFixer) jacket).setTextureHeight(64);
 		jacket.addCuboid(-4.0F, 0.0F, -2.0F, 8, 12, 4, 0.5F);
 		jacket.setPivot(0.0F, 0.0F, 0.0F);
 		((BipedModelLayers) model).setJacket(jacket);
 
-		ModelPart leftPantLeg = new ModelPart(0, 48);
+		ModelPart leftPantLeg = new ModelPartTrans(0, 48);
 		((ModelPartTextureFixer) leftPantLeg).setTextureHeight(64);
 		leftPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.5F);
 		leftPantLeg.setPivot(2.0F, 12.0F, 0.0F);
 		((BipedModelLayers) model).setLeftPantLeg(leftPantLeg);
 
-		ModelPart rightPantLeg = new ModelPart(0, 32);
+		ModelPart rightPantLeg = new ModelPartTrans(0, 32);
 		((ModelPartTextureFixer) rightPantLeg).setTextureHeight(64);
 		rightPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.5F);
 		rightPantLeg.setPivot(-2.0F, 12.0F, 0.0F);
@@ -107,12 +108,12 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 		slimRightArm.addCuboid(-2.0F, -2.0F, -2.0F, 3, 12, 4, 0.0F);
 		slimRightArm.setPivot(-5.0F, 2.0F, 0.0F);
 
-		ModelPart slimLeftSleeve = new ModelPart(48, 48);
+		ModelPart slimLeftSleeve = new ModelPartTrans(48, 48);
 		((ModelPartTextureFixer) slimLeftSleeve).setTextureHeight(64);
 		slimLeftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 3, 12, 4, 0.5F);
 		slimLeftSleeve.setPivot(5.0F, 2.0F, 0.0F);
 
-		ModelPart slimRightSleeve = new ModelPart(40, 32);
+		ModelPart slimRightSleeve = new ModelPartTrans(40, 32);
 		((ModelPartTextureFixer) slimRightSleeve).setTextureHeight(64);
 		slimRightSleeve.addCuboid(-2.0F, -2.0F, -2.0F, 3, 12, 4, 0.5F);
 		slimRightSleeve.setPivot(-5.0F, 2.0F, 0.0F);
