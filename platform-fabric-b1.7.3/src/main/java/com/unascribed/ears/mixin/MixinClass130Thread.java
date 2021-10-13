@@ -4,8 +4,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.service.ProfileService;
+import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
+import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.EarsMod;
 
 @Mixin(targets = "net/minecraft/class_130$1")

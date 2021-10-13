@@ -3,7 +3,7 @@ package com.unascribed.ears.asm;
 import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.agent.mini.PatchContext;
 import com.unascribed.ears.common.agent.mini.annotation.Patch;
-import com.unascribed.ears.common.mini.asm.tree.LabelNode;
+import com.unascribed.ears.common.agent.mini.asm.tree.LabelNode;
 
 @Patch.Class("rr")
 public class ImageBufferDownloadTransformer extends MiniTransformer {

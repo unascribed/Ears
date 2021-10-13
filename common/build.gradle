@@ -35,6 +35,10 @@ configurations {
 		canBeConsumed = true
 		canBeResolved = false
 	}
+	mixinVLegacy {
+		canBeConsumed = true
+		canBeResolved = false
+	}
 	legacy {
 		canBeConsumed = true
 		canBeResolved = false
@@ -128,6 +132,22 @@ task mixinModernJar(type: Jar) {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+task mixinVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.legacy.output
+	from sourceSets.mixin.output
+	
+	configurations = [project.configurations.vlegacyShade]
+	relocate 'com.google.gson', 'com.unascribed.ears.common.legacy.gson'
+	relocate 'com.github.steveice10.mc.auth', 'com.unascribed.ears.common.legacy.mcauthlib'
+	exclude 'module-info.class'
+	
+	classifier 'mixin-vlegacy'
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 task legacyJar(type: Jar) {
 	from sourceSets.main.output
 	from sourceSets.normal.output
@@ -197,11 +217,12 @@ task agentVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shad
 
 build.dependsOn mixinLegacyJar
 build.dependsOn mixinModernJar
+build.dependsOn mixinVLegacyJar
 build.dependsOn legacyJar
 build.dependsOn modernJar
 build.dependsOn agentLegacyJar
-build.dependsOn agentVLegacyJar
 build.dependsOn agentModernJar
+build.dependsOn agentVLegacyJar
 
 artifacts {
 	mixinLegacy mixinLegacyJar

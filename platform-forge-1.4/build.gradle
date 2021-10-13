@@ -56,13 +56,8 @@ dependencies {
 	mappings files(mcp)
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
-	modImplementation "com.github.Steveice10:MCAuthLib:1.3"
-	shade "com.github.Steveice10:MCAuthLib:1.3"
-	modImplementation "com.google.code.gson:gson:2.8.6"
-	shade "com.google.code.gson:gson:2.8.6"
-	
-	compile files('../common/build/libs/ears-common-agent-legacy.jar')
-	shade files('../common/build/libs/ears-common-agent-legacy.jar')
+	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
+	shade files('../common/build/libs/ears-common-agent-vlegacy.jar')
 }
 
 subprojects {

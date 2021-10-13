@@ -6,8 +6,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.service.ProfileService;
+import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
+import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;

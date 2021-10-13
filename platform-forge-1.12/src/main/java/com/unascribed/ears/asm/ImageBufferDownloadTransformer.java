@@ -2,7 +2,7 @@ package com.unascribed.ears.asm;
 
 import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.agent.mini.PatchContext;
-import com.unascribed.ears.common.mini.asm.tree.LabelNode;
+import com.unascribed.ears.common.agent.mini.asm.tree.LabelNode;
 import com.unascribed.ears.common.agent.mini.annotation.Patch;
 
 @Patch.Class("net.minecraft.client.renderer.ImageBufferDownload")

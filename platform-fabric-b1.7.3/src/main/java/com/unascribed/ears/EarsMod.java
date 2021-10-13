@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.steveice10.mc.auth.service.ProfileService;
-import com.github.steveice10.mc.auth.service.SessionService;
+import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
+import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 
