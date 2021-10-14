@@ -1,1 +1,4 @@
 .gradle
+node_modules
+description.html
+example.json
