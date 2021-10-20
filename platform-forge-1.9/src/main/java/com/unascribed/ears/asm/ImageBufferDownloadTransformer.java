@@ -1,0 +1,29 @@
+package com.unascribed.ears.asm;
+
+import com.unascribed.ears.common.agent.mini.annotation.Patch;
+import com.unascribed.ears.common.agent.mini.asm.tree.LabelNode;
+import com.unascribed.ears.common.agent.mini.MiniTransformer;
+import com.unascribed.ears.common.agent.mini.PatchContext;
+
+@Patch.Class("net.minecraft.client.renderer.ImageBufferDownload")
+public class ImageBufferDownloadTransformer extends MiniTransformer {
+	
+	@Patch.Method("func_78433_b(IIII)V")
+	public void patchSetAreaOpaque(PatchContext ctx) {
+		ctx.jumpToStart();
+		// if (EarsMod.interceptSetAreaOpaque(this, ...)) return;
+		LabelNode label = new LabelNode();
+		ctx.add(
+			ALOAD(0),
+			ILOAD(1),
+			ILOAD(2),
+			ILOAD(3),
+			ILOAD(4),
+			INVOKESTATIC("com/unascribed/ears/Ears", "interceptSetAreaOpaque", "(Lnet/minecraft/client/renderer/ImageBufferDownload;IIII)Z"),
+			IFNE(label),
+			RETURN(),
+			label
+		);
+	}
+
+}

@@ -38,6 +38,7 @@ request({
 				return false;
 			});
 		});
+		console.log(ctx);
 		fs.writeFileSync('description.html', hbs.compile(fs.readFileSync('description.html.hbs').toString('utf8'))(ctx));
 	}
 });

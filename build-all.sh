@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 all="fabric-1.8 fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3"
-old="forge-1.6 forge-1.7 forge-1.8"
+old="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
 new="fabric-1.17 forge-1.17"
 nobodyCares="rift-1.13"
 # these ones can't be built in parallel
