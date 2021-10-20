@@ -1,21 +1,30 @@
 #!/usr/bin/fish
 set coremod ears-forge-1.4 ears-forge-1.5
 set agent ears-nfc ears-forge-1.2
-for t in (ls -1 artifacts/ |rev |cut -d- -f 2- |rev)
-	if contains $t $agent
-		rm -f ~/MultiMC/instances/$t/.minecraft/ears.jar
-		cp artifacts/$t*.jar ~/MultiMC/instances/$t/.minecraft/ears.jar
+set compat ears-fabric-1.16=ears-fabric-1.15 ears-fabric-1.17=ears-fabric-1.18 ears-forge-1.9=ears-forge-1.10,ears-forge-1.11
+set hasCompat (echo $compat |tr ' ' '\n' |cut -d'=' -f1)
+function doCopy
+	set src $argv[1]
+	set dst $argv[2]
+	if contains $dst $agent
+		rm -f ~/MultiMC/instances/$dst/.minecraft/ears.jar
+		cp artifacts/$src*.jar ~/MultiMC/instances/$dst/.minecraft/ears.jar
 	else 
 		set dir mods
-		if contains $t $coremod
+		if contains $dst $coremod
 			set dir coremods
 		end
-		mkdir -p ~/MultiMC/instances/$t/.minecraft/$dir/
-		rm -f ~/MultiMC/instances/$t/.minecraft/$dir/ears-*.jar
-		cp artifacts/$t*.jar ~/MultiMC/instances/$t/.minecraft/$dir
+		mkdir -p ~/MultiMC/instances/$dst/.minecraft/$dir/
+		rm -f ~/MultiMC/instances/$dst/.minecraft/$dir/ears-*.jar
+		cp artifacts/$src*.jar ~/MultiMC/instances/$dst/.minecraft/$dir
 	end
 end
-rm -f ~/MultiMC/instances/ears-fabric-1.15/.minecraft/mods/ears-*.jar
-cp artifacts/ears-fabric-1.16*.jar ~/MultiMC/instances/ears-fabric-1.15/.minecraft/mods
-rm -f ~/MultiMC/instances/ears-fabric-1.18/.minecraft/mods/ears-*.jar
-cp artifacts/ears-fabric-1.17*.jar ~/MultiMC/instances/ears-fabric-1.18/.minecraft/mods
+for t in (ls -1 artifacts/ |rev |cut -d- -f 2- |rev)
+	if contains $t $hasCompat
+		for sub in (string split ',' (string split '=' (string match -ea $t= $compat)))
+			doCopy $t $sub
+		end
+	else
+		doCopy $t $t
+	end
+end
