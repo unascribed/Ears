@@ -3,4 +3,8 @@
   <h3 align="center">Faithful fancy fashion features for fuzzy folk.</h3>
 </p>
 
-Check out [the wiki](https://github.com/unascribed/Ears/wiki) for more info.
+Ears is a player model customization mod available for a dizzying number of Minecraft versions.
+
+Get it and/or learn more at [CurseForge](https://www.curseforge.com/minecraft/mc-mods/ears), [Modrinth](https://modrinth.com/mod/ears), or [Glass Repo](https://glass-repo.net/repo/mod/ears).
+
+Check out the [Manipulator](https://unascribed.com/ears)!
