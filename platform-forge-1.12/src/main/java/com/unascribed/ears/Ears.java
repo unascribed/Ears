@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true)
+@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true, acceptedMinecraftVersions="(1.9,1.12.99)")
 public class Ears {
 	
 	public Ears() {

@@ -123,7 +123,7 @@ public class EarsFeatures {
 		);
 	}
 
-	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0);
+	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	
 	public final boolean enabled;
 	public final EarMode earMode;
@@ -134,8 +134,18 @@ public class EarsFeatures {
 	public final float tailBend1;
 	public final float tailBend2;
 	public final float tailBend3;
+	public final int snoutOffset;
+	public final int snoutWidth;
+	public final int snoutHeight;
+	public final int snoutDepth;
+	public final float chestSize;
 
-	EarsFeatures(boolean enabled, EarMode earMode, EarAnchor earAnchor, Protrusions protrusions, TailMode tailMode, float tailBend0, float tailBend1, float tailBend2, float tailBend3) {
+	EarsFeatures(boolean enabled,
+			EarMode earMode, EarAnchor earAnchor,
+			Protrusions protrusions,
+			TailMode tailMode, float tailBend0, float tailBend1, float tailBend2, float tailBend3,
+			int snoutOffset, int snoutWidth, int snoutHeight, int snoutDepth,
+			float chestSize) {
 		this.enabled = enabled;
 		this.earMode = earMode;
 		this.earAnchor = earAnchor;
@@ -145,8 +155,13 @@ public class EarsFeatures {
 		this.tailBend1 = tailBend1;
 		this.tailBend2 = tailBend2;
 		this.tailBend3 = tailBend3;
+		this.snoutOffset = snoutOffset;
+		this.snoutWidth = snoutWidth;
+		this.snoutHeight = snoutHeight;
+		this.snoutDepth = snoutDepth;
+		this.chestSize = chestSize;
 	}
-	
+
 	public static EarsFeatures detect(EarsImage img) {
 		EarsLog.debug("Common:Features", "detect({})", img);
 		if (img.getHeight() == 64) {
@@ -182,7 +197,35 @@ public class EarsFeatures {
 						EarsLog.debug("Common:Features", "detect(...): The tail bend pixel is #{}XXXX - 1 segment with angle {}", upperHex32f16Dbg(tailBend), tailBend0);
 					}
 				}
-				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend0, tailBend1, tailBend2, tailBend3);
+				int snout = getPixel(img, 6);
+				int etc = getPixel(img, 7);
+				int snoutOffset = 0;
+				int snoutWidth = 0;
+				int snoutHeight = 0;
+				int snoutDepth = 0;
+				if (MagicPixel.from(snout) == MagicPixel.BLUE) {
+					EarsLog.debug("Common:Features", "detect(...): The snout pixel is Magic Blue, pretending it's black");
+				} else {
+					snoutOffset = ((etc&0x0000FF00)>>8);
+					snoutWidth = ((snout&0x00FF0000)>>16);
+					snoutHeight = ((snout&0x0000FF00)>>8);
+					snoutDepth = ((snout&0x000000FF));
+					if (snoutOffset > 8-snoutHeight) snoutOffset = 8-snoutHeight;
+					if (snoutWidth > 7) snoutWidth = 7;
+					if (snoutHeight > 4) snoutHeight = 4;
+					if (snoutDepth > 6) snoutDepth = 6;
+					EarsLog.debug("Common:Features", "detect(...): The snout pixel is #{} and the etc pixel is #{} - snout geometry is {}x{}x{}+0,{}", upperHex24Dbg(snout), upperHex24Dbg(etc), snoutWidth, snoutHeight, snoutDepth, snoutOffset);
+				}
+				float chestSize = 0;
+				if (MagicPixel.from(etc) == MagicPixel.BLUE) {
+					EarsLog.debug("Common:Features", "detect(...): The etc pixel is Magic Blue, pretending it's black");
+				} else {
+					// leave the upper half of the range in case we want it for something later
+					chestSize = ((etc&0x00FF0000)>>16)/128f;
+					if (chestSize > 1) chestSize = 1;
+					EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - {}% size", upperHex24Dbg(etc), (int)(chestSize*100));
+				}
+				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend0, tailBend1, tailBend2, tailBend3, snoutOffset, snoutWidth, snoutHeight, snoutDepth, chestSize);
 			} else {
 				EarsLog.debug("Common:Features", "detect(...): Pixel at 0, 32 is not #3F23D8 (Magic Blue) - it's #{}. Disabling",  upperHex32Dbg(img.getARGB(0, 32)));
 				return DISABLED;

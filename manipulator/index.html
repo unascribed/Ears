@@ -85,7 +85,7 @@ SOFTWARE.
 			text-align: center !important;
 		}
 		.inner {
-			max-width: 1280px;
+			max-width: 1600px;
 			padding: 0 16px;
 			margin: 0 auto;
 		}
@@ -262,6 +262,38 @@ SOFTWARE.
 					<span id="tail-bend-3-angle"></span>
 				</td>
 			</tr>
+			<tr>
+				<td>
+					<input id="snout" disabled type="checkbox"><label for="snout"> Snout</label>
+				</td>
+				<td>
+					<input id="snout-width" type="range" disabled value="1" min="1" max="7" step="1">
+				</td>
+				<td>
+					<input id="snout-height" type="range" disabled value="1" min="1" max="4" step="1">
+				</td>
+				<td>
+					<input id="snout-depth" type="range" disabled value="1" min="1" max="6" step="1">
+				</td>
+				<td>
+					<input id="snout-offset" type="range" disabled value="0" min="0" max="8" step="1">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td class="center" colspan="4" id="snout-size" style="visibility: hidden">
+					<span id="snout-width-value">1</span>x<span id="snout-height-value">1</span>x<span id="snout-depth-value">1</span>-0,<span id="snout-offset-value">0</span>
+				</td>
+				</td>
+			</tr>
+			<tr id="chest-outer" style="display: none">
+				<td>
+					<input id="chest" disabled type="checkbox"><label for="chest"> Chest</label>
+				</td>
+				<td>
+					<input id="chest-size" type="range" disabled value="1" min="1" max="128" step="1">
+				</td>
+			</tr>
 		</table>
 		<br/>
 		<div class="notice" style="display: none;margin-bottom:8px" id="req-121-notice">
@@ -280,6 +312,10 @@ SOFTWARE.
 		<div class="notice" style="display: none;margin-bottom:8px" id="req-124-notice">
 			<b><i>You've selected options that require new features added in v1.2.4.</i></b><br/>
 			Before v1.2.4, Vertical tail mode will not render.
+		</div>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-130-notice">
+			<b><i>You've selected options that require new features added in v1.3.0.</i></b><br/>
+			Before v1.3.0, <span id="req-130-snouts">snouts</span><span id="req-130-and"> and </span><span id="req-130-chest">chests</span> will not render.
 		</div>
 		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
@@ -306,7 +342,7 @@ SOFTWARE.
 	</div>
 	<script src="WebGL.js"></script>
 	<script src="three.min.js"></script>
-	<script src="ears-common.js"></script>
+	<script src="ears-common.js?v=1.3.0"></script>
 	<script>
 	if (location.hash === "#debug") {
 		window.EarsDebug = true;
@@ -388,6 +424,7 @@ SOFTWARE.
 		let req121 = $("#req-121-notice");
 		let req122 = $("#req-122-notice");
 		let req123 = $("#req-123-notice");
+		let req130 = $("#req-130-notice");
 		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
@@ -395,6 +432,7 @@ SOFTWARE.
 		req122.style.display = "none";
 		req123.style.display = "none";
 		req124.style.display = "none";
+		req130.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		$("#sides-bad-uvs").style.display = "none";
@@ -431,6 +469,22 @@ SOFTWARE.
 		} else if ($("#tail-bend-0").value != 0) {
 			req122.style.display = "block";
 		}
+		let req130Count = 0;
+		if ($("#snout").checked) {
+			req130.style.display = "block";
+			$("#req-130-snouts").style.display = "inline";
+			req130Count++;
+		} else {
+			$("#req-130-snouts").style.display = "none";
+		}
+		if ($("#chest").checked) {
+			req130.style.display = "block";
+			$("#req-130-chest").style.display = "inline";
+			req130Count++;
+		} else {
+			$("#req-130-chest").style.display = "none";
+		}
+		$("#req-130-and").style.display = req130Count > 1 ? "inline" : "none";
 	}
 	
 	rebuildGeom = null;
@@ -459,6 +513,8 @@ SOFTWARE.
 	wireElement("tail-mode", 4);
 	wireElement("tail-segments", -1);
 	wireElement("unlock-angles", -1);
+	wireElement("snout", -1);
+	wireElement("chest", -1);
 	async function updateSkin() {
 		usingSample = false;
 		let files = $("#skin-upload").files;
@@ -555,6 +611,60 @@ SOFTWARE.
 				$("#tail-bend-1").value = tailBend1;
 				$("#tail-bend-2").value = tailBend2;
 				$("#tail-bend-3").value = tailBend3;
+				let snout = earsData.getUint32(6*4);
+				let etc = earsData.getUint32(7*4);
+				let snoutOffset = 0;
+				let snoutWidth = 0;
+				let snoutHeight = 0;
+				let snoutDepth = 0;
+				if (magicPixels[snout] !== "blue") {
+					snoutOffset = ((etc>>16)&0xFF);
+					snoutWidth = ((snout>>24)&0xFF);
+					snoutHeight = ((snout>>16)&0xFF);
+					snoutDepth = ((snout>>8)&0xFF);
+					if (snoutOffset > 8-snoutHeight) snoutOffset = 8-snoutHeight;
+					if (snoutWidth > 7) snoutWidth = 7;
+					if (snoutHeight > 4) snoutHeight = 4;
+					if (snoutDepth > 6) snoutDepth = 6;
+				}
+				if (snoutWidth !== 0 && snoutHeight !== 0 && snoutDepth !== 0) {
+					$("#snout").checked = true;
+					$("#snout-size").style.visibility = "visible";
+					$("#snout-width").disabled = false;
+					$("#snout-width").value = snoutWidth;
+					$("#snout-width-value").textContent = snoutWidth;
+					$("#snout-height").disabled = false;
+					$("#snout-height").value = snoutHeight;
+					$("#snout-height-value").textContent = snoutHeight;
+					$("#snout-depth").disabled = false;
+					$("#snout-depth").value = snoutDepth;
+					$("#snout-depth-value").textContent = snoutDepth;
+					$("#snout-offset").disabled = false;
+					$("#snout-offset").value = snoutOffset;
+					$("#snout-offset-value").textContent = snoutOffset;
+				} else {
+					$("#snout").checked = false;
+					$("#snout-size").style.visibility = "hidden";
+					$("#snout-width").disabled = true;
+					$("#snout-height").disabled = true;
+					$("#snout-depth").disabled = true;
+					$("#snout-offset").disabled = true;
+				}
+				let chestSize = 0;
+				if (magicPixels[etc] !== "blue") {
+					chestSize = ((etc>>24)&0xFF)/128;
+					if (chestSize > 1) chestSize = 1;
+				}
+				if (chestSize > 0) {
+					$("#chest-outer").style.display = "table-row";
+					$("#chest").checked = true;
+					$("#chest-size").disabled = false;
+					$("#chest-size").value = (chestSize*128)|0;
+				} else {
+					$("#chest-outer").style.display = "none";
+					$("#chest").checked = false;
+					$("#chest-size").disabled = true;
+				}
 			} else {
 				earsElements.forEach((e) => {
 					e.disabled = true;
@@ -631,6 +741,29 @@ SOFTWARE.
 				if (protrusions === "cyan" || protrusions === "green") {
 					ctx.drawImage(img, 192, 64, 64, 64, 0, 0, 64, 64);
 				}
+				if ($("#snout").checked) {
+					let width = Number($("#snout-width").value);
+					let height = Number($("#snout-height").value);
+					let depth = Number($("#snout-depth").value);
+					ctx.fillStyle = '#FF0000';
+					ctx.fillRect(0, 0, width, 1);
+					ctx.fillStyle = '#FFAA00';
+					ctx.fillRect(0, 1, width, 1);
+					ctx.fillStyle = '#FFFFFF';
+					ctx.fillRect(0, 2, width, height);
+					ctx.fillStyle = '#FF00FF';
+					ctx.fillRect(0, 2+height, width, 1);
+					ctx.fillStyle = '#00FFFF';
+					ctx.fillRect(0, 2+height+1, width, 1);
+					ctx.fillStyle = '#00FF00';
+					ctx.fillRect(7, 0, 1, height);
+					ctx.fillStyle = '#0000FF';
+					ctx.fillRect(7, 4, 1, height);
+					ctx.fillStyle = '#FFFFFF';
+				}
+				if ($("#chest").checked) {
+					ctx.drawImage(img, 64, 128, 64, 64, 0, 0, 64, 64);
+				}
 				resolve();
 			};
 			img.src = 'sample_skin_atlas.png';
@@ -693,6 +826,53 @@ SOFTWARE.
 			tailBendAngles[i].textContent = renderDegrees(e.value);
 			updateTailBendPixel();
 		});
+	});
+	$("#snout").addEventListener('input', () => {
+		let en = $("#snout").checked;
+		$("#snout-width").disabled = !en;
+		$("#snout-height").disabled = !en;
+		$("#snout-depth").disabled = !en;
+		$("#snout-offset").disabled = !en;
+		$("#snout-size").style.visibility = en ? "visible" : "hidden";
+		updateSnoutAndEtcPixel();
+	});
+	['width', 'height', 'depth', 'offset'].forEach((n) => {
+		$("#snout-"+n).addEventListener('input', () => {
+			$("#snout-"+n+"-value").textContent = $("#snout-"+n).value;
+			updateSnoutAndEtcPixel();
+		});
+	});
+	function updateSnoutAndEtcPixel() {
+		let ctx = $("#skin").getContext("2d");
+		let scratch = ctx.createImageData(2, 1);
+		let en = $("#snout").checked;
+		let width = en ? $("#snout-width").value : 0;
+		let height = en ? $("#snout-height").value : 0;
+		let depth = en ? $("#snout-depth").value : 0;
+		$("#snout-offset").max = 8-height;
+		let offset = en ? $("#snout-offset").value : 0;
+		if (offset > 8-height) offset = 8-height;
+		scratch.data[0] = width;
+		scratch.data[1] = height;
+		scratch.data[2] = depth;
+		scratch.data[3] = 255;
+		scratch.data[4] = $("#chest").checked ? $("#chest-size").value : 0;
+		scratch.data[5] = offset;
+		scratch.data[6] = 0;
+		scratch.data[7] = 255;
+		ctx.putImageData(scratch, 2, 33);
+		rebuild();
+	}
+	$("#chest").addEventListener('input', () => {
+		let en = $("#chest").checked;
+		$("#chest-size").disabled = !en;
+		updateSnoutAndEtcPixel();
+		rebuild();
+	});
+	$("#chest-size").addEventListener('input', () => {
+		let ctx = $("#skin").getContext("2d");
+		updateSnoutAndEtcPixel();
+		rebuild();
 	});
 	$("#skin-upload").addEventListener('change', () => updateSkin());
 	window.addEventListener("resize", () => updateDpr());
@@ -851,12 +1031,14 @@ SOFTWARE.
 				0, 10, 0,
 				8, 8, 8,
 				0, 0,
-				false));
+				false,
+				0, 20, 0));
 		addToScene(bodyPart("head2",
 				0, 10, 0,
 				8, 8, 8,
 				32, 0,
-				true));
+				true,
+				0, 20, 0));
 		
 		addToScene(bodyPart("torso",
 				0, 0, 0,
@@ -875,45 +1057,53 @@ SOFTWARE.
 						-5.5, 0, 0,
 						3, 12, 4,
 						40, 16,
-						false));
+						false,
+						-10, 0, 0));
 				addToScene(bodyPart("right_arm2",
 						-5.5, 0, 0,
 						3, 12, 4,
 						40, 32,
-						true));
+						true,
+						-10, 0, 0));
 				
 				addToScene(bodyPart("left_arm",
 						5.5, 0, 0,
 						3, 12, 4,
 						32, 48,
-						false));
+						false,
+						10, 0, 0));
 				addToScene(bodyPart("left_arm2",
 						5.5, 0, 0,
 						3, 12, 4,
 						48, 48,
-						true));
+						true,
+						10, 0, 0));
 			} else {
 				addToScene(bodyPart("right_arm",
 						-6, 0, 0,
 						4, 12, 4,
 						40, 16,
-						false));
+						false,
+						-10, 0, 0));
 				addToScene(bodyPart("right_arm2",
 						-6, 0, 0,
 						4, 12, 4,
 						40, 32,
-						true));
+						true,
+						-10, 0, 0));
 				
 				addToScene(bodyPart("left_arm",
 						6, 0, 0,
 						4, 12, 4,
 						32, 48,
-						false));
+						false,
+						10, 0, 0));
 				addToScene(bodyPart("left_arm2",
 						6, 0, 0,
 						4, 12, 4,
 						48, 48,
-						true));
+						true,
+						10, 0, 0));
 			}
 		}
 		
@@ -923,23 +1113,27 @@ SOFTWARE.
 				-2, -12, 0,
 				4, 12, 4,
 				0, 16,
-				false));
+				false,
+				0, 0, 0));
 		addToScene(bodyPart("right_leg2",
 				-2, -12, 0,
 				4, 12, 4,
 				0, 32,
-				true));
+				true,
+				0, 0, 0));
 		
 		addToScene(bodyPart("left_leg",
 				2, -12, 0,
 				4, 12, 4,
 				16, 48,
-				false));
+				false,
+				0, 0, 0));
 		addToScene(bodyPart("left_leg2",
 				2, -12, 0,
 				4, 12, 4,
 				0, 48,
-				true));
+				true,
+				0, 0, 0));
 		
 		$("#slim-enabled").addEventListener("change", (e) => {
 			scene.remove(meshes["left_arm"]);
@@ -971,9 +1165,9 @@ SOFTWARE.
 							return;
 						}
 						mat.multiply(new THREE.Matrix4().makeTranslation(tgt.position.x, tgt.position.y, tgt.position.z));
-						mat.multiply(new THREE.Matrix4().makeRotationZ(tgt.rotation.z));
-						mat.multiply(new THREE.Matrix4().makeRotationY(tgt.rotation.y));
-						mat.multiply(new THREE.Matrix4().makeRotationX(tgt.rotation.x));
+						mat.multiply(new THREE.Matrix4().makeRotationZ(-tgt.rotation.z));
+						mat.multiply(new THREE.Matrix4().makeRotationY(-tgt.rotation.y));
+						mat.multiply(new THREE.Matrix4().makeRotationX(-tgt.rotation.x));
 						mat.multiply(new THREE.Matrix4().makeTranslation(-tgt.geometry.parameters.width/2, -tgt.geometry.parameters.height/2, -tgt.geometry.parameters.depth/2));
 					} else if (m.type === "translate") {
 						mat.multiply(new THREE.Matrix4().makeTranslation(m.x, -m.y, m.z));
@@ -993,7 +1187,7 @@ SOFTWARE.
 					geom.applyMatrix4(mat);
 					geom.computeVertexNormals();
 					let mesh = new THREE.Mesh(geom, o.back ? matEarsBack : matEarsFront);
-					mesh.renderOrder = 2;
+					mesh.renderOrder = 0;
 					earsMeshes.push(mesh);
 					scene.add(mesh);
 				} else if (o.type === "point") {

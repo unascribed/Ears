@@ -47,6 +47,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer>, E
 			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
 			this.skipRendering = 0;
 			this.stackDepth = 0;
+			this.permittedBodyPart = null;
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.enableBlend();

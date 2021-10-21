@@ -7,16 +7,13 @@ import org.spongepowered.asm.mixin.Mixins;
 
 import com.unascribed.ears.common.debug.EarsLog;
 
-import net.minecraft.client.Minecraft;
-
 
 public class EarsMod implements InitializationListener {
 
 	@Override
 	public void onInitialization() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft {} / Rift vWhoCares; Side={}",
-					Minecraft.getInstance().getVersion(), RiftLoader.instance.getSide());
+			EarsLog.debugva("Platform", "Initialized - Minecraft 1.13.2 / Rift vWhoCares; Side={}", RiftLoader.instance.getSide());
 		}
 		MixinBootstrap.init();
 		Mixins.addConfiguration("ears.mixins.json");
