@@ -57,10 +57,10 @@ public class EarsJS {
 			
 			@Override
 			public int getARGB(int x, int y) {
-				int c = dv.getUint32(((y*64)+x)*4);
-				int a = c & 0xFF;
-				c = ((c >> 8)&0x00FFFFFF) | (a << 24);
-				return c;
+				int rgba = dv.getUint32(((y*64)+x)*4);
+				int a = rgba & 0xFF;
+				int argb = ((rgba >> 8)&0x00FFFFFF) | (a << 24);
+				return argb;
 			}
 		};
 		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img));

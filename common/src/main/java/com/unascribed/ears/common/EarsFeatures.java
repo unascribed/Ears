@@ -1,9 +1,19 @@
 package com.unascribed.ears.common;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import com.unascribed.ears.common.EarsCommon.Rectangle;
 import com.unascribed.ears.common.debug.EarsLog;
 
 /**
@@ -133,8 +143,8 @@ public class EarsFeatures {
 		
 		public static final Alfalfa NONE = new Alfalfa(0, Collections.<String, byte[]>emptyMap());
 		
-		// EARS ALFALFA in hex
-		public static final long MAGIC = 0x000EA2500A1FA1FAL;
+		// EARS ALFALFA in hex preceded by FF and 00
+		public static final long MAGIC = 0xFF00EA250A1FA1FAL;
 		
 		public final int version;
 		public final Map<String, byte[]> data;
@@ -148,9 +158,117 @@ public class EarsFeatures {
 		public String toString() {
 			return "Alfalfa[version=" + version + ", data=" + data + "]";
 		}
+		
+		public static Alfalfa read(InputStream in) throws IOException {
+			DataInputStream dis = new DataInputStream(in);
+			long magic = dis.readLong();
+			if (magic != MAGIC) {
+				EarsLog.debug("Common:Features", "Alfalfa.read: Magic number does not match. Expected {}, got {}", Long.toHexString(MAGIC), Long.toHexString(magic));
+				return NONE;
+			}
+			int version = dis.readUnsignedByte();
+			EarsLog.debug("Common:Features", "Alfalfa.read: Discovered Alfalfa v{} data", version);
+			if (version != 1) {
+				EarsLog.debug("Common:Features", "Alfalfa.read: Don't know how to read this version, ignoring");
+				return NONE;
+			}
+			// TODO
+			return new Alfalfa(version, Collections.<String, byte[]>emptyMap());
+		}
+		
+		public void write(OutputStream out) throws IOException {
+			// TODO
+			DataOutputStream dos = new DataOutputStream(out);
+			dos.writeLong(MAGIC);
+			dos.writeByte(version);
+		}
 
 		public static Alfalfa read(EarsImage img) {
-			return NONE;
+			// base-255 encoding so that we never use an alpha value of 0, since editors might strip it
+			// the alternative solution is to not use the MSB, but that limits us to 7 bits which is restrictive
+			// (for reference, putting the bytes directly into the alpha channel would be "base-256")
+			BigInteger _255 = BigInteger.valueOf(255);
+			BigInteger bi = BigInteger.ZERO;
+			int read = 0;
+			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
+				for (int x = rect.x1; x < rect.x2; x++) {
+					for (int y = rect.y1; y < rect.y2; y++) {
+						int a = (img.getARGB(x, y)>>24)&0xFF;
+						if (a == 0) {
+							continue;
+						}
+						bi = bi.multiply(_255).add(BigInteger.valueOf(254-(a-1)));
+						read++;
+					}
+				}
+			}
+			if (bi.equals(BigInteger.ZERO)) {
+				EarsLog.debug("Common:Features", "Alfalfa.read: Found no data in alpha channel");
+			} else {
+				EarsLog.debug("Common:Features", "Alfalfa.read: Read {} ayte(s) of data from alpha channel", read);
+			}
+			return read(new ByteArrayInputStream(bi.toByteArray()));
+		}
+
+		public void write(WritableEarsImage img) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			write(baos);
+			byte[] data = baos.toByteArray();
+			ByteArrayOutputStream alphaBytes = new ByteArrayOutputStream();
+			BigInteger _255 = BigInteger.valueOf(255);
+			BigInteger bi = new BigInteger(data);
+			while (!bi.equals(BigInteger.ZERO)) {
+				int a = 0;
+				if (bi.compareTo(_255) < 0) {
+					a = bi.intValueExact();
+					bi = BigInteger.ZERO;
+				} else {
+					BigInteger[] divmod = bi.divideAndRemainder(_255);
+					a = divmod[1].intValueExact()+1;
+					bi = divmod[0];
+				}
+				alphaBytes.write(a);
+			}
+			int written = 0;
+			byte[] alphaBytesArr = alphaBytes.toByteArray();
+			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
+				for (int x = rect.x1; x < rect.x2; x++) {
+					for (int y = rect.y1; y < rect.y2; y++) {
+						int argb = img.getARGB(x, y);
+						int a = (argb>>24)&0xFF;
+						if (a == 0) {
+							argb = 0xFF000000;
+						}
+						if (written >= alphaBytesArr.length) {
+							a = 255;
+						} else {
+							a = alphaBytesArr[alphaBytesArr.length-1-written]&0xFF;
+						}
+						argb = (argb&0x00FFFFFF)|((a&0xFF) << 24);
+						img.setARGB(x, y, argb);
+						written++;
+					}
+				}
+			}
+			if (written < alphaBytesArr.length) {
+				throw new RuntimeException("Ran out of space while trying to encode "+data.length+" bytes of data - "+(alphaBytesArr.length-1)+" ayte(s) were left, wrote "+written+" ayte(s)");
+			}
+		}
+		
+		public static Alfalfa read(ByteArrayInputStream in) {
+			try {
+				return read((InputStream)in);
+			} catch (IOException e) {
+				throw new AssertionError(e);
+			}
+		}
+		
+		public void write(ByteArrayOutputStream out) {
+			try {
+				write((OutputStream)out);
+			} catch (IOException e) {
+				throw new AssertionError(e);
+			}
 		}
 		
 	}
