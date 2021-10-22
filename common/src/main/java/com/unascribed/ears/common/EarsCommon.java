@@ -341,25 +341,25 @@ public class EarsCommon {
 				delegate.push();
 					delegate.anchorTo(BodyPart.HEAD);
 					delegate.translate((8-snoutWidth)/2f, -(snoutOffset+snoutHeight), -snoutDepth);
-					delegate.renderFront(0, 2, snoutWidth, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderDoubleSided(0, 2, snoutWidth, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 					delegate.push();
 						// top
 						delegate.rotate(-90, 1, 0, 0);
 						delegate.translate(0, -1, 0);
-						delegate.renderFront(0, 1, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.renderDoubleSided(0, 1, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						for (int i = 0; i < snoutDepth-1; i++) {
 							delegate.translate(0, -1, 0);
-							delegate.renderFront(0, 0, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.renderDoubleSided(0, 0, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						}
 					delegate.pop();
 					delegate.push();
 						// bottom
 						delegate.translate(0, snoutHeight, 0);
 						delegate.rotate(90, 1, 0, 0);
-						delegate.renderFront(0, 2+snoutHeight, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.renderDoubleSided(0, 2+snoutHeight, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						for (int i = 0; i < snoutDepth-1; i++) {
 							delegate.translate(0, 1, 0);
-							delegate.renderFront(0, 2+snoutHeight+1, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.renderDoubleSided(0, 2+snoutHeight+1, snoutWidth, 1, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						}
 					delegate.pop();
 					delegate.push();
@@ -367,19 +367,19 @@ public class EarsCommon {
 						// right
 						delegate.push();
 							delegate.translate(-1, 0, 0);
-							delegate.renderFront(7, 0, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.renderDoubleSided(7, 0, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							for (int i = 0; i < snoutDepth-1; i++) {
 								delegate.translate(-1, 0, 0);
-								delegate.renderFront(7, 4, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderDoubleSided(7, 4, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							}
 						delegate.pop();
 						// left
 						delegate.push();
 							delegate.translate(-1, 0, snoutWidth);
-							delegate.renderBack(7, 0, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.renderDoubleSided(7, 0, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							for (int i = 0; i < snoutDepth-1; i++) {
 								delegate.translate(-1, 0, 0);
-								delegate.renderBack(7, 4, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderDoubleSided(7, 4, 1, snoutHeight, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							}
 						delegate.pop();
 					delegate.pop();
@@ -394,18 +394,18 @@ public class EarsCommon {
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -10, 0);
 					delegate.rotate(-chestSize*35, 1, 0, 0);
-					delegate.renderFront(20, 22, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderDoubleSided(20, 22, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 					delegate.push();
 						delegate.translate(0, 4, 0);
 						delegate.rotate(90, 1, 0, 0);
-						delegate.renderFront(56, 44, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.renderDoubleSided(56, 44, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 					delegate.pop();
 					delegate.push();
 						delegate.rotate(90, 0, 1, 0);
 						delegate.translate(-4f, 0, 0.01f);
-						delegate.renderFront(60, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.renderDoubleSided(60, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						delegate.translate(0, 0, 7.98f);
-						delegate.renderBack(60, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+						delegate.renderDoubleSided(60, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 					delegate.pop();
 				delegate.pop();
 			}
