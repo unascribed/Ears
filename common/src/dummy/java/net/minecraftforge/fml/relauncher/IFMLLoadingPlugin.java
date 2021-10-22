@@ -6,6 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+/**
+ * Never used. Allows the agent to compile without pulling in all of FML.
+ */
 public interface IFMLLoadingPlugin {
 	String[] getASMTransformerClass();
 	String getModContainerClass();

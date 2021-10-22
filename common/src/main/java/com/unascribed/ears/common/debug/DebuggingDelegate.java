@@ -2,6 +2,9 @@ package com.unascribed.ears.common.debug;
 
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 
+/**
+ * A wrapper around another EarsRenderDelegate that {@link EarsLog logs} everything performed.
+ */
 public class DebuggingDelegate implements EarsRenderDelegate {
 
 	private final EarsRenderDelegate delegate;

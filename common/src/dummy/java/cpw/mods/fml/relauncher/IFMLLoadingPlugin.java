@@ -6,6 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+/**
+ * Never used. Allows the agent to compile against a generic version of the IFMLLoadingPlugin
+ * interface that includes all methods that were ever present, since method overriding is not
+ * checked at runtime.
+ */
 public interface IFMLLoadingPlugin {
 	String[] getLibraryRequestClass(); // 1.4 and 1.5
 	String[] getASMTransformerClass();

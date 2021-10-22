@@ -2,6 +2,10 @@ package org.lwjgl.opengl;
 
 import java.nio.*;
 
+/**
+ * Skeleton implementation of GL11 from LWJGL2 (also compatible with 3, for the most part) to allow
+ * some things to compile without pulling in all of LWJGL.
+ */
 public final class GL11 {
 
 	static int noinline() {

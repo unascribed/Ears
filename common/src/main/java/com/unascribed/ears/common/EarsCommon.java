@@ -15,6 +15,9 @@ import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexSource;
 
+/**
+ * Entrypoint to methods that are common to all ports of Ears.
+ */
 public class EarsCommon {
 
 	private static final ThreadLocal<float[][]> uvScratch = new ThreadLocal<float[][]>() {
@@ -45,6 +48,10 @@ public class EarsCommon {
 		
 	}
 	
+	/**
+	 * A list of rectangles in a 64x64 skin that are forced to have their translucency removed by
+	 * the vanilla skin loader.
+	 */
 	public static final List<Rectangle> FORCED_OPAQUE_REGIONS = Collections.unmodifiableList(Arrays.asList(
 			new Rectangle(8, 0, 24, 8),
 			new Rectangle(0, 8, 32, 16),
@@ -61,6 +68,12 @@ public class EarsCommon {
 			new Rectangle(16, 52, 48, 64)
 		));
 	
+	/**
+	 * Call {@code sam} with every rectangle in {@link #FORCED_OPAQUE_REGIONS}.
+	 * <p>
+	 * Needed because vanilla minecraft uses rough rectangles that mess up a ton of unused pixels,
+	 * which we give a use to.
+	 */
 	public static void carefullyStripAlpha(StripAlphaMethod sam, boolean sixtyFour) {
 		EarsLog.debug("Common", "carefullyStripAlpha({}, {})", sam, sixtyFour);
 		for (Rectangle rect : FORCED_OPAQUE_REGIONS) {
@@ -69,6 +82,9 @@ public class EarsCommon {
 		}
 	}
 	
+	/**
+	 * Render all the features described in {@code features} using {@code delegate}.
+	 */
 	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount, boolean slim) {
 		EarsLog.debug("Common:Renderer", "render({}, {}, {})", features, delegate, swingAmount);
 		
@@ -398,10 +414,18 @@ public class EarsCommon {
 		}
 	}
 
+	/**
+	 * Calculate the needed UVs to render a quad with the given rotation and flip of the given
+	 * texture.
+	 */
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src) {
 		return calculateUVs(u, v, w, h, rot, flip, src, 0);
 	}
 	
+	/**
+	 * Calculate the needed UVs to render a quad with the given rotation and flip of the given
+	 * texture, "pinching" the UVs in by the specified amount to avoid UV bleed.
+	 */
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src, float pinch) {
 		EarsLog.debug("Common:Renderer", "calculateUVs(u={}, v={}, w={}, h={}, rot={}, flip={}, src={})", u, v, w, h, rot, flip, src);
 		float tw = src.width;

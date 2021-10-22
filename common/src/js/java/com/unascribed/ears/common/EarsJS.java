@@ -21,8 +21,14 @@ import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.EarsFeatures.MagicPixel;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 
+/**
+ * Entry point for the Manipulator to build quads.
+ */
 public class EarsJS {
 	
+	/**
+	 * Called "rebuildQuads" in JavaScript.
+	 */
 	public static void main(String[] args) throws IOException {
 		JSMapLike<JSString> magicPixels = JSObjects.create();
 		JSMapLike<JSString> magicPixelValues = JSObjects.create();

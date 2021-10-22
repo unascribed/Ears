@@ -5,6 +5,10 @@ import static org.lwjgl.opengl.GL12.*;
 
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
 
+/**
+ * A specialization of {@link DirectEarsRenderDelegate} that performs matrix manipulation and
+ * render setup by making direct OpenGL calls.
+ */
 public abstract class PartiallyUnmanagedEarsRenderDelegate<TPeer, TModelPart> extends DirectEarsRenderDelegate<TPeer, TModelPart> {
 	
 	@Override

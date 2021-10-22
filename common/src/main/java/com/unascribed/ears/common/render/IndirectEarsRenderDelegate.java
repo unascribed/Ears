@@ -2,6 +2,16 @@ package com.unascribed.ears.common.render;
 
 import com.unascribed.ears.common.EarsCommon;
 
+/**
+ * Provides an abstraction for working with "indirect" rendering in modern Minecraft versions (1.15
+ * and later).
+ *
+ * @param <TMatrixStack> the type of the matrix stack; usually MatrixStack or PoseStack
+ * @param <TVertexConsumerProvider> the type of the vertex consumer provider; usually VertexConsumerProvider or IRenderTypeBuffers
+ * @param <TVertexConsumer> the type of a vertex consumer; usually VertexConsumer or IRenderBuffer
+ * @param <TPeer> the type of the "render peer"; usually something like AbstractClientPlayer
+ * @param <TModelPart> the type of model parts; usually ModelPart (Yarn/Mojmap) or ModelRenderer (MCP)
+ */
 public abstract class IndirectEarsRenderDelegate<TMatrixStack, TVertexConsumerProvider, TVertexConsumer, TPeer, TModelPart> extends AbstractEarsRenderDelegate<TPeer, TModelPart> {
 
 	protected TMatrixStack matrices;

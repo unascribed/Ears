@@ -2,6 +2,9 @@ package com.unascribed.ears.common.debug;
 
 import java.util.Set;
 
+/**
+ * Never used. Exists to allow the main module to compile.
+ */
 class EarsLogImpl {
 
 	static boolean checkDebug() {

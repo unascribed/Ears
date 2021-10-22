@@ -6,8 +6,30 @@ import java.nio.ByteOrder;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;
+import com.unascribed.ears.common.legacy.PartiallyUnmanagedEarsRenderDelegate;
+import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.util.Decider;
 
+/**
+ * Implements some basic shared render logic to reduce duplicated code.
+ * <p>
+ * It will handle managing render skipping, permitted body parts, stack over/underflow detection,
+ * tracking which texture is bound, and building quads with the right UVs.
+ * <p>
+ * A subclass should be used if possible. For "exotic" platforms (such as the Manipulator), consider
+ * implementing EarsRenderDelegate directly. AbstractEarsRenderDelegate and friends all make various
+ * assumptions that are only true within Minecraft itself.
+ * 
+ * @see ImmediateEarsRenderDelegate Immediate, for versions with a broken Tesselator and no state or texture manager (e.g. Beta 1.7, 1.2.5)
+ * @see UnmanagedEarsRenderDelegate Unmanaged, for versions without a state manager or texture manager (e.g. 1.4, 1.5)
+ * @see PartiallyUnmanagedEarsRenderDelegate PartiallyUnmanaged, for versions without a state manager (e.g. 1.6, 1.7)
+ * @see DirectEarsRenderDelegate Direct, for versions with a state manager (e.g. 1.8, 1.12, 1.14)
+ * @see IndirectEarsRenderDelegate Indirect, for versions with the RenderLayer/VertexConsumerProvider abstraction (e.g. 1.15, 1.16)
+ * 
+ * @param <TPeer> the type of the "render peer"; usually something like AbstractClientPlayer
+ * @param <TModelPart> the type of model parts; usually ModelPart (Yarn/Mojmap) or ModelRenderer (MCP)
+ */
 public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements EarsRenderDelegate {
 	
 	protected abstract EarsFeatures getEarsFeatures();

@@ -33,11 +33,21 @@ public class EarsLog {
 		}
 	}
 
+	/**
+	 * @return {@code true} if debugging and the given debug tag are enabled
+	 */
 	@SuppressWarnings("unused")
 	public static boolean shouldLog(String tag) {
 		return DEBUG && (ONLY_DEBUG == null || ONLY_DEBUG.contains(tag));
 	}
 	
+	/**
+	 * Print a log message to the Ears log file (or stdout, if configured).
+	 * <p>
+	 * Prefer one of the many specializations of this method that don't allocate an array; Ears
+	 * tends to inject into hot paths in the Minecraft renderer, so it's good to avoid the array
+	 * allocation if debugging is off.
+	 */
 	public static void debugva(String tag, String fmt, Object... arg) {
 		if (shouldLog(tag)) {
 			StringBuffer buf = new StringBuffer();
@@ -62,8 +72,6 @@ public class EarsLog {
 		}
 	}
 	
-	// various purpose-built overloads prevent boxing and array allocation when debugging is off
-
 	public static void debug(String tag, String fmt) {
 		if (shouldLog(tag)) {
 			debugva(tag, fmt);

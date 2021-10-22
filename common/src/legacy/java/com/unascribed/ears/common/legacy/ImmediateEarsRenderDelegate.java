@@ -8,6 +8,10 @@ import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
+/**
+ * A further specialization of {@link UnmanagedEarsRenderDelegate} that renders quads using OpenGL
+ * 1.1 immediate mode.
+ */
 public abstract class ImmediateEarsRenderDelegate<TPeer, TModelPart> extends UnmanagedEarsRenderDelegate<TPeer, TModelPart> {
 
 	@Override

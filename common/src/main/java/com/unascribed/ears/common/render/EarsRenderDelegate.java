@@ -4,6 +4,11 @@ import java.util.Locale;
 
 import com.unascribed.ears.common.EarsFeatures;
 
+/**
+ * Entrypoint to the Ears abstract rendering platform. Every platform provides a concrete
+ * implementation, usually based on {@link AbstractEarsRenderDelegate} or one of its many
+ * subclasses.
+ */
 public interface EarsRenderDelegate {
 
 	public enum BodyPart {

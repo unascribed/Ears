@@ -6,6 +6,9 @@ import java.util.WeakHashMap;
 
 import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 
+/**
+ * General purpose thread-local type-safe storage for providing "inside-out" fields where needed.
+ */
 public final class EarsStorage {
 
 	public static final class Key<T> {

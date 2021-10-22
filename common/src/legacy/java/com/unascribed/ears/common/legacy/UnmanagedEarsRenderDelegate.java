@@ -9,6 +9,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+/**
+ * A specialization of PartiallyUnmanagedEarsRenderDelegate that keeps track of auxillary GL texture
+ * IDs itself.
+ */
 public abstract class UnmanagedEarsRenderDelegate<TPeer, TModelPart> extends PartiallyUnmanagedEarsRenderDelegate<TPeer, TModelPart> {
 	
 	private final Map<String, Integer> subTextures = new HashMap<String, Integer>();

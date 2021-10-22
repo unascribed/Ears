@@ -6,6 +6,9 @@ import java.util.Locale;
 import java.util.Map;
 import com.unascribed.ears.common.debug.EarsLog;
 
+/**
+ * Describes the state of every Ears feature for a player skin.
+ */
 public class EarsFeatures {
 
 	enum MagicPixel {
@@ -193,6 +196,10 @@ public class EarsFeatures {
 		this.alfalfa = alfalfa;
 	}
 
+	/**
+	 * Decode the Ears configuration out of the magic pixels in the given skin image, and associate
+	 * the given Alfalfa with the resultant features object.
+	 */
 	public static EarsFeatures detect(EarsImage img, Alfalfa alfalfa) {
 		EarsLog.debug("Common:Features", "detect({}, {})", img, alfalfa);
 		if (img.getHeight() == 64) {
@@ -266,6 +273,12 @@ public class EarsFeatures {
 		return DISABLED;
 	}
 	
+	/**
+	 * Convert a pixel value to a float from -1 to 1, using an encoding that puts 0 at pixel value
+	 * 0, thereby shifting all other possible values forward by one.
+	 * <p>
+	 * This allows a black pixel to mean 0 for all of its values.
+	 */
 	private static float pxValToUnit(int i) {
 		if (i == 0) return 0;
 		int j = i-128;
