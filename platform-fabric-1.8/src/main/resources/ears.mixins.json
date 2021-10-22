@@ -9,7 +9,8 @@
     "MixinDownloadedSkinParser",
     "MixinPlayerEntityRenderer",
     "MixinPlayerSkinTexture",
-    "AccessorPlayerEntityModel"
+    "AccessorPlayerEntityModel",
+    "MixinModelPart"
   ],
   "injectors": {
     "defaultRequire": 1

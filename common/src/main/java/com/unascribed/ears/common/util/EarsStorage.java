@@ -1,0 +1,47 @@
+package com.unascribed.ears.common.util;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+
+public final class EarsStorage {
+
+	public static final class Key<T> {
+		public static final Key<Alfalfa> ALFALFA = new Key<Alfalfa>(Alfalfa.NONE);
+		
+		public final T def;
+
+		public Key() { this(null); }
+		public Key(T def) { this.def = def; }
+	}
+	
+	private static final ThreadLocal<Map<Object, Map<Key<?>, Object>>> storage = new ThreadLocal<Map<Object, Map<Key<?>, Object>>>() {
+		@Override
+		protected Map<Object, Map<Key<?>, Object>> initialValue() {
+			return new WeakHashMap<Object, Map<Key<?>, Object>>();
+		}
+	};
+	
+	public static <T> void put(Object peer, Key<T> key, T value) {
+		Map<Object, Map<Key<?>, Object>> stor = storage.get();
+		Map<Key<?>, Object> map = stor.get(peer);
+		if (map == null) {
+			map = new HashMap<Key<?>, Object>();
+			stor.put(peer, map);
+		}
+		map.put(key, value);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T get(Object peer, Key<T> key) {
+		Map<Object, Map<Key<?>, Object>> stor = storage.get();
+		Map<Key<?>, Object> map = stor.get(peer);
+		if (map == null) return key.def;
+		return (T)map.get(key);
+	}
+
+	private EarsStorage() {}
+	
+}

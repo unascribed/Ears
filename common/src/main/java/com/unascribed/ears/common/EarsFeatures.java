@@ -122,8 +122,37 @@ public class EarsFeatures {
 				MagicPixel.ORANGE, VERTICAL
 		);
 	}
+	
+	/**
+	 * Extra data stored in the alpha channel of forced-opaque areas.
+	 */
+	public static class Alfalfa {
+		
+		public static final Alfalfa NONE = new Alfalfa(0, Collections.<String, byte[]>emptyMap());
+		
+		// EARS ALFALFA in hex
+		public static final long MAGIC = 0x000EA2500A1FA1FAL;
+		
+		public final int version;
+		public final Map<String, byte[]> data;
+		
+		public Alfalfa(int version, Map<String, byte[]> data) {
+			this.version = version;
+			this.data = Collections.unmodifiableMap(new HashMap<String, byte[]>(data));
+		}
 
-	private static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		@Override
+		public String toString() {
+			return "Alfalfa[version=" + version + ", data=" + data + "]";
+		}
+
+		public static Alfalfa read(EarsImage img) {
+			return NONE;
+		}
+		
+	}
+
+	public static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, Alfalfa.NONE);
 	
 	public final boolean enabled;
 	public final EarMode earMode;
@@ -139,13 +168,14 @@ public class EarsFeatures {
 	public final int snoutHeight;
 	public final int snoutDepth;
 	public final float chestSize;
+	public final Alfalfa alfalfa;
 
 	EarsFeatures(boolean enabled,
 			EarMode earMode, EarAnchor earAnchor,
 			Protrusions protrusions,
 			TailMode tailMode, float tailBend0, float tailBend1, float tailBend2, float tailBend3,
 			int snoutOffset, int snoutWidth, int snoutHeight, int snoutDepth,
-			float chestSize) {
+			float chestSize, Alfalfa alfalfa) {
 		this.enabled = enabled;
 		this.earMode = earMode;
 		this.earAnchor = earAnchor;
@@ -160,10 +190,11 @@ public class EarsFeatures {
 		this.snoutHeight = snoutHeight;
 		this.snoutDepth = snoutDepth;
 		this.chestSize = chestSize;
+		this.alfalfa = alfalfa;
 	}
 
-	public static EarsFeatures detect(EarsImage img) {
-		EarsLog.debug("Common:Features", "detect({})", img);
+	public static EarsFeatures detect(EarsImage img, Alfalfa alfalfa) {
+		EarsLog.debug("Common:Features", "detect({}, {})", img, alfalfa);
 		if (img.getHeight() == 64) {
 			MagicPixel first = getMagicPixel(img, 0);
 			if (first == MagicPixel.BLUE) {
@@ -225,7 +256,7 @@ public class EarsFeatures {
 					if (chestSize > 1) chestSize = 1;
 					EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - {}% size", upperHex24Dbg(etc), (int)(chestSize*100));
 				}
-				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend0, tailBend1, tailBend2, tailBend3, snoutOffset, snoutWidth, snoutHeight, snoutDepth, chestSize);
+				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend0, tailBend1, tailBend2, tailBend3, snoutOffset, snoutWidth, snoutHeight, snoutDepth, chestSize, alfalfa);
 			} else {
 				EarsLog.debug("Common:Features", "detect(...): Pixel at 0, 32 is not #3F23D8 (Magic Blue) - it's #{}. Disabling",  upperHex32Dbg(img.getARGB(0, 32)));
 				return DISABLED;

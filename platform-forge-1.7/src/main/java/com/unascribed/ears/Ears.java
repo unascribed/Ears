@@ -17,8 +17,10 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
@@ -153,6 +155,9 @@ public class Ears {
 			}
 
 			g.dispose();
+			
+			EarsStorage.put(newImg, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(newImg)));
+			
 			setImageData(subject, ((DataBufferInt) newImg.getRaster().getDataBuffer()).getData());
 			EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setAreaOpaque(subject, _x1, _y1, _x2, _y2), true);
 			setAreaTransparent(subject, 32, 0, 64, 32);
@@ -167,7 +172,7 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
+		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
 	}
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {

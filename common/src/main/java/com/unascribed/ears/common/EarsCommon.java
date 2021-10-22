@@ -1,14 +1,19 @@
 package com.unascribed.ears.common;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import com.unascribed.ears.common.EarsFeatures.EarAnchor;
 import com.unascribed.ears.common.EarsFeatures.EarMode;
 import com.unascribed.ears.common.EarsFeatures.TailMode;
-import com.unascribed.ears.common.EarsRenderDelegate.BodyPart;
-import com.unascribed.ears.common.EarsRenderDelegate.QuadGrow;
-import com.unascribed.ears.common.EarsRenderDelegate.TexFlip;
-import com.unascribed.ears.common.EarsRenderDelegate.TexRotation;
 import com.unascribed.ears.common.debug.DebuggingDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.render.EarsRenderDelegate;
+import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
+import com.unascribed.ears.common.render.EarsRenderDelegate.QuadGrow;
+import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
+import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
+import com.unascribed.ears.common.render.EarsRenderDelegate.TexSource;
 
 public class EarsCommon {
 
@@ -28,33 +33,50 @@ public class EarsCommon {
 		void stripAlpha(int x1, int y1, int x2, int y2);
 	}
 	
+	public static final class Rectangle {
+		public final int x1, y1, x2, y2;
+
+		public Rectangle(int x1, int y1, int x2, int y2) {
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+		
+	}
+	
+	public static final List<Rectangle> FORCED_OPAQUE_REGIONS = Collections.unmodifiableList(Arrays.asList(
+			new Rectangle(8, 0, 24, 8),
+			new Rectangle(0, 8, 32, 16),
+			
+			new Rectangle(4, 16, 12, 20),
+			new Rectangle(20, 16, 36, 20),
+			new Rectangle(44, 16, 52, 20),
+			
+			new Rectangle(0, 20, 56, 32),
+			
+			new Rectangle(20, 48, 28, 52),
+			new Rectangle(36, 48, 44, 52),
+				
+			new Rectangle(16, 52, 48, 64)
+		));
+	
 	public static void carefullyStripAlpha(StripAlphaMethod sam, boolean sixtyFour) {
 		EarsLog.debug("Common", "carefullyStripAlpha({}, {})", sam, sixtyFour);
-		sam.stripAlpha(8, 0, 24, 8);
-		sam.stripAlpha(0, 8, 32, 16);
-		
-		sam.stripAlpha(4, 16, 12, 20);
-		sam.stripAlpha(20, 16, 36, 20);
-		sam.stripAlpha(44, 16, 52, 20);
-		
-		sam.stripAlpha(0, 20, 56, 32);
-		
-		if (sixtyFour) {
-			sam.stripAlpha(20, 48, 28, 52);
-			sam.stripAlpha(36, 48, 44, 52);
-			
-			sam.stripAlpha(16, 52, 48, 64);
+		for (Rectangle rect : FORCED_OPAQUE_REGIONS) {
+			if (!sixtyFour && rect.y1 > 32) continue;
+			sam.stripAlpha(rect.x1, rect.y1, rect.x2, rect.y2);
 		}
 	}
 	
 	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount, boolean slim) {
 		EarsLog.debug("Common:Renderer", "render({}, {}, {})", features, delegate, swingAmount);
 		
-		if (EarsLog.DEBUG) {
+		if (EarsLog.DEBUG && EarsLog.shouldLog("Platform:Renderer:Delegate")) {
 			delegate = new DebuggingDelegate(delegate);
 		}
 
-		if (EarsLog.DEBUG) {
+		if (EarsLog.DEBUG && EarsLog.shouldLog("Common:Renderer:Dots")) {
 			for (BodyPart part : BodyPart.values()) {
 				delegate.push();
 					delegate.anchorTo(part);
@@ -76,6 +98,9 @@ public class EarsCommon {
 		}
 		
 		if (features != null && features.enabled) {
+			delegate.setUp();
+			delegate.bind(TexSource.SKIN);
+			
 			EarMode earMode = features.earMode;
 			EarAnchor earAnchor = features.earAnchor;
 			
@@ -242,7 +267,7 @@ public class EarsCommon {
 					int segHeight = 12/segments;
 					for (int i = 0; i < segments; i++) {
 						delegate.rotate(angles[i]*(1-(swingAmount/2)), 1, 0, 0);
-						renderDoubleSided(delegate, 56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+						delegate.renderDoubleSided(56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 						delegate.translate(0, segHeight, 0);
 					}
 				delegate.pop();
@@ -256,28 +281,28 @@ public class EarsCommon {
 					delegate.anchorTo(BodyPart.LEFT_LEG);
 					delegate.translate(0, 0, -4);
 					delegate.rotate(90, 1, 0, 0);
-					renderDoubleSided(delegate, 16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.renderDoubleSided(16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				delegate.push();
 					delegate.anchorTo(BodyPart.RIGHT_LEG);
 					delegate.translate(0, 0, -4);
 					delegate.rotate(90, 1, 0, 0);
-					renderDoubleSided(delegate, 0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.renderDoubleSided(0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				delegate.push();
 					delegate.anchorTo(BodyPart.LEFT_ARM);
 					delegate.rotate(90, 0, 1, 0);
 					delegate.translate(-4, 0, slim ? 3 : 4);
-					renderDoubleSided(delegate, 44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.renderDoubleSided(44, 48, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.HORIZONTAL, QuadGrow.NONE);
 				delegate.pop();
 				
 				delegate.push();
 					delegate.anchorTo(BodyPart.RIGHT_ARM);
 					delegate.rotate(90, 0, 1, 0);
 					delegate.translate(-4, 0, 0);
-					renderDoubleSided(delegate, 52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderDoubleSided(52, 16, 4, 4, TexRotation.UPSIDE_DOWN, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 			}
 			
@@ -287,7 +312,7 @@ public class EarsCommon {
 					delegate.translate(0, -8, 0);
 					delegate.rotate(25, 1, 0, 0);
 					delegate.translate(0, -8, 0);
-					renderDoubleSided(delegate, 56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+					delegate.renderDoubleSided(56, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 				delegate.pop();
 			}
 			
@@ -369,25 +394,24 @@ public class EarsCommon {
 				delegate.pop();
 			}
 			
+			delegate.tearDown();
 		}
 	}
 
-	private static void renderDoubleSided(EarsRenderDelegate delegate, int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		delegate.renderFront(u, v, width, height, rot, flip, grow);
-		delegate.renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
-	}
-
-	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip) {
-		return calculateUVs(u, v, w, h, rot, flip, 0);
+	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src) {
+		return calculateUVs(u, v, w, h, rot, flip, src, 0);
 	}
 	
-	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, float pinch) {
-		EarsLog.debug("Common:Renderer", "calculateUVs({}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip);
-		float minU = (u/64f)+pinch;
-		float minV = (v/64f)+pinch;
+	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src, float pinch) {
+		EarsLog.debug("Common:Renderer", "calculateUVs(u={}, v={}, w={}, h={}, rot={}, flip={}, src={})", u, v, w, h, rot, flip, src);
+		float tw = src.width;
+		float th = src.height;
 		
-		float maxU = ((u+(rot.transpose ? h : w))/64f)-pinch;
-		float maxV = ((v+(rot.transpose ? w : h))/64f)-pinch;
+		float minU = (u/tw)+pinch;
+		float minV = (v/th)+pinch;
+		
+		float maxU = ((u+(rot.transpose ? h : w))/tw)-pinch;
+		float maxV = ((v+(rot.transpose ? w : h))/th)-pinch;
 		
 		if (rot.transpose) {
 			if (flip == TexFlip.HORIZONTAL) flip = TexFlip.VERTICAL;

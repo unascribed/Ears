@@ -16,9 +16,11 @@ import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureModel
 import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureType;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService.ProfileLookupCallback;
+import com.unascribed.ears.common.util.EarsStorage;
 import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
@@ -41,7 +43,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.3.0"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.0"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
@@ -157,6 +159,9 @@ public class Ears {
 			}
 
 			g.dispose();
+			
+			EarsStorage.put(newImg, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(newImg)));
+			
 			setImageData(subject, ((DataBufferInt) newImg.getRaster().getDataBuffer()).getData());
 			EarsCommon.carefullyStripAlpha(new StripAlphaMethod() {
 				@Override
@@ -176,7 +181,7 @@ public class Ears {
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img)));
+		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
 	}
 	
 	public static String amendSkinUrl(String url) {

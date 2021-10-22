@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 
@@ -27,7 +28,6 @@ public class EarsDownloadThread {
 				URL url = new URL(string);
 				if (string.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && string.endsWith(".png")) {
 					String username = string.substring(39, string.length() - 4);
-					// this is called in the download thread, so it's ok to block
 					final String[] newUrl = {null};
 					EarsMod.profileService.findProfilesByName(new String[]{username}, new ProfileService.ProfileLookupCallback() {
 						@Override
@@ -60,14 +60,16 @@ public class EarsDownloadThread {
 				imageConnection.setDoOutput(false);
 				imageConnection.connect();
 				if (imageConnection.getResponseCode() / 100 != 4) {
+					BufferedImage rawImage = ImageIO.read(imageConnection.getInputStream());
+					Alfalfa alfalfa = Alfalfa.read(new AWTEarsImage(rawImage));
 					if (imageProcessor == null) {
-						EarsDownloadThread.this.image = ImageIO.read(imageConnection.getInputStream());
+						EarsDownloadThread.this.image = rawImage;
 					} else {
-						EarsDownloadThread.this.image = imageProcessor.process(ImageIO.read(imageConnection.getInputStream()));
+						EarsDownloadThread.this.image = imageProcessor.process(rawImage);
 					}
 
 					EarsLog.debug("Platform:Inject", "Process player skin");
-					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image)));
+					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa));
 
 					return;
 				}

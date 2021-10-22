@@ -9,6 +9,7 @@ import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.modern.RawEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.SimpleTexture;
@@ -27,7 +28,7 @@ public abstract class MixinThreadDownloadImageData extends SimpleTexture impleme
 	@Inject(at=@At("HEAD"), method = "setImage(Lnet/minecraft/client/renderer/texture/NativeImage;)V")
 	public void setImage(NativeImage cur, CallbackInfo ci) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false));
+		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
 	}
 	
 	@Override

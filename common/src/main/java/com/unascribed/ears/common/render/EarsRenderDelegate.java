@@ -1,4 +1,8 @@
-package com.unascribed.ears.common;
+package com.unascribed.ears.common.render;
+
+import java.util.Locale;
+
+import com.unascribed.ears.common.EarsFeatures;
 
 public interface EarsRenderDelegate {
 
@@ -31,6 +35,33 @@ public interface EarsRenderDelegate {
 			return zSize;
 		}
 		
+	}
+	
+	public enum TexSource {
+		SKIN(64, 64),
+		WING(12, 12),
+		;
+		public final int width, height;
+		public final String lowerName;
+
+		TexSource(int width, int height) {
+			this.width = width;
+			this.height = height;
+			this.lowerName = name().toLowerCase(Locale.ROOT);
+		}
+		
+		public String addSuffix(String path) {
+			if (this == SKIN) return path;
+			return path+"/ears/"+lowerName;
+		}
+		
+		public byte[] getPNGData(EarsFeatures feat) {
+			if (this == SKIN) return null;
+			if (this == WING) {
+				return feat.alfalfa.data.get("wing");
+			}
+			return null;
+		}
 	}
 	
 	public enum TexRotation {
@@ -107,14 +138,22 @@ public interface EarsRenderDelegate {
 		}
 	}
 	
+	void setUp();
+	void tearDown();
+	
 	void push();
 	void pop();
 	
 	void anchorTo(BodyPart part);
+	void bind(TexSource tex);
+	
 	void translate(float x, float y, float z);
 	void rotate(float ang, float x, float y, float z);
+	void scale(float x, float y, float z);
+	
 	void renderFront(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
 	void renderBack(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
+	void renderDoubleSided(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow);
 	
 	void renderDebugDot(float r, float g, float b, float a);
 	

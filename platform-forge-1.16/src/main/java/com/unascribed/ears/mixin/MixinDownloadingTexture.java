@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.modern.RawEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.renderer.texture.DownloadingTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
@@ -32,7 +34,7 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 	private void loadTexture(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		NativeImage cur = ci.getReturnValue();
-		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false));
+		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
 	}
 	
 	private static boolean ears$reentering;
@@ -44,6 +46,7 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {
 				ears$reentering = true;
+				EarsStorage.put(image, EarsStorage.Key.ALFALFA, Alfalfa.read(new RawEarsImage(image.makePixelArray(), image.getWidth(), image.getHeight(), false)));
 				EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setAreaOpaque(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
 			} finally {
 				ears$reentering = false;

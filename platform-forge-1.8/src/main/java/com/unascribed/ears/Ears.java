@@ -8,13 +8,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.lwjgl.opengl.GL11;
+
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelPlayer;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -30,6 +36,7 @@ public class Ears {
 	
 	public static final Map<ITextureObject, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
 	private static final Map<RenderPlayer, LayerEars> earsLayers = new WeakHashMap<>();
+	public static final EarsStorage.Key<Boolean> FORCE_TRANSLUCENT = new EarsStorage.Key<>(false);
 	
 	private static boolean reentering;
 	
@@ -38,6 +45,11 @@ public class Ears {
 			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
 					Loader.instance().getMCVersionString(), ForgeVersion.getVersion(), FMLCommonHandler.instance().getSide());
 		}
+	}
+	
+	public static void preprocessSkin(ImageBufferDownload subject, BufferedImage rawImg, BufferedImage img) {
+		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
+		EarsStorage.put(img, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(rawImg)));
 	}
 	
 	public static boolean interceptSetAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
@@ -56,7 +68,7 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
+		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
 	}
 	
 	public static void addLayer(RenderPlayer rp) {
@@ -64,6 +76,26 @@ public class Ears {
 		LayerEars layer = new LayerEars(rp);
 		earsLayers.put(rp, layer);
 		rp.addLayer(layer);
+		
+		EarsStorage.put(rp.getMainModel().bipedHeadwear, FORCE_TRANSLUCENT, true);
+		EarsStorage.put(rp.getMainModel().bipedBodyWear, FORCE_TRANSLUCENT, true);
+		EarsStorage.put(rp.getMainModel().bipedLeftArmwear, FORCE_TRANSLUCENT, true);
+		EarsStorage.put(rp.getMainModel().bipedRightArmwear, FORCE_TRANSLUCENT, true);
+		EarsStorage.put(rp.getMainModel().bipedLeftLegwear, FORCE_TRANSLUCENT, true);
+		EarsStorage.put(rp.getMainModel().bipedRightLegwear, FORCE_TRANSLUCENT, true);
+	}
+	
+	public static void preRender(ModelRenderer subject) {
+		if (EarsStorage.get(subject, FORCE_TRANSLUCENT)) {
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		}
+	}
+	
+	public static void postRender(ModelRenderer subject) {
+		if (EarsStorage.get(subject, FORCE_TRANSLUCENT)) {
+			GlStateManager.disableBlend();
+		}
 	}
 	
 	public static void renderLeftArm(RenderPlayer rp, AbstractClientPlayer player) {

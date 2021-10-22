@@ -10,6 +10,7 @@ public class Patches {
 		out.add(new ImageBufferDownloadTransformer());
 		out.add(new RenderPlayerTransformer());
 		out.add(new ThreadDownloadImageDataTransformer());
+		out.add(new ModelRendererTransformer());
 	}
 	
 }

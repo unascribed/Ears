@@ -34,7 +34,7 @@ public class EarsLog {
 	}
 
 	@SuppressWarnings("unused")
-	private static boolean shouldLog(String tag) {
+	public static boolean shouldLog(String tag) {
 		return DEBUG && (ONLY_DEBUG == null || ONLY_DEBUG.contains(tag));
 	}
 	

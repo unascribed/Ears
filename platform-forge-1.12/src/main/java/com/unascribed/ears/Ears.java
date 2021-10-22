@@ -10,8 +10,10 @@ import java.util.WeakHashMap;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelPlayer;
@@ -40,6 +42,11 @@ public class Ears {
 	
 	private static boolean reentering;
 	
+	public static void preprocessSkin(ImageBufferDownload subject, BufferedImage rawImg, BufferedImage img) {
+		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
+		EarsStorage.put(img, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(rawImg)));
+	}
+	
 	public static boolean interceptSetAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {}, {}) reentering={}", subject, x1, y2, x2, y2, reentering);
 		if (reentering) return true;
@@ -56,7 +63,7 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img)));
+		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
 	}
 	
 	public static void addLayer(RenderPlayer rp) {

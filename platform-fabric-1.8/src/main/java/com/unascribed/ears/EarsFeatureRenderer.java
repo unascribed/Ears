@@ -1,12 +1,19 @@
 package com.unascribed.ears;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.EarsRenderDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
+import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
+import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.mixin.AccessorPlayerEntityModel;
 
 import net.minecraft.client.MinecraftClient;
@@ -18,96 +25,42 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.Texture;
+import net.minecraft.client.texture.TextureUtil;
 import net.minecraft.util.Identifier;
 
-public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayerEntity>, EarsRenderDelegate {
+public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayerEntity> {
 	
 	private final PlayerEntityRenderer render;
-	
-	private AbstractClientPlayerEntity entity;
-	private int skipRendering;
-	private int stackDepth;
-	private BodyPart permittedBodyPart;
 	
 	public EarsFeatureRenderer(PlayerEntityRenderer render) {
 		this.render = render;
 		EarsLog.debug("Platform:Renderer", "Constructed");
+		((SetTranslucent)render.getModel().field_3782).ears$setTranslucent(true);
+		((SetTranslucent)render.getModel().field_3816).ears$setTranslucent(true);
+		((SetTranslucent)render.getModel().field_3814).ears$setTranslucent(true);
+		((SetTranslucent)render.getModel().field_3815).ears$setTranslucent(true);
+		((SetTranslucent)render.getModel().field_3812).ears$setTranslucent(true);
+		((SetTranslucent)render.getModel().field_3813).ears$setTranslucent(true);
 	}
 	
-	
-	
 	@Override
-	public void render(AbstractClientPlayerEntity entity,
-			float limbSwing, float limbDistance, float partialTicks,
-			float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {})", entity, limbSwing, limbDistance, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
-		Identifier skin = entity.getSkinTexture();
-		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "render(...): skin={}, tex={}", skin, tex);
-		if (!entity.isInvisible() && tex instanceof EarsFeaturesHolder) {
-			EarsLog.debug("Platform:Renderer", "render(...): Checks passed");
-			MinecraftClient.getInstance().getTextureManager().bindTexture(skin);
-			this.entity = entity;
-			this.skipRendering = 0;
-			this.stackDepth = 0;
-			this.permittedBodyPart = null;
-			GlStateManager.enableCull();
-			GlStateManager.enableRescaleNormal();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, limbDistance, ((AccessorPlayerEntityModel)render.getModel()).ears$isThinArms());
-			GlStateManager.disableBlend();
-			GlStateManager.disableRescaleNormal();
-			GlStateManager.disableCull();
-			this.entity = null;
-		}
+	public void render(AbstractClientPlayerEntity entity, float limbAngle, float limbDistance,
+			float tickDelta, float age, float headYaw, float headPitch, float scale) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		delegate.render(entity, limbDistance, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayerEntity entity) {
-		Identifier skin = entity.getSkinTexture();
-		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "renderLeftArm(...): skin={}, tex={}", skin, tex);
-		if (!entity.isInvisible() && tex instanceof EarsFeaturesHolder) {
-			EarsLog.debug("Platform:Renderer", "renderLeftArm(...): Checks passed");
-			MinecraftClient.getInstance().getTextureManager().bindTexture(skin);
-			this.entity = entity;
-			this.skipRendering = 0;
-			this.stackDepth = 0;
-			this.permittedBodyPart = BodyPart.LEFT_ARM;
-			GlStateManager.enableCull();
-			GlStateManager.enableRescaleNormal();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorPlayerEntityModel)render.getModel()).ears$isThinArms());
-			GlStateManager.disableBlend();
-			GlStateManager.disableRescaleNormal();
-			GlStateManager.disableCull();
-			this.entity = null;
-		}
+		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		delegate.render(entity, 0, BodyPart.LEFT_ARM);
 	}
-
+	
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
-		Identifier skin = entity.getSkinTexture();
-		Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "renderRightArm(...): skin={}, tex={}", skin, tex);
-		if (!entity.isInvisible() && tex instanceof EarsFeaturesHolder) {
-			EarsLog.debug("Platform:Renderer", "renderRightArm(...): Checks passed");
-			MinecraftClient.getInstance().getTextureManager().bindTexture(skin);
-			this.entity = entity;
-			this.skipRendering = 0;
-			this.stackDepth = 0;
-			this.permittedBodyPart = BodyPart.RIGHT_ARM;
-			GlStateManager.enableCull();
-			GlStateManager.enableRescaleNormal();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			EarsCommon.render(((EarsFeaturesHolder)tex).getEarsFeatures(), this, 0, ((AccessorPlayerEntityModel)render.getModel()).ears$isThinArms());
-			GlStateManager.disableBlend();
-			GlStateManager.disableRescaleNormal();
-			GlStateManager.disableCull();
-			this.entity = null;
-		}
+		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
 	
 	@Override
@@ -115,131 +68,141 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		return true;
 	}
 
-	@Override
-	public void push() {
-		stackDepth++;
-		GlStateManager.pushMatrix();
-		if (skipRendering > 0) skipRendering++;
-	}
-
-	@Override
-	public void pop() {
-		if (stackDepth <= 0) {
-			new Exception("STACK UNDERFLOW").printStackTrace();
-			return;
+	private final DirectEarsRenderDelegate<AbstractClientPlayerEntity, ModelPart> delegate = new DirectEarsRenderDelegate<AbstractClientPlayerEntity, ModelPart>() {
+		@Override
+		protected void setUpRenderState() {
+			GlStateManager.enableCull();
+			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
-		stackDepth--;
-		GlStateManager.popMatrix();
-		if (skipRendering > 0) skipRendering--;
-	}
-
-	@Override
-	public void anchorTo(BodyPart part) {
-		if (permittedBodyPart != null && part != permittedBodyPart) {
-			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
-			if (skipRendering == 0) {
-				skipRendering = 1;
+		
+		@Override
+		protected void tearDownRenderState() {
+			GlStateManager.disableBlend();
+			GlStateManager.disableRescaleNormal();
+			GlStateManager.disableCull();
+		}
+		
+		@Override
+		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
+			PlayerEntityModel model = render.getModel();
+			return d.map(BodyPart.HEAD, model.field_3781)
+					.map(BodyPart.LEFT_ARM, model.field_3785)
+					.map(BodyPart.LEFT_LEG, model.field_3787)
+					.map(BodyPart.RIGHT_ARM, model.field_3784)
+					.map(BodyPart.RIGHT_LEG, model.field_3786)
+					.map(BodyPart.TORSO, model.field_3783);
+		}
+		
+		@Override
+		protected void doAnchorTo(BodyPart part, ModelPart modelPart) {
+			modelPart.method_3106(1/16f);
+			ModelBox cuboid = modelPart.field_3941.get(0);
+			GlStateManager.scalef(1/16f, 1/16f, 1/16f);
+			GlStateManager.translatef(cuboid.minX, cuboid.maxY, cuboid.minZ);
+			if (peer.isSneaking()) {
+				if (part == BodyPart.LEFT_LEG || part == BodyPart.RIGHT_LEG) {
+					GlStateManager.translated(0, 0.1875, 0);
+				} else {
+					GlStateManager.translated(0, 0.2125, 0);
+				}
 			}
-			return;
 		}
-		ModelPart model;
-		switch (part) {
-			case HEAD:
-				model = render.getModel().field_3781;
-				break;
-			case LEFT_ARM:
-				model = render.getModel().field_3785;
-				break;
-			case LEFT_LEG:
-				model = render.getModel().field_3787;
-				break;
-			case RIGHT_ARM:
-				model = render.getModel().field_3784;
-				break;
-			case RIGHT_LEG:
-				model = render.getModel().field_3786;
-				break;
-			case TORSO:
-				model = render.getModel().field_3783;
-				break;
-			default: return;
+		
+		@Override
+		protected boolean isVisible(ModelPart modelPart) {
+			return modelPart.visible;
 		}
-		if (!model.visible) {
-			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not visible, skip rendering until pop");
-			if (skipRendering == 0) {
-				skipRendering = 1;
+
+		@Override
+		protected EarsFeatures getEarsFeatures() {
+			Identifier skin = peer.getSkinTexture();
+			Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
+			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
+				return ((EarsFeaturesHolder)tex).getEarsFeatures();
 			}
-			return;
+			return EarsFeatures.DISABLED;
 		}
-		if (entity.isSneaking()) {
-			if (part == BodyPart.LEFT_LEG || part == BodyPart.RIGHT_LEG) {
-				GlStateManager.translated(0, 0.1875, 0);
+
+		@Override
+		protected boolean isSlim() {
+			return ((AccessorPlayerEntityModel)render.getModel()).ears$isThinArms();
+		}
+
+		@Override
+		protected void pushMatrix() {
+			GlStateManager.pushMatrix();
+		}
+
+		@Override
+		protected void popMatrix() {
+			GlStateManager.popMatrix();
+		}
+
+		@Override
+		protected void doBindSkin() {
+			MinecraftClient.getInstance().getTextureManager().bindTexture(peer.getSkinTexture());
+		}
+
+		@Override
+		protected void doBindSub(TexSource src, byte[] pngData) {
+			if (pngData == null) {
+				GlStateManager.bindTexture(0);
 			} else {
-				GlStateManager.translated(0, 0.2125, 0);
+				Identifier skin = peer.getSkinTexture();
+				Identifier id = new Identifier(skin.getNamespace(), src.addSuffix(skin.getPath()));
+				if (MinecraftClient.getInstance().getTextureManager().getTexture(id) == null) {
+					try {
+						MinecraftClient.getInstance().getTextureManager().loadTexture(id, new NativeImageBackedTexture(ImageIO.read(new ByteArrayInputStream(pngData))));
+					} catch (IOException e) {
+						MinecraftClient.getInstance().getTextureManager().loadTexture(id, TextureUtil.MISSINGNO);
+					}
+				}
+				MinecraftClient.getInstance().getTextureManager().bindTexture(id);
 			}
 		}
-		model.method_3106(1/16f);
-		ModelBox cuboid = model.field_3941.get(0);
-		GlStateManager.scalef(1/16f, 1/16f, 1/16f);
-		GlStateManager.translatef(cuboid.minX, cuboid.maxY, cuboid.minZ);
-	}
 
-	@Override
-	public void translate(float x, float y, float z) {
-		if (skipRendering > 0) return;
-		GlStateManager.translatef(x, y, z);
-	}
+		@Override
+		protected void doTranslate(float x, float y, float z) {
+			GlStateManager.translatef(x, y, z);
+		}
 
-	@Override
-	public void rotate(float ang, float x, float y, float z) {
-		if (skipRendering > 0) return;
-		GlStateManager.rotatef(ang, x, y, z);
-	}
+		@Override
+		protected void doRotate(float ang, float x, float y, float z) {
+			GlStateManager.rotatef(ang, x, y, z);
+		}
 
-	@Override
-	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		if (skipRendering > 0) return;
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder vc = tess.getBuffer();
+		@Override
+		protected void doScale(float x, float y, float z) {
+			GlStateManager.scalef(x, y, z);
+		}
+
+		@Override
+		protected void beginQuad() {
+			Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.field_5175);
+		}
+
+		@Override
+		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
+			Tessellator.getInstance().getBuffer().vertex(x, y, z).texture(u, v).normal(nX, nY, nZ).next();
+		}
+
+		@Override
+		protected void drawQuad() {
+			Tessellator.getInstance().draw();
+		}
 		
-		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip);
-		float g = grow.grow;
-
-		vc.begin(GL11.GL_QUADS, VertexFormats.field_5175);
-		vc.vertex(-g, h+g, 0).texture(uv[0][0], uv[0][1]).normal(0, 0, -1).next();
-		vc.vertex(w+g, h+g, 0).texture(uv[1][0], uv[1][1]).normal(0, 0, -1).next();
-		vc.vertex(w+g, -g, 0).texture(uv[2][0], uv[2][1]).normal(0, 0, -1).next();
-		vc.vertex(-g, -g, 0).texture(uv[3][0], uv[3][1]).normal(0, 0, -1).next();
-		tess.draw();
-	}
-
-	@Override
-	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		if (skipRendering > 0) return;
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder vc = tess.getBuffer();
-		
-		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally());
-		float g = grow.grow;
-		
-		vc.begin(GL11.GL_QUADS, VertexFormats.field_5175);
-		vc.vertex(-g, -g, 0).texture(uv[3][0], uv[3][1]).normal(0, 0, 1).next();
-		vc.vertex(w+g, -g, 0).texture(uv[2][0], uv[2][1]).normal(0, 0, 1).next();
-		vc.vertex(w+g, h+g, 0).texture(uv[1][0], uv[1][1]).normal(0, 0, 1).next();
-		vc.vertex(-g, h+g, 0).texture(uv[0][0], uv[0][1]).normal(0, 0, 1).next();
-		tess.draw();
-	}
-
-	@Override
-	public void renderDebugDot(float r, float g, float b, float a) {
-		if (skipRendering > 0) return;
-		
-		GL11.glPointSize(8);
-		GlStateManager.disableTexture();
-		BufferBuilder bb = Tessellator.getInstance().getBuffer();
-		bb.begin(GL11.GL_POINTS, VertexFormats.POSITION_COLOR);
-		bb.vertex(0, 0, 0).color(r, g, b, a).next();
-		Tessellator.getInstance().draw();
-		GlStateManager.enableTexture();
-	}
+		@Override
+		protected void doRenderDebugDot(float r, float g, float b, float a) {
+			GL11.glPointSize(8);
+			GlStateManager.disableTexture();
+			BufferBuilder bb = Tessellator.getInstance().getBuffer();
+			bb.begin(GL11.GL_POINTS, VertexFormats.POSITION_COLOR);
+			bb.vertex(0, 0, 0).color(r, g, b, a).next();
+			Tessellator.getInstance().draw();
+			GlStateManager.enableTexture();
+		}
+	};
 }

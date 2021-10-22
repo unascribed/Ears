@@ -1,10 +1,12 @@
 package com.unascribed.ears.mixin;
 
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.unascribed.ears.BipedModelLayers;
 import com.unascribed.ears.EarsMod;
@@ -69,31 +71,31 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 		// non-head secondary layers
 		ModelPart leftSleeve = new ModelPartTrans(48, 48);
 		((ModelPartTextureFixer) leftSleeve).setTextureHeight(64);
-		leftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.5F);
+		leftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.25F);
 		leftSleeve.setPivot(5.0F, 2.0F, 0.0F);
 		((BipedModelLayers) model).setLeftSleeve(leftSleeve);
 
 		ModelPart rightSleeve = new ModelPartTrans(40, 32);
 		((ModelPartTextureFixer) rightSleeve).setTextureHeight(64);
-		rightSleeve.addCuboid(-3.0F, -2.0F, -2.0F, 4, 12, 4, 0.5F);
+		rightSleeve.addCuboid(-3.0F, -2.0F, -2.0F, 4, 12, 4, 0.25F);
 		rightSleeve.setPivot(-5.0F, 2.0F, 0.0F);
 		((BipedModelLayers) model).setRightSleeve(rightSleeve);
 
 		ModelPart jacket = new ModelPartTrans(16, 32);
 		((ModelPartTextureFixer) jacket).setTextureHeight(64);
-		jacket.addCuboid(-4.0F, 0.0F, -2.0F, 8, 12, 4, 0.5F);
+		jacket.addCuboid(-4.0F, 0.0F, -2.0F, 8, 12, 4, 0.25F);
 		jacket.setPivot(0.0F, 0.0F, 0.0F);
 		((BipedModelLayers) model).setJacket(jacket);
 
 		ModelPart leftPantLeg = new ModelPartTrans(0, 48);
 		((ModelPartTextureFixer) leftPantLeg).setTextureHeight(64);
-		leftPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.5F);
+		leftPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.25F);
 		leftPantLeg.setPivot(2.0F, 12.0F, 0.0F);
 		((BipedModelLayers) model).setLeftPantLeg(leftPantLeg);
 
 		ModelPart rightPantLeg = new ModelPartTrans(0, 32);
 		((ModelPartTextureFixer) rightPantLeg).setTextureHeight(64);
-		rightPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.5F);
+		rightPantLeg.addCuboid(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.25F);
 		rightPantLeg.setPivot(-2.0F, 12.0F, 0.0F);
 		((BipedModelLayers) model).setRightPantLeg(rightPantLeg);
 
@@ -110,12 +112,12 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 
 		ModelPart slimLeftSleeve = new ModelPartTrans(48, 48);
 		((ModelPartTextureFixer) slimLeftSleeve).setTextureHeight(64);
-		slimLeftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 3, 12, 4, 0.5F);
+		slimLeftSleeve.addCuboid(-1.0F, -2.0F, -2.0F, 3, 12, 4, 0.25F);
 		slimLeftSleeve.setPivot(5.0F, 2.0F, 0.0F);
 
 		ModelPart slimRightSleeve = new ModelPartTrans(40, 32);
 		((ModelPartTextureFixer) slimRightSleeve).setTextureHeight(64);
-		slimRightSleeve.addCuboid(-2.0F, -2.0F, -2.0F, 3, 12, 4, 0.5F);
+		slimRightSleeve.addCuboid(-2.0F, -2.0F, -2.0F, 3, 12, 4, 0.25F);
 		slimRightSleeve.setPivot(-5.0F, 2.0F, 0.0F);
 
 		EarsMod.fatLeftArm = model.leftArm;
@@ -168,6 +170,15 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 		EarsMod.layer.doRenderLayer((PlayerRenderer) (Object) this, player, player.field_505 + (player.field_504 - player.field_505) * ticks, ticks);
 	}
 
+	@Inject(method = "method_345", at = @At("HEAD"))
+	private void amendFirstPersonArmHead(CallbackInfo info) {
+		Player player = EarsMod.client.player;
+		if (player != null) {
+			fixSlimArm(player);
+		}
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+	
 	@Inject(method = "method_345", at = @At("RETURN"))
 	private void amendFirstPersonArm(CallbackInfo info) {
 		ModelPart rightSleeve = ((BipedModelLayers) this.headRenderer).getRightSleeve();
@@ -175,8 +186,18 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 			rightSleeve.render(0.0625F);
 		Player player = EarsMod.client.player;
 		if (player != null) {
-			fixSlimArm(player);
 			EarsMod.layer.renderRightArm((PlayerRenderer) (Object) this, player);
 		}
+		GL11.glEnable(GL11.GL_CULL_FACE);
+	}
+	
+	@Inject(method="render", at=@At("HEAD"))
+	protected void renderHead(Player arg, int i, float f, CallbackInfoReturnable<Boolean> ci) {
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+	
+	@Inject(method="render", at=@At("RETURN"))
+	protected void renderReturn(Player arg, int i, float f, CallbackInfoReturnable<Boolean> ci) {
+		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 }

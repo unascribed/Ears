@@ -17,7 +17,9 @@ import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
 
+import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.EarsFeatures.MagicPixel;
+import com.unascribed.ears.common.render.EarsRenderDelegate;
 
 public class EarsJS {
 	
@@ -35,7 +37,7 @@ public class EarsJS {
 		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
 		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
 		final DataView dv = DataView.create(skin.getData().getBuffer());
-		EarsFeatures feat = EarsFeatures.detect(new EarsImage() {
+		EarsImage img = new EarsImage() {
 			
 			@Override
 			public int getWidth() {
@@ -54,13 +56,35 @@ public class EarsJS {
 				c = ((c >> 8)&0x00FFFFFF) | (a << 24);
 				return c;
 			}
-		});
+		};
+		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img));
 		final JSArray<JSObject> objects = JSArray.create();
 		EarsCommon.render(feat, new EarsRenderDelegate() {
 			
 			private JSArray<JSObject> moves = JSArray.create();
 			private JSArray<JSArray<JSObject>> movesStack = JSArray.create();
 			
+			@Override
+			public void setUp() {}
+
+			@Override
+			public void tearDown() {}
+
+			@Override
+			public void bind(TexSource tex) {
+				// TODO
+			}
+
+			@Override
+			public void scale(float x, float y, float z) {
+				JSMapLike<JSObject> qm = JSObjects.create();
+				qm.set("type", JSString.valueOf("scale"));
+				qm.set("x", JSNumber.valueOf(x));
+				qm.set("y", JSNumber.valueOf(y));
+				qm.set("z", JSNumber.valueOf(z));
+				moves.push(qm);
+				
+			}
 			@Override
 			public void translate(float x, float y, float z) {
 				JSMapLike<JSObject> qm = JSObjects.create();
@@ -113,7 +137,7 @@ public class EarsJS {
 				q.set("type", JSString.valueOf("quad"));
 				q.set("moves", moves.slice(0));
 				JSArray<JSArray<JSNumber>> uvs = JSArray.create();
-				float[][] uvsArr = EarsCommon.calculateUVs(u, v, width, height, rot, back ? flip.flipHorizontally() : flip);
+				float[][] uvsArr = EarsCommon.calculateUVs(u, v, width, height, rot, back ? flip.flipHorizontally() : flip, TexSource.SKIN);
 				for (float[] arr : uvsArr) {
 					JSArray<JSNumber> jarr = JSArray.create();
 					for (int i = 0; i < arr.length; i++) {
@@ -145,6 +169,12 @@ public class EarsJS {
 				qm.set("type", JSString.valueOf("anchor"));
 				qm.set("part", JSString.valueOf(part.name().toLowerCase(Locale.ROOT)));
 				moves.push(qm);
+			}
+
+			@Override
+			public void renderDoubleSided(int u, int v, int width, int height, TexRotation rot, TexFlip flip, QuadGrow grow) {
+				renderFront(u, v, width, height, rot, flip, grow);
+				renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
 			}
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);

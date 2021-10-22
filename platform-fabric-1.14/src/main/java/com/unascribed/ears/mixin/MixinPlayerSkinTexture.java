@@ -10,6 +10,7 @@ import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsImage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.modern.RawEarsImage;
+import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
@@ -29,7 +30,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 	public void method_4534(NativeImage cur, CallbackInfo ci) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		EarsImage img = new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false);
-		earsFeatures = EarsFeatures.detect(img);
+		earsFeatures = EarsFeatures.detect(img, EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
 	}
 	
 	@Override
