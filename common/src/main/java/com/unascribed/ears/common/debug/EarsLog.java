@@ -66,7 +66,7 @@ public class EarsLog {
 				PrintWriter pw = new PrintWriter(sw);
 				((Throwable)arg[arg.length-1]).printStackTrace(pw);
 				pw.flush();
-				buf.insert(0, sw.toString()+"\r\n");
+				EarsLogImpl.log(sw.toString().trim());
 			}
 			EarsLogImpl.log(EarsLogImpl.buildMsg(secs, millis, tag, buf.toString()));
 		}

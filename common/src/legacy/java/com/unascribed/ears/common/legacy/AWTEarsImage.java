@@ -2,12 +2,12 @@ package com.unascribed.ears.common.legacy;
 
 import java.awt.image.BufferedImage;
 
-import com.unascribed.ears.common.EarsImage;
+import com.unascribed.ears.common.WritableEarsImage;
 
 /**
  * For older versions of Minecraft that use AWT ImageIO and BufferedImage.
  */
-public class AWTEarsImage implements EarsImage {
+public class AWTEarsImage implements WritableEarsImage {
 
 	private final BufferedImage delegate;
 
@@ -28,6 +28,11 @@ public class AWTEarsImage implements EarsImage {
 	@Override
 	public int getARGB(int x, int y) {
 		return delegate.getRGB(x, y);
+	}
+	
+	@Override
+	public void setARGB(int x, int y, int argb) {
+		delegate.setRGB(x, y, argb);
 	}
 	
 	@Override

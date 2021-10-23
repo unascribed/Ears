@@ -8,13 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import com.unascribed.ears.common.EarsCommon.Rectangle;
 import com.unascribed.ears.common.debug.EarsLog;
+import com.unascribed.ears.common.util.Slice;
 
 /**
  * Describes the state of every Ears feature for a player skin.
@@ -141,17 +144,21 @@ public class EarsFeatures {
 	 */
 	public static class Alfalfa {
 		
-		public static final Alfalfa NONE = new Alfalfa(0, Collections.<String, byte[]>emptyMap());
+		// cannot be longer than 64 entries (as if we'll ever reach that)
+		private static final List<String> PREDEF_KEYS = Collections.unmodifiableList(Arrays.asList(
+			"END", "wing"
+		));
 		
-		// EARS ALFALFA in hex preceded by FF and 00
-		public static final long MAGIC = 0xFF00EA250A1FA1FAL;
+		public static final Alfalfa NONE = new Alfalfa(0, Collections.<String, Slice>emptyMap());
+		
+		public static final int MAGIC = 0xEA1FA1FA; // EALFALFA
 		
 		public final int version;
-		public final Map<String, byte[]> data;
+		public final Map<String, Slice> data;
 		
-		public Alfalfa(int version, Map<String, byte[]> data) {
+		public Alfalfa(int version, Map<String, Slice> data) {
 			this.version = version;
-			this.data = Collections.unmodifiableMap(new HashMap<String, byte[]>(data));
+			this.data = Collections.unmodifiableMap(new HashMap<String, Slice>(data));
 		}
 
 		@Override
@@ -159,11 +166,40 @@ public class EarsFeatures {
 			return "Alfalfa[version=" + version + ", data=" + data + "]";
 		}
 		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((data == null) ? 0 : data.hashCode());
+			result = prime * result + version;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Alfalfa other = (Alfalfa) obj;
+			if (data == null) {
+				if (other.data != null)
+					return false;
+			} else if (!data.equals(other.data))
+				return false;
+			if (version != other.version)
+				return false;
+			return true;
+		}
+
 		public static Alfalfa read(InputStream in) throws IOException {
 			DataInputStream dis = new DataInputStream(in);
-			long magic = dis.readLong();
+			dis.skipBytes(1);
+			int magic = dis.readInt();
 			if (magic != MAGIC) {
-				EarsLog.debug("Common:Features", "Alfalfa.read: Magic number does not match. Expected {}, got {}", Long.toHexString(MAGIC), Long.toHexString(magic));
+				EarsLog.debug("Common:Features", "Alfalfa.read: Magic number does not match. Expected {}, got {}", Integer.toHexString(MAGIC), Long.toHexString(magic));
 				return NONE;
 			}
 			int version = dis.readUnsignedByte();
@@ -172,22 +208,80 @@ public class EarsFeatures {
 				EarsLog.debug("Common:Features", "Alfalfa.read: Don't know how to read this version, ignoring");
 				return NONE;
 			}
-			// TODO
-			return new Alfalfa(version, Collections.<String, byte[]>emptyMap());
+			byte[] buf = new byte[255];
+			Map<String, Slice> map = new HashMap<String, Slice>();
+			while (true) {
+				String k;
+				int first = dis.readUnsignedByte();
+				if (first < 64) {
+					if (first < PREDEF_KEYS.size()) {
+						k = PREDEF_KEYS.get(first);
+					} else {
+						k = "!unk"+first;
+					}
+				} else {
+					StringBuilder sb = new StringBuilder();
+					sb.appendCodePoint(first);
+					while (true) {
+						int b = dis.readUnsignedByte();
+						if ((b&0x80) != 0) {
+							sb.appendCodePoint(b & 0x7F);
+							break;
+						} else {
+							sb.appendCodePoint(b);
+						}
+					}
+					k = sb.toString();
+				}
+				if ("END".equals(k)) break;
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				while (true) {
+					int len = dis.readUnsignedByte();
+					dis.readFully(buf, 0, len);
+					baos.write(buf, 0, len);
+					if (len != 255) break;
+				}
+				byte[] data = baos.toByteArray();
+				map.put(k, new Slice(data, 0, data.length));
+				EarsLog.debug("Common:Features", "Alfalfa.read: Found entry {} with {} byte{} of data", k, data.length, data.length == 1 ? "" : "s");
+			}
+			EarsLog.debug("Common:Features", "Alfalfa.read: Found {} entr{}", map.size(), map.size() == 1 ? "y" : "ies");
+			return new Alfalfa(version, map);
 		}
 		
 		public void write(OutputStream out) throws IOException {
-			// TODO
 			DataOutputStream dos = new DataOutputStream(out);
-			dos.writeLong(MAGIC);
+			dos.writeInt(MAGIC);
 			dos.writeByte(version);
+			for (Map.Entry<String, Slice> en : data.entrySet()) {
+				String k = en.getKey();
+				int idx = PREDEF_KEYS.indexOf(k);
+				if (k.startsWith("!unk")) {
+					dos.writeByte(Integer.parseInt(k.substring(4)));
+				} else if (idx == -1) {
+					for (int i = 0; i < k.length(); i++) {
+						char c = k.charAt(i);
+						if (c < 64 && i == 0) throw new IOException("Cannot write an entry with name "+en.getKey()+" - it must start with an ASCII character with value 64 (@) or greater");
+						if (c > 127) throw new IOException("Cannot write an entry with name "+en.getKey()+" - it must only contain ASCII characters");
+						if (i == k.length()-1) c |= 0x80;
+						dos.writeByte(c);
+					}
+				} else {
+					dos.writeByte(idx);
+				}
+				int fullLen = en.getValue().size();
+				int pos = 0;
+				do {
+					int len = Math.min(255, fullLen-pos);
+					dos.writeByte(len);
+					en.getValue().slice(pos, len).writeTo(dos);
+					pos += len;
+				} while (pos < fullLen);
+			}
+			dos.writeByte(0);
 		}
 
 		public static Alfalfa read(EarsImage img) {
-			// base-255 encoding so that we never use an alpha value of 0, since editors might strip it
-			// the alternative solution is to not use the MSB, but that limits us to 7 bits which is restrictive
-			// (for reference, putting the bytes directly into the alpha channel would be "base-256")
-			BigInteger _255 = BigInteger.valueOf(255);
 			BigInteger bi = BigInteger.ZERO;
 			int read = 0;
 			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
@@ -197,40 +291,35 @@ public class EarsFeatures {
 						if (a == 0) {
 							continue;
 						}
-						bi = bi.multiply(_255).add(BigInteger.valueOf(254-(a-1)));
+						int v = 0x7F-(a&0x7F);
+						bi = bi.or(BigInteger.valueOf(v).shiftLeft(read*7));
 						read++;
 					}
 				}
 			}
 			if (bi.equals(BigInteger.ZERO)) {
 				EarsLog.debug("Common:Features", "Alfalfa.read: Found no data in alpha channel");
-			} else {
-				EarsLog.debug("Common:Features", "Alfalfa.read: Read {} ayte(s) of data from alpha channel", read);
+				return NONE;
 			}
-			return read(new ByteArrayInputStream(bi.toByteArray()));
+			EarsLog.debug("Common:Features", "Alfalfa.read: Read {} ayte{} of data from alpha channel", read, read == 1 ? "" : "s");
+			try {
+				return read(new ByteArrayInputStream(bi.toByteArray()));
+			} catch (Exception e) {
+				EarsLog.debug("Common:Features", "Alfalfa.read: Exception while reading data", e);
+				return NONE;
+			}
 		}
 
 		public void write(WritableEarsImage img) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			write(baos);
 			byte[] data = baos.toByteArray();
-			ByteArrayOutputStream alphaBytes = new ByteArrayOutputStream();
-			BigInteger _255 = BigInteger.valueOf(255);
-			BigInteger bi = new BigInteger(data);
-			while (!bi.equals(BigInteger.ZERO)) {
-				int a = 0;
-				if (bi.compareTo(_255) < 0) {
-					a = bi.intValueExact();
-					bi = BigInteger.ZERO;
-				} else {
-					BigInteger[] divmod = bi.divideAndRemainder(_255);
-					a = divmod[1].intValueExact()+1;
-					bi = divmod[0];
-				}
-				alphaBytes.write(a);
+			if (data.length > 1428) {
+				throw new IllegalArgumentException("Cannot write more than 1428 bytes of data");
 			}
+			BigInteger _7F = BigInteger.valueOf(0x7F);
+			BigInteger bi = new BigInteger(1, data);
 			int written = 0;
-			byte[] alphaBytesArr = alphaBytes.toByteArray();
 			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
 				for (int x = rect.x1; x < rect.x2; x++) {
 					for (int y = rect.y1; y < rect.y2; y++) {
@@ -239,28 +328,19 @@ public class EarsFeatures {
 						if (a == 0) {
 							argb = 0xFF000000;
 						}
-						if (written >= alphaBytesArr.length) {
-							a = 255;
-						} else {
-							a = alphaBytesArr[alphaBytesArr.length-1-written]&0xFF;
-						}
+						int n = written*7;
+						int v = bi.and(_7F.shiftLeft(n)).shiftRight(n).intValueExact();
+						a = (0x7F-v)|0x80;
 						argb = (argb&0x00FFFFFF)|((a&0xFF) << 24);
 						img.setARGB(x, y, argb);
 						written++;
 					}
 				}
 			}
-			if (written < alphaBytesArr.length) {
-				throw new RuntimeException("Ran out of space while trying to encode "+data.length+" bytes of data - "+(alphaBytesArr.length-1)+" ayte(s) were left, wrote "+written+" ayte(s)");
-			}
 		}
 		
-		public static Alfalfa read(ByteArrayInputStream in) {
-			try {
-				return read((InputStream)in);
-			} catch (IOException e) {
-				throw new AssertionError(e);
-			}
+		public static Alfalfa read(ByteArrayInputStream in) throws IOException {
+			return read((InputStream)in);
 		}
 		
 		public void write(ByteArrayOutputStream out) {
