@@ -91,4 +91,18 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		delegate.tearDown();
 	}
 
+	@Override
+	public float getTime() {
+		float t = delegate.getTime();
+		EarsLog.debug("Platform:Renderer:Delegate", "getTime() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public boolean isFlying() {
+		boolean f = delegate.isFlying();
+		EarsLog.debug("Platform:Renderer:Delegate", "isFlying() -> {}", f);
+		return f;
+	}
+
 }

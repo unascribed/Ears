@@ -194,6 +194,16 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			Tessellator.getInstance().draw();
 			GlStateManager.enableTexture();
 		}
+
+		@Override
+		public float getTime() {
+			return peer.ticksExisted+Minecraft.getInstance().getRenderPartialTicks();
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.abilities.isFlying;
+		}
 	};
 
 }

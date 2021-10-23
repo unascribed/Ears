@@ -31,6 +31,7 @@ import net.minecraft.util.ResourceLocation;
 public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 	
 	private final RenderPlayer render;
+	private float tickDelta;
 	
 	public LayerEars(RenderPlayer render) {
 		this.render = render;
@@ -41,16 +42,19 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 	public void doRenderLayer(AbstractClientPlayer entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		this.tickDelta = tickDelta;
 		delegate.render(entity, limbDistance, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		this.tickDelta = 0;
 		delegate.render(entity, 0, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		this.tickDelta = 0;
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
 	
@@ -194,6 +198,16 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 			bb.pos(0, 0, 0).color(r, g, b, a).endVertex();
 			Tessellator.getInstance().draw();
 			GlStateManager.enableTexture2D();
+		}
+
+		@Override
+		public float getTime() {
+			return peer.ticksExisted+tickDelta;
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.capabilities.isFlying;
 		}
 	};
 }

@@ -46,20 +46,25 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		((SetTranslucent)render.getModel().field_3813).ears$setTranslucent(true);
 	}
 	
+	private float tickDelta;
+	
 	@Override
 	public void render(AbstractClientPlayerEntity entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		this.tickDelta = tickDelta;
 		delegate.render(entity, limbDistance, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayerEntity entity) {
 		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		this.tickDelta = 0;
 		delegate.render(entity, 0, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		this.tickDelta = 0;
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
 	
@@ -203,6 +208,16 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 			bb.vertex(0, 0, 0).color(r, g, b, a).next();
 			Tessellator.getInstance().draw();
 			GlStateManager.enableTexture();
+		}
+
+		@Override
+		public float getTime() {
+			return peer.ticksAlive+tickDelta;
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.abilities.flying;
 		}
 	};
 }

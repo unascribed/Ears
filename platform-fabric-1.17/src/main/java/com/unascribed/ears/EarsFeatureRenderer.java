@@ -39,21 +39,25 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
+	private VertexConsumerProvider.Immediate scratch() {
+		return MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+	}
+	
 	@Override
 	public void render(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, vertexConsumers, entity, limbDistance, light, LivingEntityRenderer.getOverlay(entity, 0));
+		delegate.render(m, scratch(), entity, limbDistance, light, LivingEntityRenderer.getOverlay(entity, 0));
 	}
 	
 	public void renderLeftArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, vertexConsumers, entity, 0, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.LEFT_ARM);
+		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, vertexConsumers, entity, 0, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.RIGHT_ARM);
+		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
-	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
+	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider.Immediate, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -123,8 +127,8 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		@Override
 		protected void doUploadSub(TexSource src, byte[] pngData) {
 			Identifier skin = peer.getSkinTexture();
-			Identifier id = new Identifier(skin.getNamespace(), skin.getPath()+"/ears/"+src);
-			if (pngData != null && MinecraftClient.getInstance().getTextureManager().getTexture(id) == null) {
+			Identifier id = new Identifier(skin.getNamespace(), src.addSuffix(skin.getPath()));
+			if (pngData != null && MinecraftClient.getInstance().getTextureManager().getOrDefault(id, null) == null) {
 				try {
 					MinecraftClient.getInstance().getTextureManager().registerTexture(id, new NativeImageBackedTexture(NativeImage.read(toNativeBuffer(pngData))));
 				} catch (IOException e) {
@@ -140,6 +144,10 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(light).normal(mn, nX, nY, nZ).next();
 		}
 		
+		protected void commitQuads() {
+			vcp.drawCurrentLayer();
+		}
+		
 		@Override
 		protected void doRenderDebugDot(float r, float g, float b, float a) {
 			// TODO port this to core profile (nah)
@@ -152,6 +160,16 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 				id = new Identifier(id.getNamespace(), src.addSuffix(id.getPath()));
 			}
 			return vcp.getBuffer(RenderLayer.getEntityTranslucentCull(id));
+		}
+
+		@Override
+		public float getTime() {
+			return peer.age+MinecraftClient.getInstance().getTickDelta();
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.getAbilities().flying;
 		}
 	};
 }

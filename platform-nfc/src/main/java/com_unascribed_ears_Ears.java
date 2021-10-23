@@ -23,6 +23,7 @@ public class com_unascribed_ears_Ears {
 	
 	private ds render;
 	private float brightness;
+	private float tickDelta;
 	
 	public static void postRenderSpecials(ds renderPlayer, gs entity, float partialTicks) {
 		INST.render(renderPlayer, entity, partialTicks);
@@ -92,6 +93,7 @@ public class com_unascribed_ears_Ears {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, 0, partialTicks);
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
+		this.tickDelta = partialTicks;
 		delegate.render(entity, 0);
 		this.render = null;
 	}
@@ -100,6 +102,7 @@ public class com_unascribed_ears_Ears {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {}, {})", render, entity, partialTicks);
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
+		this.tickDelta = partialTicks;
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 		this.render = null;
 	}
@@ -142,7 +145,6 @@ public class com_unascribed_ears_Ears {
 			// a          b              c          d              e             f              g
 			// bipedHead, bipedHeadwear, bipedBody, bipedRightArm, bipedLeftArm, bipedRightLeg, bipedLeftLeg
 			// thank god notch's proguard config doesn't randomize member order
-			ps model;
 			return d.map(BodyPart.HEAD, modelPlayer.a)
 					.map(BodyPart.LEFT_ARM, modelPlayer.e)
 					.map(BodyPart.LEFT_LEG, modelPlayer.g)
@@ -164,6 +166,16 @@ public class com_unascribed_ears_Ears {
 		@Override
 		protected float getBrightness() {
 			return brightness;
+		}
+
+		@Override
+		public float getTime() {
+			return ((sn)peer).bt+tickDelta;
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.playerCapabilities.flying;
 		}
 	};
 

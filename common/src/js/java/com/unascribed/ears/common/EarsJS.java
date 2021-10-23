@@ -182,6 +182,16 @@ public class EarsJS {
 				renderFront(u, v, width, height, rot, flip, grow);
 				renderBack(u, v, width, height, rot, flip.flipHorizontally(), grow);
 			}
+
+			@Override
+			public float getTime() {
+				return 0;
+			}
+
+			@Override
+			public boolean isFlying() {
+				return false;
+			}
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
 	}

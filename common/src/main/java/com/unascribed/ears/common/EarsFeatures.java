@@ -138,6 +138,22 @@ public class EarsFeatures {
 				MagicPixel.ORANGE, VERTICAL
 		);
 	}
+	public enum WingMode {
+		NONE,
+		SYMMETRIC_DUAL,
+		SYMMETRIC_SINGLE,
+		ASYMMETRIC_L,
+		ASYMMETRIC_R,
+		;
+		public static final Map<MagicPixel, WingMode> BY_MAGIC = buildMap(
+				MagicPixel.BLUE, NONE,
+				MagicPixel.RED, NONE,
+				MagicPixel.PINK, SYMMETRIC_DUAL,
+				MagicPixel.GREEN, SYMMETRIC_SINGLE,
+				MagicPixel.CYAN, ASYMMETRIC_L,
+				MagicPixel.ORANGE, ASYMMETRIC_R
+		);
+	}
 	
 	/**
 	 * Extra data stored in the alpha channel of forced-opaque areas.
@@ -315,7 +331,7 @@ public class EarsFeatures {
 			write(baos);
 			byte[] data = baos.toByteArray();
 			if (data.length > 1428) {
-				throw new IllegalArgumentException("Cannot write more than 1428 bytes of data");
+				throw new IllegalArgumentException("Cannot write more than 1428 bytes of data (got "+data.length+" bytes)");
 			}
 			BigInteger _7F = BigInteger.valueOf(0x7F);
 			BigInteger bi = new BigInteger(1, data);
@@ -328,8 +344,7 @@ public class EarsFeatures {
 						if (a == 0) {
 							argb = 0xFF000000;
 						}
-						int n = written*7;
-						int v = bi.and(_7F.shiftLeft(n)).shiftRight(n).intValueExact();
+						int v = bi.shiftRight(written*7).and(_7F).intValueExact();
 						a = (0x7F-v)|0x80;
 						argb = (argb&0x00FFFFFF)|((a&0xFF) << 24);
 						img.setARGB(x, y, argb);
@@ -353,7 +368,7 @@ public class EarsFeatures {
 		
 	}
 
-	public static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, Alfalfa.NONE);
+	public static final EarsFeatures DISABLED = new EarsFeatures(false, EarMode.NONE, null, Protrusions.NONE, TailMode.NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, WingMode.NONE, Alfalfa.NONE);
 	
 	public final boolean enabled;
 	public final EarMode earMode;
@@ -369,6 +384,8 @@ public class EarsFeatures {
 	public final int snoutHeight;
 	public final int snoutDepth;
 	public final float chestSize;
+	public final WingMode wingMode;
+	
 	public final Alfalfa alfalfa;
 
 	EarsFeatures(boolean enabled,
@@ -376,7 +393,8 @@ public class EarsFeatures {
 			Protrusions protrusions,
 			TailMode tailMode, float tailBend0, float tailBend1, float tailBend2, float tailBend3,
 			int snoutOffset, int snoutWidth, int snoutHeight, int snoutDepth,
-			float chestSize, Alfalfa alfalfa) {
+			float chestSize, WingMode wingMode,
+			Alfalfa alfalfa) {
 		this.enabled = enabled;
 		this.earMode = earMode;
 		this.earAnchor = earAnchor;
@@ -391,6 +409,7 @@ public class EarsFeatures {
 		this.snoutHeight = snoutHeight;
 		this.snoutDepth = snoutDepth;
 		this.chestSize = chestSize;
+		this.wingMode = wingMode;
 		this.alfalfa = alfalfa;
 	}
 
@@ -461,7 +480,18 @@ public class EarsFeatures {
 					if (chestSize > 1) chestSize = 1;
 					EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - {}% size", upperHex24Dbg(etc), (int)(chestSize*100));
 				}
-				return new EarsFeatures(true, earMode, earAnchor, protrusions, tailMode, tailBend0, tailBend1, tailBend2, tailBend3, snoutOffset, snoutWidth, snoutHeight, snoutDepth, chestSize, alfalfa);
+				WingMode wingMode = getMagicPixel(img, 8, WingMode.BY_MAGIC, WingMode.NONE, "wing mode");
+				if (wingMode != WingMode.NONE && !alfalfa.data.containsKey("wing")) {
+					EarsLog.debug("Common:Features", "detect(...): Wings are enabled, but there's no wing texture in the alfalfa. Disabling");
+					wingMode = WingMode.NONE;
+				}
+				return new EarsFeatures(true,
+						earMode, earAnchor,
+						protrusions,
+						tailMode, tailBend0, tailBend1, tailBend2, tailBend3,
+						snoutOffset, snoutWidth, snoutHeight, snoutDepth,
+						chestSize, wingMode,
+						alfalfa);
 			} else {
 				EarsLog.debug("Common:Features", "detect(...): Pixel at 0, 32 is not #3F23D8 (Magic Blue) - it's #{}. Disabling",  upperHex32Dbg(img.getARGB(0, 32)));
 				return DISABLED;

@@ -6,9 +6,6 @@ import java.nio.ByteOrder;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
-import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;
-import com.unascribed.ears.common.legacy.PartiallyUnmanagedEarsRenderDelegate;
-import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.util.Decider;
 
 /**
@@ -21,9 +18,9 @@ import com.unascribed.ears.common.util.Decider;
  * implementing EarsRenderDelegate directly. AbstractEarsRenderDelegate and friends all make various
  * assumptions that are only true within Minecraft itself.
  * 
- * @see ImmediateEarsRenderDelegate Immediate, for versions with a broken Tesselator and no state or texture manager (e.g. Beta 1.7, 1.2.5)
- * @see UnmanagedEarsRenderDelegate Unmanaged, for versions without a state manager or texture manager (e.g. 1.4, 1.5)
- * @see PartiallyUnmanagedEarsRenderDelegate PartiallyUnmanaged, for versions without a state manager (e.g. 1.6, 1.7)
+ * @see com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate Immediate, for versions with a broken Tesselator and no state or texture manager (e.g. Beta 1.7, 1.2.5)
+ * @see com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate Unmanaged, for versions without a state manager or texture manager (e.g. 1.4, 1.5)
+ * @see com.unascribed.ears.common.legacy.PartiallyUnmanagedEarsRenderDelegate PartiallyUnmanaged, for versions without a state manager (e.g. 1.6, 1.7)
  * @see DirectEarsRenderDelegate Direct, for versions with a state manager (e.g. 1.8, 1.12, 1.14)
  * @see IndirectEarsRenderDelegate Indirect, for versions with the RenderLayer/VertexConsumerProvider abstraction (e.g. 1.15, 1.16)
  * 
@@ -193,6 +190,7 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 
 	@Override
 	public void bind(TexSource src) {
+		if (src == this.bound) return;
 		if (src == TexSource.SKIN) {
 			doBindSkin();
 		} else {

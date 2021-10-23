@@ -6,6 +6,7 @@ import java.util.List;
 import com.unascribed.ears.common.EarsFeatures.EarAnchor;
 import com.unascribed.ears.common.EarsFeatures.EarMode;
 import com.unascribed.ears.common.EarsFeatures.TailMode;
+import com.unascribed.ears.common.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.DebuggingDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
@@ -253,7 +254,7 @@ public class EarsCommon {
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -2, 4);
-					delegate.rotate(ang+(swingAmount*swing), 1, 0, 0);
+					delegate.rotate(ang+(swingAmount*swing)+(float)(Math.sin(delegate.getTime()/12)*4), 1, 0, 0);
 					boolean vert = tailMode == TailMode.VERTICAL;
 					if (vert) {
 						delegate.translate(4, 0, 0);
@@ -410,6 +411,39 @@ public class EarsCommon {
 				delegate.pop();
 			}
 			
+			WingMode wingMode = features.wingMode;
+
+			if (wingMode != WingMode.NONE) {
+				boolean f = delegate.isFlying();
+				delegate.push();
+					float wiggle = ((float)(Math.sin((delegate.getTime()+8)/(f ? 2 : 12))*(f ? 20 : 2)))+(swingAmount*10);
+					delegate.anchorTo(BodyPart.TORSO);
+					delegate.bind(TexSource.WING);
+					delegate.translate(2, -12, 4);
+					if (wingMode == WingMode.SYMMETRIC_DUAL || wingMode == WingMode.ASYMMETRIC_R) {
+						delegate.push();
+							delegate.rotate(-120+wiggle, 0, 1, 0);
+							delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.pop();
+					}
+					if (wingMode == WingMode.SYMMETRIC_DUAL || wingMode == WingMode.ASYMMETRIC_L) {
+						delegate.translate(4, 0, 0);
+						delegate.push();
+							delegate.rotate(-60-wiggle, 0, 1, 0);
+							delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.pop();
+					}
+					if (wingMode == WingMode.SYMMETRIC_SINGLE) {
+						delegate.translate(2, 0, 0);
+						delegate.push();
+							delegate.rotate(-90+wiggle, 0, 1, 0);
+							delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+						delegate.pop();
+					}
+				delegate.pop();
+			}
+			
+			delegate.bind(TexSource.SKIN);
 			delegate.tearDown();
 		}
 	}

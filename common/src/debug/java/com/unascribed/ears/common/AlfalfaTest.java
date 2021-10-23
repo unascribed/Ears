@@ -1,13 +1,13 @@
 package com.unascribed.ears.common;
 
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javax.imageio.ImageIO;
 
 import com.unascribed.ears.common.EarsFeatures.Alfalfa;
@@ -20,8 +20,9 @@ public class AlfalfaTest {
 		System.setProperty("ears.debug", "true");
 		System.setProperty("ears.debug.stdout", "true");
 		Map<String, Slice> data = new HashMap<String, Slice>();
-		byte[] bys = new byte[23];
-		ThreadLocalRandom.current().nextBytes(bys);
+		File wing = new File("alfalfa-test-wing.png");
+		byte[] bys = new byte[(int)wing.length()];
+		new DataInputStream(new FileInputStream(wing)).readFully(bys);
 		data.put("wing", new Slice(bys));
 		Alfalfa al = new Alfalfa(1, data);
 		BufferedImage img = ImageIO.read(new File("alfalfa-test-in.png"));

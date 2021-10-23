@@ -195,5 +195,15 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 			Tessellator.getInstance().draw();
 			GlStateManager.enableTexture2D();
 		}
+
+		@Override
+		public float getTime() {
+			return peer.ticksExisted+Minecraft.getMinecraft().getRenderPartialTicks();
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.capabilities.isFlying;
+		}
 	};
 }

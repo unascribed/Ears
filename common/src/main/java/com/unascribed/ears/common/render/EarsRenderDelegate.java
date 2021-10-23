@@ -162,4 +162,7 @@ public interface EarsRenderDelegate {
 	
 	void renderDebugDot(float r, float g, float b, float a);
 	
+	float getTime();
+	boolean isFlying();
+	
 }

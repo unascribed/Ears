@@ -39,23 +39,27 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
+	private MultiBufferSource.BufferSource scratch() {
+		return Minecraft.getInstance().renderBuffers().bufferSource();
+	}
+	
 	@Override
-	public void render(PoseStack m, MultiBufferSource VertexConsumers, int light, AbstractClientPlayer entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, VertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, VertexConsumers, entity, limbDistance, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
+	public void render(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
+		delegate.render(m, scratch(), entity, limbDistance, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
 	}
 	
-	public void renderLeftArm(PoseStack m, MultiBufferSource VertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, VertexConsumers, entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
+	public void renderLeftArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
+		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
-	public void renderRightArm(PoseStack m, MultiBufferSource VertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, VertexConsumers, entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
+	public void renderRightArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
+		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
 	// official Mojang mappings continue to baffle me. PoseStack????????????
 	// MCP mappings were bad but they never managed to make me irrationally angry
-	private final IndirectEarsRenderDelegate<PoseStack, MultiBufferSource, VertexConsumer, AbstractClientPlayer, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
+	private final IndirectEarsRenderDelegate<PoseStack, MultiBufferSource.BufferSource, VertexConsumer, AbstractClientPlayer, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -125,8 +129,8 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		@Override
 		protected void doUploadSub(TexSource src, byte[] pngData) {
 			ResourceLocation skin = peer.getSkinTextureLocation();
-			ResourceLocation id = new ResourceLocation(skin.getNamespace(), skin.getPath()+"/ears/"+src);
-			if (pngData != null && Minecraft.getInstance().getTextureManager().getTexture(id) == null) {
+			ResourceLocation id = new ResourceLocation(skin.getNamespace(), src.addSuffix(skin.getPath()));
+			if (pngData != null && Minecraft.getInstance().getTextureManager().getTexture(id, null) == null) {
 				try {
 					Minecraft.getInstance().getTextureManager().register(id, new DynamicTexture(NativeImage.read(toNativeBuffer(pngData))));
 				} catch (IOException e) {
@@ -143,6 +147,11 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		}
 		
 		@Override
+		protected void commitQuads() {
+			vcp.endLastBatch();
+		}
+		
+		@Override
 		protected void doRenderDebugDot(float r, float g, float b, float a) {
 			// TODO port this to core profile (no)
 		}
@@ -154,6 +163,16 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 				id = new ResourceLocation(id.getNamespace(), src.addSuffix(id.getPath()));
 			}
 			return vcp.getBuffer(RenderType.entityTranslucentCull(id));
+		}
+
+		@Override
+		public float getTime() {
+			return peer.tickCount+Minecraft.getInstance().getDeltaFrameTime();
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.getAbilities().flying;
 		}
 	};
 }

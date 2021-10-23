@@ -28,16 +28,19 @@ import net.minecraft.util.ResourceLocation;
 public class LayerEars {
 	
 	private RenderPlayer render;
+	private float tickDelta;
 	
 	public void doRenderLayer(RenderPlayer render, AbstractClientPlayer entity, float limbDistance, float partialTicks) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.render = render;
+		this.tickDelta = partialTicks;
 		delegate.render(entity, limbDistance);
 	}
 	
 	public void renderRightArm(RenderPlayer render, AbstractClientPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", render, entity);
 		this.render = render;
+		this.tickDelta = 0;
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
 	
@@ -121,6 +124,16 @@ public class LayerEars {
 		@Override
 		protected void drawQuad() {
 			Tessellator.instance.draw();
+		}
+
+		@Override
+		public float getTime() {
+			return peer.ticksExisted+tickDelta;
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.capabilities.isFlying;
 		}
 	};
 }

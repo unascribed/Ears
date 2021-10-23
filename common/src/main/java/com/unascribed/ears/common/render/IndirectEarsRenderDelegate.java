@@ -46,14 +46,17 @@ public abstract class IndirectEarsRenderDelegate<TMatrixStack, TVertexConsumerPr
 	
 	@Override
 	protected final void doBindSkin() {
+		commitQuads();
 		this.vc = getVertexConsumer(TexSource.SKIN);
 	}
 	
 	protected abstract TVertexConsumer getVertexConsumer(TexSource src);
+	protected abstract void commitQuads();
 
 	@Override
 	protected final void doBindSub(TexSource src, byte[] pngData) {
 		doUploadSub(src, pngData);
+		commitQuads();
 		this.vc = getVertexConsumer(src);
 	}
 

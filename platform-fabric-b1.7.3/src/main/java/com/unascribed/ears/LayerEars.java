@@ -19,10 +19,12 @@ import net.minecraft.entity.player.Player;
 public class LayerEars {
 	private PlayerRenderer renderer;
 	private float brightness;
+	private float tickDelta;
 
 	public void doRenderLayer(PlayerRenderer renderer, Player entity, float limbDistance, float partialTicks) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.renderer = renderer;
+		this.tickDelta = partialTicks;
 		this.brightness = entity.getBrightnessAtEyes(partialTicks);
 		delegate.render(entity, limbDistance);
 	}
@@ -30,6 +32,7 @@ public class LayerEars {
 	public void renderRightArm(PlayerRenderer renderer, Player entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", renderer, entity);
 		this.renderer = renderer;
+		this.tickDelta = 0;
 		this.brightness = entity.getBrightnessAtEyes(0);
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
@@ -92,6 +95,16 @@ public class LayerEars {
 		@Override
 		protected int uploadImage(BufferedImage img) {
 			return EarsMod.client.textureManager.glLoadImage(img);
+		}
+
+		@Override
+		public float getTime() {
+			return peer.field_1645+tickDelta;
+		}
+
+		@Override
+		public boolean isFlying() {
+			return false;
 		}
 		
 	};

@@ -187,6 +187,16 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			Tessellator.getInstance().draw();
 			GlStateManager.enableTexture();
 		}
+
+		@Override
+		public float getTime() {
+			return peer.age+MinecraftClient.getInstance().getTickDelta();
+		}
+
+		@Override
+		public boolean isFlying() {
+			return peer.abilities.flying;
+		}
 	};
 
 }
