@@ -23,6 +23,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 mixin {
     add sourceSets.main, 'ears.refmap.json'
+    config 'ears.mixins.json'
 }
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
@@ -41,7 +42,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.70'
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.103'
+    
+    annotationProcessor "org.spongepowered:mixin:0.8.4:processor"
 
     implementation files('../common/build/libs/ears-common-mixin-modern.jar')
 
