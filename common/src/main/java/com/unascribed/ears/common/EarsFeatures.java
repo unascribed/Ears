@@ -160,6 +160,28 @@ public class EarsFeatures {
 	 */
 	public static class Alfalfa {
 		
+		/**
+		 * The portions of the skin that are forced opaque, minus the front of the head, to avoid
+		 * messing up previews in MultiMC and various avatar rendering services.
+		 * @see EarsCommon#FORCED_OPAQUE_REGIONS
+		 */
+		public static final List<Rectangle> ENCODE_REGIONS = Collections.unmodifiableList(Arrays.asList(
+				new Rectangle(8, 0, 24, 8),
+				new Rectangle(0, 8, 8, 16),
+				new Rectangle(16, 8, 32, 16),
+				
+				new Rectangle(4, 16, 12, 20),
+				new Rectangle(20, 16, 36, 20),
+				new Rectangle(44, 16, 52, 20),
+				
+				new Rectangle(0, 20, 56, 32),
+				
+				new Rectangle(20, 48, 28, 52),
+				new Rectangle(36, 48, 44, 52),
+					
+				new Rectangle(16, 52, 48, 64)
+			));
+		
 		// cannot be longer than 64 entries (as if we'll ever reach that)
 		private static final List<String> PREDEF_KEYS = Collections.unmodifiableList(Arrays.asList(
 			"END", "wing"
@@ -266,6 +288,8 @@ public class EarsFeatures {
 		}
 		
 		public void write(OutputStream out) throws IOException {
+			if (version == 0) return;
+			if (version != 1) throw new IOException("Don't know how to write Alfalfa version "+version);
 			DataOutputStream dos = new DataOutputStream(out);
 			dos.writeInt(MAGIC);
 			dos.writeByte(version);
@@ -300,7 +324,7 @@ public class EarsFeatures {
 		public static Alfalfa read(EarsImage img) {
 			BigInteger bi = BigInteger.ZERO;
 			int read = 0;
-			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
+			for (Rectangle rect : ENCODE_REGIONS) {
 				for (int x = rect.x1; x < rect.x2; x++) {
 					for (int y = rect.y1; y < rect.y2; y++) {
 						int a = (img.getARGB(x, y)>>24)&0xFF;
@@ -336,7 +360,7 @@ public class EarsFeatures {
 			BigInteger _7F = BigInteger.valueOf(0x7F);
 			BigInteger bi = new BigInteger(1, data);
 			int written = 0;
-			for (Rectangle rect : EarsCommon.FORCED_OPAQUE_REGIONS) {
+			for (Rectangle rect : ENCODE_REGIONS) {
 				for (int x = rect.x1; x < rect.x2; x++) {
 					for (int y = rect.y1; y < rect.y2; y++) {
 						int argb = img.getARGB(x, y);
@@ -344,7 +368,7 @@ public class EarsFeatures {
 						if (a == 0) {
 							argb = 0xFF000000;
 						}
-						int v = bi.shiftRight(written*7).and(_7F).intValueExact();
+						int v = bi.shiftRight(written*7).and(_7F).intValue();
 						a = (0x7F-v)|0x80;
 						argb = (argb&0x00FFFFFF)|((a&0xFF) << 24);
 						img.setARGB(x, y, argb);

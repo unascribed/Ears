@@ -85,9 +85,11 @@ SOFTWARE.
 			text-align: center !important;
 		}
 		.inner {
-			max-width: 1600px;
+			max-width: 1280px;
 			padding: 0 16px;
+			padding-right: 512px;
 			margin: 0 auto;
+			box-sizing: border-box;
 		}
 		h2 small {
 			font-weight: normal;
@@ -110,7 +112,14 @@ SOFTWARE.
 		#three {
 			width: 512px;
 			height: 512px;
-			margin-left: 16px;
+			position: fixed;
+			top: 16px;
+			right: 0px;
+		}
+		@media(min-width: 1280px) {
+			#three {
+				right: calc(((100vw - 1280px) / 2) - 16px);
+			}
 		}
 		td {
 			padding: 2px;
@@ -125,23 +134,36 @@ SOFTWARE.
 			color: #0FA;
 		}
 		.notice {
-			border-left: #F00 5px solid;
+			border-left: #F03 5px solid;
 			padding: 8px;
 			padding-left: 58px;
-			background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTEyIDJMMSAyMWgyMk0xMiA2bDcuNTMgMTNINC40N00xMSAxMHY0aDJ2LTRtLTIgNnYyaDJ2LTIiIGZpbGw9IiNGRkYiLz48L3N2Zz4K');
+			background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyLDIwQTgsOCAwIDAsMCAyMCwxMkE4LDggMCAwLDAgMTIsNEE4LDggMCAwLDAgNCwxMkE4LDggMCAwLDAgMTIsMjBNMTIsMkExMCwxMCAwIDAsMSAyMiwxMkExMCwxMCAwIDAsMSAxMiwyMkM2LjQ3LDIyIDIsMTcuNSAyLDEyQTEwLDEwIDAgMCwxIDEyLDJNMTIuNSw3VjEyLjI1TDE3LDE0LjkyTDE2LjI1LDE2LjE1TDExLDEzVjdIMTIuNVoiIGZpbGw9IiNGRkYiLz48L3N2Zz4K');
 			background-position: 12px 12px;
 			background-repeat: no-repeat;
 			background-size: 32px 32px;
 		}
 		.notice.bug {
 			background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTIwIDhoLTIuODFjLS40NS0uOC0xLjA3LTEuNS0xLjgyLTJMMTcgNC40MSAxNS41OSAzbC0yLjE3IDIuMTdhNi4wMDIgNi4wMDIgMCAwMC0yLjgzIDBMOC40MSAzIDcgNC40MSA4LjYyIDZjLS43NS41LTEuMzYgMS4yMS0xLjgxIDJINHYyaDIuMDljLS4wNi4zMy0uMDkuNjYtLjA5IDF2MUg0djJoMnYxYzAgLjM0LjAzLjY3LjA5IDFINHYyaDIuODFBNS45ODggNS45ODggMCAwMDE1IDIwLjE4Yy45MS0uNTIgMS42Ny0xLjI4IDIuMTktMi4xOEgyMHYtMmgtMi4wOWMuMDYtLjMzLjA5LS42Ni4wOS0xdi0xaDJ2LTJoLTJ2LTFjMC0uMzQtLjAzLS42Ny0uMDktMUgyMFY4bS00IDdhNCA0IDAgMDEtNCA0IDQgNCAwIDAxLTQtNHYtNGE0IDQgMCAwMTQtNCA0IDQgMCAwMTQgNHY0bS0yLTV2MmgtNHYtMmg0bS00IDRoNHYyaC00di0yeiIgZmlsbD0iI0ZGRiIvPjwvc3ZnPgo=');
+			border-left-color: #F80;
+		}
+		.notice.legacy {
+			border-left-color: #AAA;
+			background-image: none;
+			padding-left: 16px;
+		}
+		.notice.info {
+			background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExLDlIMTNWN0gxMU0xMiwyMEM3LjU5LDIwIDQsMTYuNDEgNCwxMkM0LDcuNTkgNy41OSw0IDEyLDRDMTYuNDEsNCAyMCw3LjU5IDIwLDEyQzIwLDE2LjQxIDE2LjQxLDIwIDEyLDIwTTEyLDJBMTAsMTAgMCAwLDAgMiwxMkExMCwxMCAwIDAsMCAxMiwyMkExMCwxMCAwIDAsMCAyMiwxMkExMCwxMCAwIDAsMCAxMiwyTTExLDE3SDEzVjExSDExVjE3WiIgZmlsbD0iI0ZGRiIvPjwvc3ZnPgo=');
+			border-left-color: #0AF;
+		}
+		ul {
+			margin: 0;
 		}
 	</style>
 </head>
 <body>
 	<noscript><b>You must enable JavaScript to use the manipulator.</b></noscript>
 	<div class="inner">
-		<div id="three" style="float:right"></div>
+		<div id="three"></div>
 		<h1>Ears Skin Manipulator</h1>
 		<p>
 			Upload* a skin to get started. Legacy (pre-1.8, 64x32) skins will be converted to modern 64x64 skins.<br/><br/>
@@ -288,6 +310,13 @@ SOFTWARE.
 			</tr>
 			<tr>
 				<td></td>
+				<td class="center">Width</td>
+				<td class="center">Height</td>
+				<td class="center">Length</td>
+				<td class="center">Offset</td>
+			</tr>
+			<tr>
+				<td></td>
 				<td class="center" colspan="4" id="snout-size" style="visibility: hidden">
 					<span id="snout-width-value">1</span>x<span id="snout-height-value">1</span>x<span id="snout-depth-value">1</span>-0,<span id="snout-offset-value">0</span>
 				</td>
@@ -314,7 +343,7 @@ SOFTWARE.
 						<option value="orange">Asymmetric Single (Right)</option>
 					</select>
 				</td>
-				<td><canvas id="wings" width="12" height="12"></canvas></td>
+				<td style="text-align: left"><canvas id="wings" width="12" height="12"></canvas></td>
 			</tr>
 		</table>
 		<table>
@@ -330,40 +359,61 @@ SOFTWARE.
 			</tr>
 		</table>
 		<br/>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-121-notice">
-			<b><i>You've selected options that require new features added in v1.2.1.</i></b><br/>
+		<div class="notice info" style="display: none;margin-bottom:8px" id="alfalfa-notice">
+			<b><i>There is data encoded in the alpha channel of the skin.</i></b><br/>
+			This may cause some skin viewers to show corrupted pixels, but will not affect the skin's
+			appearance in-game.
+			<div id="alfalfa-notice-unneeded">
+				<br/>
+				However, no options are enabled that use this data. You can <button id="remove-alfalfa">remove it</button> if you wish.
+			</div>
+		</div>
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-121-notice">
+			<b><i>Selected options require new features added in v1.2.1.</i></b><br/>
 			Before v1.2.1, Cross ears mode will not render.
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-122-notice">
-			<b><i>You've selected options that require new features added in v1.2.2.</i></b><br/>
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-122-notice">
+			<b><i>Selected options require new features added in v1.2.2.</i></b><br/>
 			Before v1.2.2, any custom first tail bend angle will be treated as 0°.
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-123-notice">
-			<b><i>You've selected options that require new features added in v1.2.3.</i></b><br/>
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-123-notice">
+			<b><i>Selected options require new features added in v1.2.3.</i></b><br/>
 			Before v1.2.3, Out ears mode will not render. <span id="out-anchor-back">As you're using
 			an Ear Anchor of "Back", you may use the legacy Behind ears mode instead for compatibility.</span>
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-124-notice">
-			<b><i>You've selected options that require new features added in v1.2.4.</i></b><br/>
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-124-notice">
+			<b><i>Selected options require new features added in v1.2.4.</i></b><br/>
 			Before v1.2.4, Vertical tail mode will not render.
 		</div>
 		<div class="notice" style="display: none;margin-bottom:8px" id="req-130-notice">
-			<b><i>You've selected options that require new features added in v1.3.0.</i></b><br/>
+			<b><i>Selected options require new features added in v1.3.0.</i></b><br/>
 			Before v1.3.0, <span id="req-130-snouts">snouts</span><span id="req-130-and"> and </span><span id="req-130-chest">chests</span> will not render.
 		</div>
-		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-122-notice">
-			<b><i>You've selected options that had bugs fixed in v1.2.2.</i></b><br/>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-140-notice">
+			<b><i>Selected options require new features added in v1.4.0.</i></b><br/>
+			Before v1.4.0, wings will not render.
+		</div>
+		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
+			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
 			Before v1.2.2:
 			<ul>
 			<li id="sides-bad-uvs">Sides, Floppy, and Behind modes had their back face texture locations swapped</li>
 			<li id="around-bad-uvs">Around mode had the backs of the sides flipped horizontally</li>
 			</ul>
 		</div>
-		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-123-notice">
-			<b><i>You've selected options that had bugs fixed in v1.2.3.</i></b><br/>
+		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-123-notice">
+			<b><i>Selected options had bugs fixed in v1.2.3.</i></b><br/>
 			Before v1.2.3:
 			<ul>
 			<li id="claws-bad-pos">Claws rendered one pixel off on the left arm for slim models</li>
+			</ul>
+		</div>
+		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-140-notice">
+			<b><i>Selected options had bugs fixed in v1.4.0.</i></b><br/>
+			Before v1.4.0:
+			<ul>
+			<li id="chest-clip">Chests rendered through chestplates</li>
+			<li id="claws-clip">Feet claws rendered through boots</li>
 			</ul>
 		</div>
 		<br/><br/>
@@ -376,7 +426,7 @@ SOFTWARE.
 	</div>
 	<script src="WebGL.js"></script>
 	<script src="three.min.js"></script>
-	<script src="ears-common.js?v=1.3.0"></script>
+	<script src="ears-common.js?v=1.4.0"></script>
 	<script>
 	if (location.hash === "#debug") {
 		window.EarsDebug = true;
@@ -386,6 +436,7 @@ SOFTWARE.
 	} else {
 		window.EarsDebug = false;
 	}
+	initCommon();
 	window.addEventListener('hashchange', () => window.location.reload());
 	var $ = (s) => document.querySelector(s);
 	var $$ = (s) => document.querySelectorAll(s);
@@ -453,6 +504,7 @@ SOFTWARE.
 	}
 	
 	let usingSample = false;
+	let usingSampleWing = false;
 	let earsElements = [];
 	let tailBends = [$("#tail-bend-0"), $("#tail-bend-1"), $("#tail-bend-2"), $("#tail-bend-3")];
 	let tailBendAngles = [$("#tail-bend-0-angle"), $("#tail-bend-1-angle"), $("#tail-bend-2-angle"), $("#tail-bend-3-angle")];
@@ -462,20 +514,28 @@ SOFTWARE.
 		let req122 = $("#req-122-notice");
 		let req123 = $("#req-123-notice");
 		let req130 = $("#req-130-notice");
+		let req140 = $("#req-140-notice");
 		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
+		let bug140 = $("#bug-140-notice");
 		req121.style.display = "none";
 		req122.style.display = "none";
 		req123.style.display = "none";
 		req124.style.display = "none";
 		req130.style.display = "none";
+		req140.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
+		bug140.style.display = "none";
 		$("#sides-bad-uvs").style.display = "none";
 		$("#around-bad-uvs").style.display = "none";
 		$("#claws-bad-pos").style.display = "none";
 		$("#out-anchor-back").style.display = "none";
+		$("#chest-clip").style.display = "none";
+		$("#claws-clip").style.display = "none";
+		$("#alfalfa-notice").style.display = alfalfaData.version > 0 ? "block" : "none";
+		$("#alfalfa-notice-unneeded").style.display = "none";
 		let earMode = $("#ear-mode").value;
 		let earAnchor = $("#ear-anchor").value;
 		if (earMode === "pink") {
@@ -496,9 +556,13 @@ SOFTWARE.
 			}
 		} 
 		let protrusions = $("#protrusions").value;
-		if ($("#slim-enabled").checked && (protrusions === "cyan" || protrusions === "green")) {
-			bug123.style.display = "block";
-			$("#claws-bad-pos").style.display = "list-item";
+		if (protrusions === "cyan" || protrusions === "green") {
+			if ($("#slim-enabled").checked) {
+				bug123.style.display = "block";
+				$("#claws-bad-pos").style.display = "list-item";
+			}
+			bug140.style.display = "block";
+			$("#claws-clip").style.display = "list-item";
 		}
 		let tailMode = $("#tail-mode").value;
 		if (tailMode === "orange") {
@@ -518,10 +582,18 @@ SOFTWARE.
 			req130.style.display = "block";
 			$("#req-130-chest").style.display = "inline";
 			req130Count++;
+			bug140.style.display = "block";
+			$("#chest-clip").style.display = "list-item";
 		} else {
 			$("#req-130-chest").style.display = "none";
 		}
 		$("#req-130-and").style.display = req130Count > 1 ? "inline" : "none";
+		let wingsMode = $("#wings-mode").value;
+		if (wingsMode !== "red" && wingsMode !== "blue") {
+			req140.style.display = "block";
+		} else {
+			$("#alfalfa-notice-unneeded").style.display = "block";
+		}
 	}
 	
 	rebuildGeom = null;
@@ -552,8 +624,11 @@ SOFTWARE.
 	wireElement("unlock-angles", -1);
 	wireElement("snout", -1);
 	wireElement("chest", -1);
+	wireElement("wings-mode", 8);
+	wireElement("wing-upload", -1);
 	async function updateSkin() {
 		usingSample = false;
+		usingSampleWing = false;
 		let files = $("#skin-upload").files;
 		if (!files || files.length == 0) return;
 		let file = files[0];
@@ -562,10 +637,12 @@ SOFTWARE.
 			let bitmap = await createImageBitmap(file);
 			if (bitmap.width != 64) {
 				alert("This doesn't look like a Minecraft skin; the width is wrong. Needs to be 64px.");
+				$("#skin-upload").value = null;
 				return;
 			}
 			if (bitmap.height != 64 && bitmap.height != 32) {
 				alert("This doesn't look like a Minecraft skin; the height is wrong. Needs to be 64px or 32px.");
+				$("#skin-upload").value = null;
 				return;
 			}
 			let ctx = $("#skin").getContext("2d");
@@ -708,10 +785,60 @@ SOFTWARE.
 				});
 			}
 			$("#ears-enabled").checked = earsEnabled;
-			rebuild();
+			rebuildQuads();
+			if (alfalfaData.wing) {
+				$("#wing-upload").value = null;
+				await new Promise((resolve, reject) => {
+					let img = new Image();
+					img.onload = () => {
+						let ctx = $("#wings").getContext("2d");
+						ctx.clearRect(0, 0, 12, 12);
+						ctx.drawImage(img, 0, 0, 12, 12, 0, 0, 12, 12);
+						resolve();
+					};
+					img.onerror = reject;
+					img.src = 'data:image/png;base64,'+btoa(alfalfaData.wing);
+				});
+			}
+			await rebuild();
 		} finally {
 			document.body.classList.remove("loading");
 		}
+	}
+	async function updateWing() {
+		usingSampleWing = false;
+		let files = $("#wing-upload").files;
+		if (!files || files.length == 0) return;
+		let file = files[0];
+		document.body.classList.add("loading");
+		try {
+			let bitmap = await createImageBitmap(file);
+			if (bitmap.width != 12) {
+				alert("This doesn't look like a Ears wing; the width is wrong. Needs to be 12px.");
+				$("#wing-upload").value = null;
+				return;
+			}
+			if (bitmap.height != 12) {
+				alert("This doesn't look like a Ears wing; the height is wrong. Needs to be 12px.");
+				$("#wing-upload").value = null;
+				return;
+			}
+			let ctx = $("#wings").getContext("2d");
+			ctx.clearRect(0, 0, 12, 12);
+			ctx.drawImage(bitmap, 0, 0);
+			encodeWingToAlfalfa();
+			await rebuild();
+		} finally {
+			document.body.classList.remove("loading");
+		}
+	}
+	function encodeWingToAlfalfa() {
+		if (!!window.alfalfaData || !window.alfalfaData.version) {
+			window.alfalfaData = {version:1};
+		}
+		let data = $("#wings").toDataURL('image/png');
+		window.alfalfaData.wing = atob(data.substr(data.indexOf(',')+1));
+		encodeAlfalfa();
 	}
 	$("#ears-enabled").addEventListener('input', () => {
 		let en = $("#ears-enabled").checked;
@@ -801,13 +928,29 @@ SOFTWARE.
 				if ($("#chest").checked) {
 					ctx.drawImage(img, 64, 128, 64, 64, 0, 0, 64, 64);
 				}
+				if (usingSampleWing) {
+					let wingsCtx = $("#wings").getContext("2d");
+					wingsCtx.clearRect(0, 0, 12, 12);
+					let wingsMode = $("#wings-mode").value;
+					if (wingsMode !== "red" && wingsMode !== "blue") {
+						wingsCtx.drawImage(img, 0, 192, 12, 12, 0, 0, 12, 12);
+						encodeWingToAlfalfa();
+					} else {
+						window.alfalfaData = {version:0};
+						encodeAlfalfa();
+					}
+				} else {
+					encodeWingToAlfalfa();
+				}
 				resolve();
 			};
+			img.onerror = reject;
 			img.src = 'sample_skin_atlas.png';
 		});
 	}
 	$("#sample").addEventListener('click', () => {
 		usingSample = true;
+		usingSampleWing = true;
 		rebuild();
 	});
 	$("#slim-enabled").addEventListener("change", (e) => {
@@ -912,6 +1055,16 @@ SOFTWARE.
 		rebuild();
 	});
 	$("#skin-upload").addEventListener('change', () => updateSkin());
+	$("#wing-upload").addEventListener('change', () => updateWing());
+	$("#remove-alfalfa").addEventListener('click', () => {
+		if (usingSample && !usingSampleWing) {
+			usingSampleWing = true;
+		}
+		$("#wings").getContext('2d').clearRect(0, 0, 12, 12);
+		window.alfalfaData = {version:0};
+		encodeAlfalfa();
+		rebuild();
+	});
 	window.addEventListener("resize", () => updateDpr());
 	updateDpr();
 	updateSkin();
@@ -968,6 +1121,16 @@ SOFTWARE.
 			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
 			THREE.NearestFilter, THREE.NearestFilter);
 		
+		let wingsTex = new THREE.CanvasTexture(
+			$("#wings"), THREE.UVMapping,
+			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
+			THREE.NearestFilter, THREE.NearestFilter);
+			
+		let textures = {
+			skin: skinTex,
+			wing: wingsTex
+		}
+		
 		let mat = new THREE.MeshLambertMaterial({
 			reflectivity: -1,
 			flatShading: true,
@@ -995,20 +1158,10 @@ SOFTWARE.
 			fog: false,
 			refractionRatio: 0,
 			color: 0xFFFFFF,
-			map: skinTex,
 			blending: THREE.NormalBlending,
 			alphaTest: 0.1,
 			transparent: true
 		};
-		
-		let matEarsFront = new THREE.MeshLambertMaterial({
-			...earsMatParams,
-			side: THREE.FrontSide
-		});
-		let matEarsBack = new THREE.MeshLambertMaterial({
-			...earsMatParams,
-			side: THREE.BackSide
-		});
 		
 		let uvDiv = 64;
 		
@@ -1208,6 +1361,8 @@ SOFTWARE.
 						mat.multiply(new THREE.Matrix4().makeTranslation(-tgt.geometry.parameters.width/2, -tgt.geometry.parameters.height/2, -tgt.geometry.parameters.depth/2));
 					} else if (m.type === "translate") {
 						mat.multiply(new THREE.Matrix4().makeTranslation(m.x, -m.y, m.z));
+					} else if (m.type === "scale") {
+						mat.multiply(new THREE.Matrix4().makeScale(m.x, m.y, m.z));
 					} else if (m.type === "rotate") {
 						mat.multiply(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(-m.x, m.y, -m.z), THREE.Math.degToRad(m.ang)));
 					} else {
@@ -1223,7 +1378,12 @@ SOFTWARE.
 					geom.translate(o.width/2, -o.height/2, 0);
 					geom.applyMatrix4(mat);
 					geom.computeVertexNormals();
-					let mesh = new THREE.Mesh(geom, o.back ? matEarsBack : matEarsFront);
+					let material = new THREE.MeshLambertMaterial({
+						...earsMatParams,
+						side: o.back ? THREE.BackSide : THREE.FrontSide,
+						map: textures[o.texture]
+					});
+					let mesh = new THREE.Mesh(geom, material);
 					mesh.renderOrder = 0;
 					earsMeshes.push(mesh);
 					scene.add(mesh);
@@ -1246,14 +1406,14 @@ SOFTWARE.
 		
 		// standard item lighting
 
-		scene.add(new THREE.AmbientLight(new THREE.Color(0.2, 0.2, 0.2)));
+		scene.add(new THREE.AmbientLight(new THREE.Color(0.3, 0.3, 0.3)));
 				
 		let light0 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
-		light0.position.set(0.2, 1, -0.7);
+		light0.position.set(0.3, 1, -0.9);
 		light0.position.normalize();
 		scene.add(light0);
 		let light1 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
-		light1.position.set(-0.2, 1, 0.7);
+		light1.position.set(-0.3, 1, 0.9);
 		light1.position.normalize();
 		scene.add(light1);
 		
@@ -1267,6 +1427,7 @@ SOFTWARE.
 			
 			if (skinTexNeedsUpdate) {
 				skinTex.needsUpdate = true;
+				wingsTex.needsUpdate = true;
 				skinTexNeedsUpdate = false;
 			}
 			

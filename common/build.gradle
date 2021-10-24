@@ -276,7 +276,7 @@ task teavm {
 		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
 		tool.sourceMapsFileGenerated = true
 		tool.mainClass = 'com.unascribed.ears.common.EarsJS'
-		tool.entryPointName = 'rebuildQuads'
+		tool.entryPointName = 'initCommon'
 		tool.targetType = TeaVMTargetType.JAVASCRIPT
 		tool.log = new ConsoleTeaVMToolLog(true)
 		tool.obfuscated = false

@@ -1,9 +1,13 @@
 package com.unascribed.ears.common;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSFunctor;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
@@ -16,20 +20,40 @@ import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
-
 import com.unascribed.ears.common.EarsFeatures.Alfalfa;
 import com.unascribed.ears.common.EarsFeatures.MagicPixel;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
+import com.unascribed.ears.common.util.Slice;
 
 /**
  * Entry point for the Manipulator to build quads.
  */
 public class EarsJS {
+
+	@JSFunctor
+	private interface NullFunctor extends JSObject {
+		void invoke() throws Exception;
+	}
 	
 	/**
-	 * Called "rebuildQuads" in JavaScript.
+	 * Called "initCommon" in JavaScript.
 	 */
 	public static void main(String[] args) throws IOException {
+		assignFuncToWindow("rebuildQuads", new NullFunctor() {
+			@Override
+			public void invoke() throws Exception {
+				rebuildQuads();
+			}
+		});
+		assignFuncToWindow("encodeAlfalfa", new NullFunctor() {
+			@Override
+			public void invoke() throws Exception {
+				encodeAlfalfa();
+			}
+		});
+	}
+	
+	public static void rebuildQuads() throws IOException {
 		JSMapLike<JSString> magicPixels = JSObjects.create();
 		JSMapLike<JSString> magicPixelValues = JSObjects.create();
 		for (MagicPixel mp : MagicPixel.values()) {
@@ -67,6 +91,7 @@ public class EarsJS {
 		final JSArray<JSObject> objects = JSArray.create();
 		EarsCommon.render(feat, new EarsRenderDelegate() {
 			
+			private TexSource texture = TexSource.SKIN;
 			private JSArray<JSObject> moves = JSArray.create();
 			private JSArray<JSArray<JSObject>> movesStack = JSArray.create();
 			
@@ -77,8 +102,8 @@ public class EarsJS {
 			public void tearDown() {}
 
 			@Override
-			public void bind(TexSource tex) {
-				// TODO
+			public void bind(TexSource src) {
+				texture = src;
 			}
 
 			@Override
@@ -143,7 +168,7 @@ public class EarsJS {
 				q.set("type", JSString.valueOf("quad"));
 				q.set("moves", moves.slice(0));
 				JSArray<JSArray<JSNumber>> uvs = JSArray.create();
-				float[][] uvsArr = EarsCommon.calculateUVs(u, v, width, height, rot, back ? flip.flipHorizontally() : flip, TexSource.SKIN);
+				float[][] uvsArr = EarsCommon.calculateUVs(u, v, width, height, rot, back ? flip.flipHorizontally() : flip, texture);
 				for (float[] arr : uvsArr) {
 					JSArray<JSNumber> jarr = JSArray.create();
 					for (int i = 0; i < arr.length; i++) {
@@ -155,6 +180,7 @@ public class EarsJS {
 				q.set("width", JSNumber.valueOf(w));
 				q.set("height", JSNumber.valueOf(h));
 				q.set("back", JSBoolean.valueOf(back));
+				q.set("texture", JSString.valueOf(texture.lowerName));
 				objects.push(q);
 			}
 			
@@ -204,10 +230,77 @@ public class EarsJS {
 			}
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
+		JSMapLike<JSObject> alfalfaData = JSObjects.create();
+		alfalfaData.set("version", JSNumber.valueOf(feat.alfalfa.version));
+		for (Map.Entry<String, Slice> en : feat.alfalfa.data.entrySet()) {
+			StringBuilder sb = new StringBuilder(en.getValue().size());
+			for (int i = 0; i < en.getValue().size(); i++) {
+				sb.append((char)(en.getValue().get(i)&0xFF));
+			}
+			alfalfaData.set(en.getKey(), JSString.valueOf(sb.toString()));
+		}
+		assignToWindow("alfalfaData", alfalfaData);
+	}
+	
+	public static void encodeAlfalfa() throws IOException {
+		JSObject alfalfaData = retrieveFromWindow("alfalfaData");
+		Map<String, Slice> data = new HashMap<String, Slice>();
+		JSArray<JSArray<JSObject>> entries = entries(alfalfaData);
+		for (int i = 0; i < entries.getLength(); i++) {
+			String key = ((JSString)entries.get(i).get(0)).stringValue();
+			if (key.equals("version")) continue;
+			JSString val = entries.get(i).get(1).cast();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			for (int j = 0; j < val.getLength(); j++) {
+				baos.write(val.charCodeAt(j));
+			}
+			data.put(key, new Slice(baos.toByteArray()));
+		}
+		JSMapLike<JSObject> alfalfaDataM = alfalfaData.cast();
+		JSNumber version = alfalfaDataM.get("version").cast();
+		Alfalfa a = new Alfalfa(version.intValue(), data);
+		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
+		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
+		final DataView dv = DataView.create(skin.getData().getBuffer());
+		WritableEarsImage img = new WritableEarsImage() {
+			
+			@Override
+			public int getWidth() {
+				return skin.getWidth();
+			}
+			
+			@Override
+			public int getHeight() {
+				return skin.getHeight();
+			}
+			
+			@Override
+			public int getARGB(int x, int y) {
+				int rgba = dv.getUint32(((y*64)+x)*4);
+				int a = rgba & 0xFF;
+				int argb = ((rgba >> 8)&0x00FFFFFF) | (a << 24);
+				return argb;
+			}
+
+			@Override
+			public void setARGB(int x, int y, int argb) {
+				int rgba = argb<<8;
+				rgba |= (argb>>24)&0xFF;
+				dv.setUint32(((y*64)+x)*4, rgba);
+			}
+		};
+		a.write(img);
+		((CanvasRenderingContext2D)canvas.getContext("2d")).putImageData(skin, 0, 0, 0, 0, 64, 64);
 	}
 	
 	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
 	private static native void assignToWindow(String name, JSObject obj);
+	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
+	private static native void assignFuncToWindow(String name, NullFunctor obj);
+	@JSBody(params={"name"}, script="return window[name];")
+	private static native JSObject retrieveFromWindow(String name);
+	@JSBody(params={"obj"}, script="return Object.entries(obj);")
+	private static native JSArray<JSArray<JSObject>> entries(JSObject obj);
 	
 	@JSBody(script="return !!document.getElementById(\"slim-enabled\").checked;")
 	private static native boolean getSlimState();
