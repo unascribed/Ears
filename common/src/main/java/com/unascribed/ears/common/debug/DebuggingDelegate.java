@@ -105,4 +105,18 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		return f;
 	}
 
+	@Override
+	public boolean isGliding() {
+		boolean f = delegate.isGliding();
+		EarsLog.debug("Platform:Renderer:Delegate", "isGliding() -> {}", f);
+		return f;
+	}
+	
+	@Override
+	public boolean hasEquipment(Equipment equipment) {
+		boolean e = delegate.hasEquipment(equipment);
+		EarsLog.debug("Platform:Renderer:Delegate", "hasEquipment({}) -> {}", equipment, e);
+		return e;
+	}
+	
 }

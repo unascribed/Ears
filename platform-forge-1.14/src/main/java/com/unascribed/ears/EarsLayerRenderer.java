@@ -27,6 +27,10 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ElytraItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
@@ -107,13 +111,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			ResourceLocation skin = peer.getLocationSkin();
-			ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
-			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-				return ((EarsFeaturesHolder)tex).getEarsFeatures();
-			}
-			return EarsFeatures.DISABLED;
+			return EarsMod.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -137,7 +135,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				GlStateManager.bindTexture(0);
 			} else {
@@ -203,6 +201,20 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		@Override
 		public boolean isFlying() {
 			return peer.abilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.getItemStackFromSlot(EquipmentSlotType.CHEST);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
+					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return peer.isElytraFlying();
 		}
 	};
 

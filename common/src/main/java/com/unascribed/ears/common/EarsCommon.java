@@ -11,6 +11,7 @@ import com.unascribed.ears.common.debug.DebuggingDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
+import com.unascribed.ears.common.render.EarsRenderDelegate.Equipment;
 import com.unascribed.ears.common.render.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
@@ -81,6 +82,10 @@ public class EarsCommon {
 			if (!sixtyFour && rect.y1 > 32) continue;
 			sam.stripAlpha(rect.x1, rect.y1, rect.x2, rect.y2);
 		}
+	}
+	
+	public static boolean shouldSuppressElytra(EarsFeatures features) {
+		return features.wingMode != WingMode.NONE;
 	}
 	
 	/**
@@ -251,6 +256,11 @@ public class EarsCommon {
 					ang = 130;
 					swing = -20;
 				}
+				float baseAngle = features.tailBend0;
+				if (delegate.isGliding()) {
+					baseAngle = -30;
+					ang = 0;
+				}
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -2, 4);
@@ -259,19 +269,19 @@ public class EarsCommon {
 					if (vert) {
 						delegate.translate(4, 0, 0);
 						delegate.rotate(90, 0, 0, 1);
-						if (features.tailBend0 < 0) {
+						if (baseAngle < 0) {
 							delegate.translate(4, 0, 0);
-							delegate.rotate(features.tailBend0, 0, 1, 0);
+							delegate.rotate(baseAngle, 0, 1, 0);
 							delegate.translate(-4, 0, 0);
 						}
 						delegate.translate(-4, 0, 0);
-						if (features.tailBend0 > 0) {
-							delegate.rotate(features.tailBend0, 0, 1, 0);
+						if (baseAngle > 0) {
+							delegate.rotate(baseAngle, 0, 1, 0);
 						}
 						delegate.rotate(90, 1, 0, 0);
 					}
 					int segments = 1;
-					float[] angles = {vert ? 0 : features.tailBend0, features.tailBend1, features.tailBend2, features.tailBend3};
+					float[] angles = {vert ? 0 : baseAngle, features.tailBend1, features.tailBend2, features.tailBend3};
 					if (features.tailBend1 != 0) {
 						segments++;
 						if (features.tailBend2 != 0) {
@@ -390,7 +400,7 @@ public class EarsCommon {
 			
 			float chestSize = features.chestSize;
 			
-			if (chestSize > 0) {
+			if (chestSize > 0 && !delegate.hasEquipment(Equipment.CHESTPLATE)) {
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -10, 0);
@@ -414,9 +424,10 @@ public class EarsCommon {
 			WingMode wingMode = features.wingMode;
 
 			if (wingMode != WingMode.NONE) {
+				boolean g = delegate.isGliding();
 				boolean f = delegate.isFlying();
 				delegate.push();
-					float wiggle = ((float)(Math.sin((delegate.getTime()+8)/(f ? 2 : 12))*(f ? 20 : 2)))+(swingAmount*10);
+					float wiggle = g ? -40 : ((float)(Math.sin((delegate.getTime()+8)/(f ? 2 : 12))*(f ? 20 : 2)))+(swingAmount*10);
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.bind(TexSource.WING);
 					delegate.translate(2, -12, 4);

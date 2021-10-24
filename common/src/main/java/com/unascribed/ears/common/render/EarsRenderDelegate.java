@@ -143,6 +143,12 @@ public interface EarsRenderDelegate {
 		}
 	}
 	
+	public enum Equipment {
+		ELYTRA,
+		CHESTPLATE,
+		;
+	}
+	
 	void setUp();
 	void tearDown();
 	
@@ -164,5 +170,7 @@ public interface EarsRenderDelegate {
 	
 	float getTime();
 	boolean isFlying();
+	boolean isGliding();
+	boolean hasEquipment(Equipment equipment);
 	
 }

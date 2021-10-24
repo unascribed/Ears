@@ -9,7 +9,8 @@
   "client": [
     "MixinPlayerEntityRenderer",
     "MixinPlayerSkinTexture",
-    "AccessorPlayerEntityModel"
+    "AccessorPlayerEntityModel",
+    "MixinElytraFeatureRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

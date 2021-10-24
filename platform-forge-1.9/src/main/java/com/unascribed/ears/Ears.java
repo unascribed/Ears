@@ -15,12 +15,15 @@ import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -59,6 +62,10 @@ public class Ears {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean shouldSuppressElytra(EntityLivingBase entity) {
+		return entity instanceof AbstractClientPlayer && EarsCommon.shouldSuppressElytra(getEarsFeatures((AbstractClientPlayer)entity));
 	}
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
@@ -129,6 +136,16 @@ public class Ears {
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);
+		}
+	}
+
+	public static EarsFeatures getEarsFeatures(AbstractClientPlayer peer) {
+		ResourceLocation skin = peer.getLocationSkin();
+		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
+		if (Ears.earsSkinFeatures.containsKey(tex) && !peer.isInvisible()) {
+			return Ears.earsSkinFeatures.get(tex);
+		} else {
+			return EarsFeatures.DISABLED;
 		}
 	}
 	

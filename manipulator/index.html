@@ -100,6 +100,13 @@ SOFTWARE.
 			width: 128px;
 			height: 128px;
 		}
+		#wings {
+			image-rendering: -moz-crisp-edges;
+			image-rendering: crisp-edges;
+			image-rendering: pixelated;
+			width: 24px;
+			height: 24px;
+		}
 		#three {
 			width: 512px;
 			height: 512px;
@@ -294,6 +301,33 @@ SOFTWARE.
 					<input id="chest-size" type="range" disabled value="1" min="1" max="128" step="1">
 				</td>
 			</tr>
+			<tr>
+				<td>
+					<label for="wings-mode">Wings Mode</label>
+				</td>
+				<td>
+					<select disabled id="wings-mode">
+						<option value="red">None</option>
+						<option value="pink">Symmetric Dual</option>
+						<option value="green">Symmetric Single</option>
+						<option value="cyan">Asymmetric Single (Left)</option>
+						<option value="orange">Asymmetric Single (Right)</option>
+					</select>
+				</td>
+				<td><canvas id="wings" width="12" height="12"></canvas></td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td></td>
+				<td>
+				<input disabled type="file" id="wing-upload" accept="image/png,.png"></input><br/>
+				</td>
+			</tr>
+			<tr>
+			<td></td>
+				<td style="text-align: left; vertical-align: top"><small>Must be 12x12</small></td>
+			</tr>
 		</table>
 		<br/>
 		<div class="notice" style="display: none;margin-bottom:8px" id="req-121-notice">
@@ -360,6 +394,9 @@ SOFTWARE.
 		let s = (64*(3*Math.floor(devicePixelRatio)))/devicePixelRatio;
 		$("#skin").style.width = s+"px";
 		$("#skin").style.height = s+"px";
+		s = (12*(3*Math.floor(devicePixelRatio)))/devicePixelRatio;
+		$("#wings").style.width = s+"px";
+		$("#wings").style.height = s+"px";
 	}
 	function drawImage(ctx, img,
 			dx1, dy1, dx2, dy2,

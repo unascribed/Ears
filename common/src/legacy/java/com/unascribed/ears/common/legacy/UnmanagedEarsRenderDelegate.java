@@ -18,7 +18,7 @@ public abstract class UnmanagedEarsRenderDelegate<TPeer, TModelPart> extends Par
 	private final Map<String, Integer> subTextures = new HashMap<String, Integer>();
 	
 	@Override
-	protected void doBindSub(TexSource src, byte[] pngData) {
+	protected void doBindAux(TexSource src, byte[] pngData) {
 		String id = src.addSuffix(getSkinUrl());
 		if (!subTextures.containsKey(id)) {
 			try {

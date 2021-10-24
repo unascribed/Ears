@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -23,10 +22,13 @@ import net.minecraft.client.renderer.entity.model.ModelBox;
 import net.minecraft.client.renderer.entity.model.ModelPlayer;
 import net.minecraft.client.renderer.entity.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemElytra;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
@@ -109,13 +111,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			ResourceLocation skin = peer.getLocationSkin();
-			ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
-			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-				return ((EarsFeaturesHolder)tex).getEarsFeatures();
-			}
-			return EarsFeatures.DISABLED;
+			return EarsMod.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -139,7 +135,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				GlStateManager.bindTexture(0);
 			} else {
@@ -205,6 +201,20 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		public boolean isFlying() {
 			return peer.abilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, chest.getItem() instanceof ItemElytra)
+					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ItemArmor)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return peer.isElytraFlying();
 		}
 	};
 }

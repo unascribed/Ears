@@ -177,6 +177,21 @@ public class com_unascribed_ears_Ears {
 		public boolean isFlying() {
 			return peer.playerCapabilities.flying;
 		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ix inv = peer.c;
+			iz chest = inv.b[2];
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.a() instanceof wa)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return false;
+		}
 	};
 
 }

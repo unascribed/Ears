@@ -23,6 +23,8 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class LayerEars {
@@ -73,7 +75,7 @@ public class LayerEars {
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				glBindTexture(GL_TEXTURE_2D, 0);
 			} else {
@@ -134,6 +136,20 @@ public class LayerEars {
 		@Override
 		public boolean isFlying() {
 			return peer.capabilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return false;
 		}
 	};
 }

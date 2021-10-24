@@ -11,7 +11,8 @@
     "MixinPlayerRenderer",
     "MixinDownloadingTexture",
     "MixinDownloadImageBuffer",
-    "AccessorPlayerModel"
+    "AccessorPlayerModel",
+    "MixinElytraLayer"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -23,9 +23,11 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemElytra;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
@@ -108,13 +110,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			ResourceLocation skin = peer.getLocationSkin();
-			ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
-			if (Ears.earsSkinFeatures.containsKey(tex) && !peer.isInvisible()) {
-				return Ears.earsSkinFeatures.get(tex);
-			} else {
-				return EarsFeatures.DISABLED;
-			}
+			return Ears.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -138,7 +134,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				GlStateManager.bindTexture(0);
 			} else {
@@ -204,6 +200,20 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		public boolean isFlying() {
 			return peer.capabilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, chest != null && chest.getItem() instanceof ItemElytra)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return peer.isElytraFlying();
 		}
 	};
 }

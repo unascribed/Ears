@@ -10,7 +10,8 @@
   "client": [
     "MixinPlayerRenderer",
     "MixinDownloadingTexture",
-    "AccessorPlayerModel"
+    "AccessorPlayerModel",
+    "MixinElytraLayer"
   ],
   "injectors": {
     "defaultRequire": 1

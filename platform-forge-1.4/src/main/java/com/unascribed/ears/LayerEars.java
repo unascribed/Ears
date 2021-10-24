@@ -12,6 +12,8 @@ import com.unascribed.ears.common.util.Decider;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemArmor;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelBox;
 import net.minecraft.src.ModelRenderer;
@@ -117,6 +119,20 @@ public class LayerEars {
 		@Override
 		public boolean isFlying() {
 			return peer.capabilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return false;
 		}
 	};
 }

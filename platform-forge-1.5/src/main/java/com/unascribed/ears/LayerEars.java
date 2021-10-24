@@ -18,6 +18,8 @@ import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 
 public class LayerEars {
 	
@@ -118,6 +120,20 @@ public class LayerEars {
 		@Override
 		public boolean isFlying() {
 			return peer.capabilities.isFlying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return false;
 		}
 	};
 }

@@ -9,7 +9,6 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -27,10 +26,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ElytraItem;
+import net.minecraft.world.item.ItemStack;
 
 public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 	
@@ -87,13 +89,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			ResourceLocation skin = peer.getSkinTextureLocation();
-			AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
-			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-				return ((EarsFeaturesHolder)tex).getEarsFeatures();
-			}
-			return EarsFeatures.DISABLED;
+			return EarsMod.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -127,7 +123,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		}
 
 		@Override
-		protected void doUploadSub(TexSource src, byte[] pngData) {
+		protected void doUploadAux(TexSource src, byte[] pngData) {
 			ResourceLocation skin = peer.getSkinTextureLocation();
 			ResourceLocation id = new ResourceLocation(skin.getNamespace(), src.addSuffix(skin.getPath()));
 			if (pngData != null && Minecraft.getInstance().getTextureManager().getTexture(id, null) == null) {
@@ -173,6 +169,20 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		@Override
 		public boolean isFlying() {
 			return peer.getAbilities().flying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.getItemBySlot(EquipmentSlot.CHEST);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
+					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return peer.isFallFlying();
 		}
 	};
 }

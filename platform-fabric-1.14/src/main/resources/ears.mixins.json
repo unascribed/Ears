@@ -10,7 +10,8 @@
     "MixinPlayerEntityRenderer",
     "MixinPlayerSkinTexture",
     "MixinSkinRemappingImageFilter",
-    "AccessorPlayerEntityModel"
+    "AccessorPlayerEntityModel",
+    "MixinElytraFeatureRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

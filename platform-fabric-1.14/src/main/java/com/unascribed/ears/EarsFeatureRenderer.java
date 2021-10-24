@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -20,20 +19,28 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.entity.feature.ArmorBipedFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.texture.Texture;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ElytraItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	
+	private final ArmorBipedFeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>, BipedEntityModel<AbstractClientPlayerEntity>> armorRenderer;
+	
 	public EarsFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
 		super(context);
 		EarsLog.debug("Platform:Renderer", "Constructed");
+		armorRenderer = new ArmorBipedFeatureRenderer<>(context, new BipedEntityModel<>(0.5F), new BipedEntityModel<>(1.0F));
 	}
 	
 	@Override
@@ -100,13 +107,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			Identifier skin = peer.getSkinTexture();
-			Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
-			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-				return ((EarsFeaturesHolder)tex).getEarsFeatures();
-			}
-			return EarsFeatures.DISABLED;
+			return EarsMod.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -130,7 +131,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				GlStateManager.bindTexture(0);
 			} else {
@@ -196,6 +197,20 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		@Override
 		public boolean isFlying() {
 			return peer.abilities.flying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.getEquippedStack(EquipmentSlot.CHEST);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
+					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return peer.isFallFlying();
 		}
 	};
 

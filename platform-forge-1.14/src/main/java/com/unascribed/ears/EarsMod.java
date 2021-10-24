@@ -1,7 +1,13 @@
 package com.unascribed.ears;
 
+import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedConstants;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +27,16 @@ public class EarsMod {
 		} catch (Throwable t) {
 			throw new LoaderException("Ears requires MixinBootstrap on versions earlier than Forge 32.0.72");
 		}
+	}
+
+	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
+		ResourceLocation skin = peer.getLocationSkin();
+		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
+			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		}
+		return EarsFeatures.DISABLED;
 	}
 	
 }

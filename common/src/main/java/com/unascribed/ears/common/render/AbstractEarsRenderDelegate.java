@@ -194,13 +194,13 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		if (src == TexSource.SKIN) {
 			doBindSkin();
 		} else {
-			doBindSub(src, src.getPNGData(feat));
+			doBindAux(src, src.getPNGData(feat));
 		}
 		this.bound = src;
 	}
 	
 	protected abstract void doBindSkin();
-	protected abstract void doBindSub(TexSource src, byte[] pngData);
+	protected abstract void doBindAux(TexSource src, byte[] pngData);
 	
 	protected ByteBuffer toNativeBuffer(byte[] arr) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(arr.length).order(ByteOrder.nativeOrder());

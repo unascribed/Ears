@@ -15,6 +15,8 @@ import net.minecraft.client.render.entity.PlayerRenderer;
 import net.minecraft.client.render.entity.model.BipedModel;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.entity.player.Player;
+import net.minecraft.item.ItemInstance;
+import net.minecraft.item.armour.ArmourItem;
 
 public class LayerEars {
 	private PlayerRenderer renderer;
@@ -104,6 +106,20 @@ public class LayerEars {
 
 		@Override
 		public boolean isFlying() {
+			return false;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemInstance chest = peer.inventory.getArmourItem(2);
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getType() instanceof ArmourItem)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
 			return false;
 		}
 		

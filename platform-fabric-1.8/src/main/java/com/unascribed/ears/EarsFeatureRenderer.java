@@ -29,6 +29,8 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.Texture;
 import net.minecraft.client.texture.TextureUtil;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayerEntity> {
@@ -152,7 +154,7 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		}
 
 		@Override
-		protected void doBindSub(TexSource src, byte[] pngData) {
+		protected void doBindAux(TexSource src, byte[] pngData) {
 			if (pngData == null) {
 				GlStateManager.bindTexture(0);
 			} else {
@@ -218,6 +220,20 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		@Override
 		public boolean isFlying() {
 			return peer.abilities.flying;
+		}
+
+		@Override
+		public boolean hasEquipment(Equipment e) {
+			ItemStack chest = peer.getArmorStacks()[1];
+			return Decider.<Equipment, Boolean>begin(e)
+					.map(Equipment.ELYTRA, false)
+					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ArmorItem)
+					.orElse(false);
+		}
+
+		@Override
+		public boolean isGliding() {
+			return false;
 		}
 	};
 }
