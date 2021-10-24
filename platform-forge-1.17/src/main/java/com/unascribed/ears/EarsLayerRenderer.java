@@ -30,9 +30,9 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ElytraItem;
-import net.minecraft.world.item.ItemStack;
 
 public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 	
@@ -172,18 +172,28 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.getItemBySlot(EquipmentSlot.CHEST);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
-					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
-					.map(Equipment.BOOTS, peer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ArmorItem)
-					.orElse(false);
+		public boolean isGliding() {
+			return peer.isFallFlying();
 		}
 
 		@Override
-		public boolean isGliding() {
-			return peer.isFallFlying();
+		public boolean isJacketEnabled() {
+			return peer.isModelPartShown(PlayerModelPart.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			return peer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			return peer.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
+			return peer.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
 		}
 	};
 }

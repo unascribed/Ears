@@ -179,19 +179,31 @@ public class com_unascribed_ears_Ears {
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ix inv = peer.c;
-			iz chest = inv.b[2];
-			iz feet = inv.b[0];
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, false)
-					.map(Equipment.CHESTPLATE, chest != null && chest.a() instanceof wa)
-					.map(Equipment.BOOTS, feet != null && feet.a() instanceof wa)
-					.orElse(false);
+		public boolean isGliding() {
+			return false;
 		}
 
 		@Override
-		public boolean isGliding() {
+		public boolean isJacketEnabled() {
+			return true;
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			// c = ix = PlayerInventory
+			iz feet = peer.c.b[0];
+			// wa = ArmorItem
+			return feet != null && feet.a() instanceof wa;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			iz chest = peer.c.b[2];
+			return chest != null && chest.a() instanceof wa;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
 			return false;
 		}
 	};

@@ -226,8 +226,23 @@ public class EarsJS {
 			}
 
 			@Override
-			public boolean hasEquipment(Equipment equipment) {
+			public boolean isWearingElytra() {
 				return false;
+			}
+
+			@Override
+			public boolean isWearingChestplate() {
+				return false;
+			}
+
+			@Override
+			public boolean isWearingBoots() {
+				return false;
+			}
+
+			@Override
+			public boolean isJacketEnabled() {
+				return getJacketState();
 			}
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
@@ -305,5 +320,7 @@ public class EarsJS {
 	
 	@JSBody(script="return !!document.getElementById(\"slim-enabled\").checked;")
 	private static native boolean getSlimState();
+	@JSBody(script="return !!document.getElementById(\"torso2-enabled\").checked;")
+	private static native boolean getJacketState();
 	
 }

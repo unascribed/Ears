@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -213,18 +214,29 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.inventory.armorItemInSlot(2);
-			ItemStack feet = peer.inventory.armorItemInSlot(0);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, false)
-					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
-					.map(Equipment.BOOTS, feet != null && feet.getItem() instanceof ItemArmor)
-					.orElse(false);
+		public boolean isGliding() {
+			return false;
 		}
 
 		@Override
-		public boolean isGliding() {
+		public boolean isJacketEnabled() {
+			return peer.isWearing(EnumPlayerModelParts.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			ItemStack feet = peer.inventory.armorItemInSlot(0);
+			return feet != null && feet.getItem() instanceof ItemArmor;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			return chest != null && chest.getItem() instanceof ItemArmor;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
 			return false;
 		}
 	};

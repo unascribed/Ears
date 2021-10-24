@@ -133,9 +133,13 @@ public interface EarsRenderDelegate {
 	public enum QuadGrow {
 		NONE(0),
 		/**
-		 * Matches secondary layers.
+		 * Matches secondary head layer.
 		 */
 		HALFPIXEL(0.5f),
+		/**
+		 * Matches secondary layers.
+		 */
+		QUARTERPIXEL(0.25f),
 		;
 		public final float grow;
 		QuadGrow(float grow) {
@@ -143,10 +147,11 @@ public interface EarsRenderDelegate {
 		}
 	}
 	
-	public enum Equipment {
-		ELYTRA,
-		CHESTPLATE,
-		BOOTS,
+	public enum Condition {
+		HAS_ELYTRA,
+		HAS_CHESTPLATE,
+		HAS_BOOTS,
+		JACKET_ENABLED,
 		;
 	}
 	
@@ -170,8 +175,12 @@ public interface EarsRenderDelegate {
 	void renderDebugDot(float r, float g, float b, float a);
 	
 	float getTime();
+	
 	boolean isFlying();
 	boolean isGliding();
-	boolean hasEquipment(Equipment equipment);
+	boolean isWearingElytra();
+	boolean isWearingChestplate();
+	boolean isWearingBoots();
+	boolean isJacketEnabled();
 	
 }

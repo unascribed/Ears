@@ -11,7 +11,6 @@ import com.unascribed.ears.common.debug.DebuggingDelegate;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
-import com.unascribed.ears.common.render.EarsRenderDelegate.Equipment;
 import com.unascribed.ears.common.render.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
@@ -304,7 +303,7 @@ public class EarsCommon {
 			boolean horn = features.protrusions.horn;
 			
 			if (claws) {
-				if (!delegate.hasEquipment(Equipment.BOOTS)) {
+				if (!delegate.isWearingBoots()) {
 					delegate.push();
 						delegate.anchorTo(BodyPart.LEFT_LEG);
 						delegate.translate(0, 0, -4);
@@ -402,12 +401,18 @@ public class EarsCommon {
 			
 			float chestSize = features.chestSize;
 			
-			if (chestSize > 0 && !delegate.hasEquipment(Equipment.CHESTPLATE)) {
+			if (chestSize > 0 && !delegate.isWearingChestplate()) {
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -10, 0);
-					delegate.rotate(-chestSize*35, 1, 0, 0);
+					delegate.rotate(-chestSize*45, 1, 0, 0);
 					delegate.renderDoubleSided(20, 22, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+					if (delegate.isJacketEnabled()) {
+						delegate.push();
+							delegate.translate(0, 0.25f, -0.25f);
+							delegate.renderDoubleSided(20, 38, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.QUARTERPIXEL);
+						delegate.pop();
+					}
 					delegate.push();
 						delegate.translate(0, 4, 0);
 						delegate.rotate(90, 1, 0, 0);
@@ -418,7 +423,7 @@ public class EarsCommon {
 						delegate.translate(-4f, 0, 0.01f);
 						delegate.renderDoubleSided(60, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						delegate.translate(0, 0, 7.98f);
-						delegate.renderDoubleSided(60, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+						delegate.renderDoubleSided(60, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 					delegate.pop();
 				delegate.pop();
 			}

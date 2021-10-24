@@ -24,6 +24,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -35,7 +36,6 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ElytraItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
@@ -184,18 +184,28 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.getEquippedStack(EquipmentSlot.CHEST);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
-					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
-					.map(Equipment.BOOTS, peer.getEquippedStack(EquipmentSlot.FEET).getItem() instanceof ArmorItem)
-					.orElse(false);
+		public boolean isGliding() {
+			return peer.isFallFlying();
 		}
 
 		@Override
-		public boolean isGliding() {
-			return peer.isFallFlying();
+		public boolean isJacketEnabled() {
+			return peer.isPartVisible(PlayerModelPart.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			return peer.getEquippedStack(EquipmentSlot.FEET).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
+			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
 		}
 	};
 }

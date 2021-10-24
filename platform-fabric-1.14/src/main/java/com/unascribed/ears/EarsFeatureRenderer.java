@@ -19,10 +19,9 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.entity.feature.ArmorBipedFeatureRenderer;
+import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
@@ -30,17 +29,13 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ElytraItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	
-	private final ArmorBipedFeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>, BipedEntityModel<AbstractClientPlayerEntity>> armorRenderer;
-	
 	public EarsFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
 		super(context);
 		EarsLog.debug("Platform:Renderer", "Constructed");
-		armorRenderer = new ArmorBipedFeatureRenderer<>(context, new BipedEntityModel<>(0.5F), new BipedEntityModel<>(1.0F));
 	}
 	
 	@Override
@@ -200,18 +195,28 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.getEquippedStack(EquipmentSlot.CHEST);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
-					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
-					.map(Equipment.BOOTS, peer.getEquippedStack(EquipmentSlot.FEET).getItem() instanceof ArmorItem)
-					.orElse(false);
+		public boolean isGliding() {
+			return peer.isFallFlying();
 		}
 
 		@Override
-		public boolean isGliding() {
-			return peer.isFallFlying();
+		public boolean isJacketEnabled() {
+			return peer.isPartVisible(PlayerModelPart.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			return peer.getEquippedStack(EquipmentSlot.FEET).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
+			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
 		}
 	};
 

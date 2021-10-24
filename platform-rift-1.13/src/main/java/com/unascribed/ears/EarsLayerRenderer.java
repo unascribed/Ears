@@ -25,10 +25,10 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemElytra;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
@@ -204,18 +204,28 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, chest.getItem() instanceof ItemElytra)
-					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ItemArmor)
-					.map(Equipment.BOOTS, peer.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() instanceof ItemArmor)
-					.orElse(false);
+		public boolean isGliding() {
+			return peer.isElytraFlying();
 		}
 
 		@Override
-		public boolean isGliding() {
-			return peer.isElytraFlying();
+		public boolean isJacketEnabled() {
+			return peer.isWearing(EnumPlayerModelParts.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			return peer.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() instanceof ItemArmor;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			return peer.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemArmor;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
+			return peer.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemElytra;
 		}
 	};
 }

@@ -24,6 +24,7 @@ import net.minecraft.client.render.ModelBox;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -223,18 +224,29 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.inventory.getArmor(2);
-			ItemStack feet = peer.inventory.getArmor(0);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, false)
-					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ArmorItem)
-					.map(Equipment.BOOTS, feet != null && feet.getItem() instanceof ArmorItem)
-					.orElse(false);
+		public boolean isGliding() {
+			return false;
 		}
 
 		@Override
-		public boolean isGliding() {
+		public boolean isJacketEnabled() {
+			return peer.isPartVisible(PlayerModelPart.JACKET);
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			ItemStack feet = peer.inventory.getArmor(0);
+			return feet != null && feet.getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			ItemStack chest = peer.inventory.getArmor(2);
+			return chest != null && chest.getItem() instanceof ArmorItem;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
 			return false;
 		}
 	};

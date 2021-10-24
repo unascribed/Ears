@@ -110,18 +110,29 @@ public class LayerEars {
 		}
 
 		@Override
-		public boolean hasEquipment(Equipment e) {
-			ItemInstance chest = peer.inventory.getArmourItem(2);
-			ItemInstance feet = peer.inventory.getArmourItem(0);
-			return Decider.<Equipment, Boolean>begin(e)
-					.map(Equipment.ELYTRA, false)
-					.map(Equipment.CHESTPLATE, chest != null && chest.getType() instanceof ArmourItem)
-					.map(Equipment.BOOTS, feet != null && feet.getType() instanceof ArmourItem)
-					.orElse(false);
+		public boolean isGliding() {
+			return false;
 		}
 
 		@Override
-		public boolean isGliding() {
+		public boolean isJacketEnabled() {
+			return true;
+		}
+
+		@Override
+		public boolean isWearingBoots() {
+			ItemInstance feet = peer.inventory.getArmourItem(0);
+			return feet != null && feet.getType() instanceof ArmourItem;
+		}
+
+		@Override
+		public boolean isWearingChestplate() {
+			ItemInstance chest = peer.inventory.getArmourItem(2);
+			return chest != null && chest.getType() instanceof ArmourItem;
+		}
+
+		@Override
+		public boolean isWearingElytra() {
 			return false;
 		}
 		

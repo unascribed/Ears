@@ -100,23 +100,44 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 
 	@Override
 	public boolean isFlying() {
-		boolean f = delegate.isFlying();
-		EarsLog.debug("Platform:Renderer:Delegate", "isFlying() -> {}", f);
-		return f;
+		boolean b = delegate.isFlying();
+		EarsLog.debug("Platform:Renderer:Delegate", "isFlying() -> {}", b);
+		return b;
 	}
 
 	@Override
 	public boolean isGliding() {
-		boolean f = delegate.isGliding();
-		EarsLog.debug("Platform:Renderer:Delegate", "isGliding() -> {}", f);
-		return f;
+		boolean b = delegate.isGliding();
+		EarsLog.debug("Platform:Renderer:Delegate", "isGliding() -> {}", b);
+		return b;
 	}
-	
+
 	@Override
-	public boolean hasEquipment(Equipment equipment) {
-		boolean e = delegate.hasEquipment(equipment);
-		EarsLog.debug("Platform:Renderer:Delegate", "hasEquipment({}) -> {}", equipment, e);
-		return e;
+	public boolean isWearingElytra() {
+		boolean b = delegate.isWearingElytra();
+		EarsLog.debug("Platform:Renderer:Delegate", "isWearingElytra() -> {}", b);
+		return b;
+	}
+
+	@Override
+	public boolean isWearingChestplate() {
+		boolean b = delegate.isWearingChestplate();
+		EarsLog.debug("Platform:Renderer:Delegate", "isWearingChestplate() -> {}", b);
+		return b;
+	}
+
+	@Override
+	public boolean isWearingBoots() {
+		boolean b = delegate.isWearingBoots();
+		EarsLog.debug("Platform:Renderer:Delegate", "isWearingBoots() -> {}", b);
+		return b;
+	}
+
+	@Override
+	public boolean isJacketEnabled() {
+		boolean b = delegate.isJacketEnabled();
+		EarsLog.debug("Platform:Renderer:Delegate", "isJacketEnabled() -> {}", b);
+		return b;
 	}
 	
 }

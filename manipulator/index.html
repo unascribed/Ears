@@ -991,6 +991,9 @@ SOFTWARE.
 	$("#slim-enabled").addEventListener("change", (e) => {
 		rebuild();
 	});
+	$("#torso2-enabled").addEventListener("change", (e) => {
+		rebuild();
+	});
 	["head", "torso", "left_arm", "right_arm", "left_leg", "right_leg"].forEach((n) => {
 		$("#"+n+"2-enabled").addEventListener("change", (e) => {
 			if (usingSample) rebuild();
