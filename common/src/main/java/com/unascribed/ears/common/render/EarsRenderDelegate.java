@@ -147,14 +147,6 @@ public interface EarsRenderDelegate {
 		}
 	}
 	
-	public enum Condition {
-		HAS_ELYTRA,
-		HAS_CHESTPLATE,
-		HAS_BOOTS,
-		JACKET_ENABLED,
-		;
-	}
-	
 	void setUp();
 	void tearDown();
 	
