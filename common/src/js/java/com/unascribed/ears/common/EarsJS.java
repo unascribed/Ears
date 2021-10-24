@@ -39,6 +39,7 @@ public class EarsJS {
 	 * Called "initCommon" in JavaScript.
 	 */
 	public static void main(String[] args) throws IOException {
+		assignToWindow("commonVersion", JSString.valueOf(EarsVersion.COMMON));
 		assignFuncToWindow("rebuildQuads", new NullFunctor() {
 			@Override
 			public void invoke() throws Exception {

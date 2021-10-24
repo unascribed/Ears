@@ -91,9 +91,16 @@ SOFTWARE.
 			margin: 0 auto;
 			box-sizing: border-box;
 		}
+		h1 small {
+			font-weight: normal;
+			font-size: 0.6em;
+		}
 		h2 small {
 			font-weight: normal;
 			font-size: 0.6em;
+		}
+		#skin, #wings {
+			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEVmZmaZmZmoZ+Z2AAAAD0lEQVQIW2PkZ4TADxAIABIoBAXF3RsYAAAAAElFTkSuQmCC');
 		}
 		#skin {
 			image-rendering: -moz-crisp-edges;
@@ -111,7 +118,7 @@ SOFTWARE.
 		}
 		#three {
 			width: 512px;
-			height: 512px;
+			height: 896px;
 			position: fixed;
 			top: 16px;
 			right: 0px;
@@ -158,13 +165,38 @@ SOFTWARE.
 		ul {
 			margin: 0;
 		}
+		@media(prefers-color-scheme: light) {
+			body {
+				background: #ECEFF1;
+				color: #1A2327;
+			}
+			body.loading {
+				cursor: wait;
+				background: #90A4AE;
+			}
+			a:link {
+				color: #0A6;
+			}
+			.notice {
+				background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyLDIwQTgsOCAwIDAsMCAyMCwxMkE4LDggMCAwLDAgMTIsNEE4LDggMCAwLDAgNCwxMkE4LDggMCAwLDAgMTIsMjBNMTIsMkExMCwxMCAwIDAsMSAyMiwxMkExMCwxMCAwIDAsMSAxMiwyMkM2LjQ3LDIyIDIsMTcuNSAyLDEyQTEwLDEwIDAgMCwxIDEyLDJNMTIuNSw3VjEyLjI1TDE3LDE0LjkyTDE2LjI1LDE2LjE1TDExLDEzVjdIMTIuNVoiIGZpbGw9IiMwMDAiLz48L3N2Zz4K');
+			}
+			.notice.bug {
+				background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTIwIDhoLTIuODFjLS40NS0uOC0xLjA3LTEuNS0xLjgyLTJMMTcgNC40MSAxNS41OSAzbC0yLjE3IDIuMTdhNi4wMDIgNi4wMDIgMCAwMC0yLjgzIDBMOC40MSAzIDcgNC40MSA4LjYyIDZjLS43NS41LTEuMzYgMS4yMS0xLjgxIDJINHYyaDIuMDljLS4wNi4zMy0uMDkuNjYtLjA5IDF2MUg0djJoMnYxYzAgLjM0LjAzLjY3LjA5IDFINHYyaDIuODFBNS45ODggNS45ODggMCAwMDE1IDIwLjE4Yy45MS0uNTIgMS42Ny0xLjI4IDIuMTktMi4xOEgyMHYtMmgtMi4wOWMuMDYtLjMzLjA5LS42Ni4wOS0xdi0xaDJ2LTJoLTJ2LTFjMC0uMzQtLjAzLS42Ny0uMDktMUgyMFY4bS00IDdhNCA0IDAgMDEtNCA0IDQgNCAwIDAxLTQtNHYtNGE0IDQgMCAwMTQtNCA0IDQgMCAwMTQgNHY0bS0yLTV2MmgtNHYtMmg0bS00IDRoNHYyaC00di0yeiIgZmlsbD0iIzAwMCIvPjwvc3ZnPgo=');
+			}
+			.notice.legacy {
+				background-image: none;
+			}
+			.notice.info {
+				background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExLDlIMTNWN0gxMU0xMiwyMEM3LjU5LDIwIDQsMTYuNDEgNCwxMkM0LDcuNTkgNy41OSw0IDEyLDRDMTYuNDEsNCAyMCw3LjU5IDIwLDEyQzIwLDE2LjQxIDE2LjQxLDIwIDEyLDIwTTEyLDJBMTAsMTAgMCAwLDAgMiwxMkExMCwxMCAwIDAsMCAxMiwyMkExMCwxMCAwIDAsMCAyMiwxMkExMCwxMCAwIDAsMCAxMiwyTTExLDE3SDEzVjExSDExVjE3WiIgZmlsbD0iIzAwMCIvPjwvc3ZnPgo=');
+			}
+		}
 	</style>
 </head>
 <body>
 	<noscript><b>You must enable JavaScript to use the manipulator.</b></noscript>
 	<div class="inner">
 		<div id="three"></div>
-		<h1>Ears Skin Manipulator</h1>
+		<h1>Ears Skin Manipulator <small id="version"></small></h1>
 		<p>
 			Upload* a skin to get started. Legacy (pre-1.8, 64x32) skins will be converted to modern 64x64 skins.<br/><br/>
 			<b>Once you're done, right-click the skin preview below and choose "Save image as..." to download it.</b><br/><br/>
@@ -436,16 +468,19 @@ SOFTWARE.
 	} else {
 		window.EarsDebug = false;
 	}
-	initCommon();
 	window.addEventListener('hashchange', () => window.location.reload());
 	var $ = (s) => document.querySelector(s);
 	var $$ = (s) => document.querySelectorAll(s);
+	
+	initCommon();
+	$("#version").textContent = "v"+window.commonVersion;
+	
 	let skinTexNeedsUpdate = false;
 	function updateDpr() {
-		let s = (64*(3*Math.floor(devicePixelRatio)))/devicePixelRatio;
+		let s = (64*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
 		$("#skin").style.width = s+"px";
 		$("#skin").style.height = s+"px";
-		s = (12*(3*Math.floor(devicePixelRatio)))/devicePixelRatio;
+		s = (12*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
 		$("#wings").style.width = s+"px";
 		$("#wings").style.height = s+"px";
 	}
@@ -1071,7 +1106,7 @@ SOFTWARE.
 
 	if (WEBGL.isWebGLAvailable()) {
 		let scene = new THREE.Scene();
-		let camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+		let camera = new THREE.PerspectiveCamera(45, 512/896, 0.1, 1000);
 		let renderer = new THREE.WebGLRenderer({
 			powerPreference: "low-power",
 			failIfMajorPerformanceCaveat: false,
@@ -1079,12 +1114,11 @@ SOFTWARE.
 		});
 		window.addEventListener("resize", () => renderer.setPixelRatio(window.devicePixelRatio));
 		renderer.autoClear = true;
-		renderer.setClearAlpha(0);
-		renderer.setSize(512, 512);
+		renderer.setSize(512, 896);
 		let dragging = false;
 		let yaw = 60;
 		let pitch = 15;
-		let zoom = 55;
+		let zoom = 65;
 		$("#three").addEventListener("mousedown", (e) => {
 			if (e.button === 0) {
 				e.preventDefault();
@@ -1112,7 +1146,7 @@ SOFTWARE.
 			e.preventDefault();
 			zoom += e.deltaY/8;
 			if (zoom < 10) zoom = 10;
-			if (zoom > 80) zoom = 80;
+			if (zoom > 120) zoom = 120;
 		});
 		$("#three").appendChild(renderer.domElement);
 		
@@ -1209,8 +1243,6 @@ SOFTWARE.
 			meshes[name] = mesh;
 			return mesh;
 		}
-		
-		scene.background = new THREE.Color("#1A2327");
 		
 		function addToScene(m) {
 			// so I can comment this out easily
@@ -1430,6 +1462,8 @@ SOFTWARE.
 				wingsTex.needsUpdate = true;
 				skinTexNeedsUpdate = false;
 			}
+			
+			scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 			
 			Object.entries(meshes).forEach(([name, mesh]) => {
 				let ele = document.getElementById(name+"-enabled");
