@@ -186,9 +186,11 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		@Override
 		public boolean hasEquipment(Equipment e) {
 			ItemStack chest = peer.getItemStackFromSlot(EquipmentSlotType.CHEST);
+			ItemStack feet = peer.getItemStackFromSlot(EquipmentSlotType.FEET);
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
 					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.map(Equipment.BOOTS, feet != null && feet.getItem() instanceof ArmorItem)
 					.orElse(false);
 		}
 

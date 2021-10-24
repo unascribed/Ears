@@ -192,6 +192,16 @@ public class EarsJS {
 			public boolean isFlying() {
 				return false;
 			}
+
+			@Override
+			public boolean isGliding() {
+				return false;
+			}
+
+			@Override
+			public boolean hasEquipment(Equipment equipment) {
+				return false;
+			}
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
 	}

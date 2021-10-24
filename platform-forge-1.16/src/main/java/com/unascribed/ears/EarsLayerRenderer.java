@@ -8,11 +8,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
-import com.unascribed.ears.common.render.EarsRenderDelegate.Equipment;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.common.util.NotRandom;
 import com.unascribed.ears.mixin.AccessorPlayerModel;
@@ -32,7 +30,6 @@ import net.minecraft.client.renderer.model.ModelRenderer.ModelBox;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
@@ -192,6 +189,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
 					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.map(Equipment.BOOTS, peer.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() instanceof ArmorItem)
 					.orElse(false);
 		}
 

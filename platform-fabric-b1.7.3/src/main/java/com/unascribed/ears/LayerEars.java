@@ -112,9 +112,11 @@ public class LayerEars {
 		@Override
 		public boolean hasEquipment(Equipment e) {
 			ItemInstance chest = peer.inventory.getArmourItem(2);
+			ItemInstance feet = peer.inventory.getArmourItem(0);
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, false)
 					.map(Equipment.CHESTPLATE, chest != null && chest.getType() instanceof ArmourItem)
+					.map(Equipment.BOOTS, feet != null && feet.getType() instanceof ArmourItem)
 					.orElse(false);
 		}
 

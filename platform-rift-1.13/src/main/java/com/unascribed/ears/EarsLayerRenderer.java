@@ -209,6 +209,7 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest.getItem() instanceof ItemElytra)
 					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ItemArmor)
+					.map(Equipment.BOOTS, peer.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() instanceof ItemArmor)
 					.orElse(false);
 		}
 

@@ -99,11 +99,13 @@ public abstract class MiniTransformer {
 		
 		boolean frames = false;
 		
+		List<String> foundMethods = new ArrayList<String>();
 		Set<String> requiredsNotSeen = new HashSet<String>(requiredMethods.size());
 		requiredsNotSeen.addAll(requiredMethods);
 		
 		for (MethodNode mn : clazz.methods) {
 			String name = mn.name+mn.desc;
+			foundMethods.add(name);
 			List<PatchMethod> li = methods.get(name);
 			if (li != null) {
 				for (PatchMethod pm : li) {
@@ -129,6 +131,13 @@ public abstract class MiniTransformer {
 			msg.append(className);
 			msg.append("!");
 			for (String name : requiredsNotSeen) {
+				msg.append(" ");
+				msg.append(name);
+				msg.append(",");
+			}
+			msg.deleteCharAt(msg.length()-1);
+			msg.append("\nThe following methods were found:");
+			for (String name : foundMethods) {
 				msg.append(" ");
 				msg.append(name);
 				msg.append(",");

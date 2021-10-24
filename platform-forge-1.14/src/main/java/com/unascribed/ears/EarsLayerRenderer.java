@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -209,6 +207,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
 					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.map(Equipment.BOOTS, peer.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() instanceof ArmorItem)
 					.orElse(false);
 		}
 

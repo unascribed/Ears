@@ -205,9 +205,11 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		public boolean hasEquipment(Equipment e) {
 			ItemStack chest = peer.inventory.armorItemInSlot(2);
+			ItemStack feet = peer.inventory.armorItemInSlot(0);
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest != null && chest.getItem() instanceof ItemElytra)
 					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ItemArmor)
+					.map(Equipment.BOOTS, feet != null && feet.getItem() instanceof ItemArmor)
 					.orElse(false);
 		}
 

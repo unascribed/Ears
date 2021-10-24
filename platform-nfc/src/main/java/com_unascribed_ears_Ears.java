@@ -182,9 +182,11 @@ public class com_unascribed_ears_Ears {
 		public boolean hasEquipment(Equipment e) {
 			ix inv = peer.c;
 			iz chest = inv.b[2];
+			iz feet = inv.b[0];
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, false)
 					.map(Equipment.CHESTPLATE, chest != null && chest.a() instanceof wa)
+					.map(Equipment.BOOTS, feet != null && feet.a() instanceof wa)
 					.orElse(false);
 		}
 

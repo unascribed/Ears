@@ -304,19 +304,21 @@ public class EarsCommon {
 			boolean horn = features.protrusions.horn;
 			
 			if (claws) {
-				delegate.push();
-					delegate.anchorTo(BodyPart.LEFT_LEG);
-					delegate.translate(0, 0, -4);
-					delegate.rotate(90, 1, 0, 0);
-					delegate.renderDoubleSided(16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
-				delegate.pop();
-				
-				delegate.push();
-					delegate.anchorTo(BodyPart.RIGHT_LEG);
-					delegate.translate(0, 0, -4);
-					delegate.rotate(90, 1, 0, 0);
-					delegate.renderDoubleSided(0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
-				delegate.pop();
+				if (!delegate.hasEquipment(Equipment.BOOTS)) {
+					delegate.push();
+						delegate.anchorTo(BodyPart.LEFT_LEG);
+						delegate.translate(0, 0, -4);
+						delegate.rotate(90, 1, 0, 0);
+						delegate.renderDoubleSided(16, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.pop();
+					
+					delegate.push();
+						delegate.anchorTo(BodyPart.RIGHT_LEG);
+						delegate.translate(0, 0, -4);
+						delegate.rotate(90, 1, 0, 0);
+						delegate.renderDoubleSided(0, 16, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+					delegate.pop();
+				}
 				
 				delegate.push();
 					delegate.anchorTo(BodyPart.LEFT_ARM);

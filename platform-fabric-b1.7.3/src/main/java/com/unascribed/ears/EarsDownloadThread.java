@@ -52,6 +52,7 @@ public class EarsDownloadThread {
 							System.err.println("[Ears] Profile lookup failed");
 						}
 					}, false);
+					if (newUrl[0] == null) return;
 					url = new URL(newUrl[0]);
 				}
 
@@ -77,7 +78,9 @@ public class EarsDownloadThread {
 				e.printStackTrace();
 				return;
 			} finally {
-				imageConnection.disconnect();
+				if (imageConnection != null) {
+					imageConnection.disconnect();
+				}
 			}
 		})).start();
 	}

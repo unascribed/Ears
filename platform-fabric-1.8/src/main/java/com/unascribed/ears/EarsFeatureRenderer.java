@@ -224,10 +224,12 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 
 		@Override
 		public boolean hasEquipment(Equipment e) {
-			ItemStack chest = peer.getArmorStacks()[1];
+			ItemStack chest = peer.inventory.getArmor(2);
+			ItemStack feet = peer.inventory.getArmor(0);
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, false)
 					.map(Equipment.CHESTPLATE, chest != null && chest.getItem() instanceof ArmorItem)
+					.map(Equipment.BOOTS, feet != null && feet.getItem() instanceof ArmorItem)
 					.orElse(false);
 		}
 

@@ -146,6 +146,7 @@ public interface EarsRenderDelegate {
 	public enum Equipment {
 		ELYTRA,
 		CHESTPLATE,
+		BOOTS,
 		;
 	}
 	

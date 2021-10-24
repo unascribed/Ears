@@ -177,6 +177,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 			return Decider.<Equipment, Boolean>begin(e)
 					.map(Equipment.ELYTRA, chest.getItem() instanceof ElytraItem)
 					.map(Equipment.CHESTPLATE, chest.getItem() instanceof ArmorItem)
+					.map(Equipment.BOOTS, peer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ArmorItem)
 					.orElse(false);
 		}
 
