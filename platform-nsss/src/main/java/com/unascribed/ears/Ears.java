@@ -189,9 +189,37 @@ public class Ears {
 		slimRightArmwear.func_923_a(-2, -2, -2, 3, 12, 4, 0.25f);
 		slimRightArmwear.func_925_a(-5, 2.5f, 0);
 		
+		flipBottom(model.bipedHead);
+		flipBottom(model.bipedBody);
+		flipBottom(fatLeftArm);
+		flipBottom(slimLeftArm);
+		flipBottom(fatRightArm);
+		flipBottom(slimRightArm);
+		flipBottom(model.bipedLeftLeg);
+		flipBottom(model.bipedRightLeg);
+		flipBottom(model.bipedHeadwear);
+		flipBottom(bodywear);
+		flipBottom(fatLeftArmwear);
+		flipBottom(slimLeftArmwear);
+		flipBottom(fatRightArmwear);
+		flipBottom(slimRightArmwear);
+		flipBottom(leftLegwear);
+		flipBottom(rightLegwear);
+		
 		forceTextureHeight = false;
 	}
 	
+	private static void flipBottom(ModelRenderer box) {
+		TexturedQuad[] quads = getQuads(box);
+		PositionTexureVertex[] verts = quads[3].field_1195_a;
+		float minV = verts[0].field_1656_c;
+		float maxV = verts[2].field_1656_c;
+		verts[0].field_1656_c = maxV;
+		verts[1].field_1656_c = maxV;
+		verts[2].field_1656_c = minV;
+		verts[3].field_1656_c = minV;
+	}
+
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
 		EarsLog.debug("Platform:Inject:Renderer", "renderSpecials player={}, partialTicks={}", player, f);
 		layer.doRenderLayer(render, player,
@@ -320,6 +348,7 @@ public class Ears {
 	private static final Field location;
 	private static final Field modelBipedMain;
 	private static final Field vertices;
+	private static final Field quads;
 	static {
 		try {
 			setAreaOpaque = ImageBufferDownload.class.getDeclaredMethod("func_884_b", int.class, int.class, int.class, int.class);
@@ -345,6 +374,9 @@ public class Ears {
 			
 			vertices = ModelRenderer.class.getDeclaredField("field_1401_j");
 			vertices.setAccessible(true);
+			
+			quads = ModelRenderer.class.getDeclaredField("field_1400_k");
+			quads.setAccessible(true);
 		} catch (Throwable t) {
 			throw new Error(t);
 		}
@@ -377,6 +409,14 @@ public class Ears {
 	public static PositionTexureVertex[] getVertices(ModelRenderer subject) {
 		try {
 			return (PositionTexureVertex[])vertices.get(subject);
+		} catch (Throwable e) {
+			if (e instanceof RuntimeException) throw (RuntimeException)e;
+			throw new RuntimeException(e);
+		}
+	}
+	public static TexturedQuad[] getQuads(ModelRenderer subject) {
+		try {
+			return (TexturedQuad[])quads.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);
