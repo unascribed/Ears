@@ -303,6 +303,12 @@ public class Ears {
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp) {
+		ModelBiped modelBipedMain = getModelBipedMain(rp);
+		if (modelBipedMain.bipedRightArm == slimRightArm) {
+			slimRightArmwear.render(0.0625f);
+		} else {
+			fatRightArmwear.render(0.0625f);
+		}
 		layer.renderRightArm(rp, game.thePlayer);
 	}
 	
