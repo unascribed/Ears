@@ -163,6 +163,7 @@ public class EarsJS {
 				if (grow.grow > 0) {
 					w += grow.grow*2;
 					h += grow.grow*2;
+					push();
 					translate(-grow.grow, -grow.grow, 0);
 				}
 				JSMapLike<JSObject> q = JSObjects.create();
@@ -182,6 +183,9 @@ public class EarsJS {
 				q.set("height", JSNumber.valueOf(h));
 				q.set("back", JSBoolean.valueOf(back));
 				q.set("texture", JSString.valueOf(texture.lowerName));
+				if (grow.grow > 0) {
+					pop();
+				}
 				objects.push(q);
 			}
 			

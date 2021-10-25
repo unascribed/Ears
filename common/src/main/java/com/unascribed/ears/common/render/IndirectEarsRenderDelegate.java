@@ -57,6 +57,11 @@ public abstract class IndirectEarsRenderDelegate<TMatrixStack, TVertexConsumerPr
 		this.vc = getVertexConsumer(src);
 	}
 	
+	public void beginTranslucent() {
+		commitQuads();
+		this.vc = getVertexConsumer(bound);
+	}
+	
 	protected abstract TVertexConsumer getVertexConsumer(TexSource src);
 	protected abstract void commitQuads();
 
