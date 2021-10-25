@@ -23,11 +23,13 @@ public class LayerEars {
 	
 	private RenderPlayer render;
 	private float tickDelta;
+	private float brightness;
 	
 	public void doRenderLayer(RenderPlayer render, EntityPlayer entity, float limbDistance, float partialTicks) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.render = render;
 		this.tickDelta = partialTicks;
+		this.brightness = entity.getEntityBrightness(partialTicks);
 		delegate.render(entity, limbDistance);
 	}
 	
@@ -35,6 +37,7 @@ public class LayerEars {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", render, entity);
 		this.render = render;
 		this.tickDelta = 0;
+		this.brightness = entity.getEntityBrightness(0);
 		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
 	}
 	
@@ -144,6 +147,11 @@ public class LayerEars {
 		@Override
 		public boolean isWearingElytra() {
 			return false;
+		}
+		
+		@Override
+		protected float getBrightness() {
+			return brightness;
 		}
 	};
 }
