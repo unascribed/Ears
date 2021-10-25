@@ -78,6 +78,11 @@ public class Ears {
 		ReflectionHelper.setPrivateValue(RendererLivingEntity.class, rp, model, "field_77045_g", "mainModel");
 		rp.modelBipedMain = model;
 		
+		model.textureHeight = 32;
+		model.bipedCloak = new ModelRenderer(model, 0, 0);
+		model.bipedCloak.addBox(-5, 0, -1, 10, 16, 1, 0);
+		model.textureHeight = 64;
+		
 		// translucent head layer
 		model.bipedHeadwear.cubeList.remove(0);
 		ModelTransBox.addBoxTo(model.bipedHeadwear, 32, 0, -4, -8, -4, 8, 8, 8, 0.5f);
