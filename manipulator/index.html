@@ -1441,7 +1441,11 @@ SOFTWARE.
 		
 		// standard item lighting
 
-		scene.add(new THREE.AmbientLight(new THREE.Color(0.3, 0.3, 0.3)));
+		if (matchMedia("(prefers-color-scheme: light)").matches) {
+			scene.add(new THREE.AmbientLight(new THREE.Color(0.5, 0.5, 0.5)));
+		} else {
+			scene.add(new THREE.AmbientLight(new THREE.Color(0.3, 0.3, 0.3)));
+		}
 				
 		let light0 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
 		light0.position.set(0.3, 1, -0.9);
