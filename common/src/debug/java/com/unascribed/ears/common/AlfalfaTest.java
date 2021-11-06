@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.Slice;
 

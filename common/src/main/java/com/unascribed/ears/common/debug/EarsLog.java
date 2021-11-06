@@ -84,12 +84,24 @@ public class EarsLog {
 		}
 	}
 
+	public static void debug(String tag, String fmt, boolean arg1) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1);
+		}
+	}
+
 	public static void debug(String tag, String fmt, int arg1) {
 		if (shouldLog(tag)) {
 			debugva(tag, fmt, arg1);
 		}
 	}
 
+	public static void debug(String tag, String fmt, int arg1, Object arg2) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1, arg2);
+		}
+	}
+	
 	public static void debug(String tag, String fmt, Object arg1, Object arg2) {
 		if (shouldLog(tag)) {
 			debugva(tag, fmt, arg1, arg2);
@@ -108,7 +120,19 @@ public class EarsLog {
 		}
 	}
 
+	public static void debug(String tag, String fmt, int arg1, Object arg2, boolean arg3) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1, arg2, arg3);
+		}
+	}
+	
 	public static void debug(String tag, String fmt, Object arg1, Object arg2, Object arg3) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1, arg2, arg3);
+		}
+	}
+	
+	public static void debug(String tag, String fmt, int arg1, Object arg2, Object arg3) {
 		if (shouldLog(tag)) {
 			debugva(tag, fmt, arg1, arg2, arg3);
 		}

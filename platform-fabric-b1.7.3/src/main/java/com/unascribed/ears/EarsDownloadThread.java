@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 

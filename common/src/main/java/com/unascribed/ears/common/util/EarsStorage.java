@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 
 /**
  * General purpose thread-local type-safe storage for providing "inside-out" fields where needed.

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.modern.RawEarsImage;

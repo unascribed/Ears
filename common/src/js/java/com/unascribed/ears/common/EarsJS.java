@@ -20,8 +20,8 @@ import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
-import com.unascribed.ears.common.EarsFeatures.MagicPixel;
+
+import com.unascribed.ears.common.EarsFeaturesParserV0.MagicPixel;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 import com.unascribed.ears.common.util.Slice;
 
@@ -57,8 +57,8 @@ public class EarsJS {
 	public static void rebuildQuads() throws IOException {
 		JSMapLike<JSString> magicPixels = JSObjects.create();
 		JSMapLike<JSString> magicPixelValues = JSObjects.create();
-		for (MagicPixel mp : MagicPixel.values()) {
-			if (mp == MagicPixel.UNKNOWN) continue;
+		for (EarsFeaturesParserV0.MagicPixel mp : EarsFeaturesParserV0.MagicPixel.values()) {
+			if (mp == EarsFeaturesParserV0.MagicPixel.UNKNOWN) continue;
 			String name = mp.name().toLowerCase(Locale.ROOT);
 			magicPixels.set(Long.toString((mp.rgb<<8|0xFF)&0xFFFFFFFFL), JSString.valueOf(name));
 			magicPixelValues.set(name, JSString.valueOf("#"+Integer.toHexString(mp.rgb|0xFF000000).substring(2)));

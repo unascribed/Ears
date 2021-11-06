@@ -7,7 +7,7 @@ import java.util.WeakHashMap;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;

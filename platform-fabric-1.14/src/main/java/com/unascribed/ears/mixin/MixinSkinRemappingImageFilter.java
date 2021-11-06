@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures.Alfalfa;
+import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.modern.RawEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;

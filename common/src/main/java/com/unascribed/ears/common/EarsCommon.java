@@ -85,7 +85,7 @@ public class EarsCommon {
 	}
 	
 	public static boolean shouldSuppressElytra(EarsFeatures features) {
-		return features.wingMode != WingMode.NONE;
+		return features.animateWings && features.wingMode != WingMode.NONE;
 	}
 	
 	/**
@@ -287,17 +287,8 @@ public class EarsCommon {
 								}
 								delegate.rotate(90, 1, 0, 0);
 							}
-							int segments = 1;
+							int segments = features.tailSegments;
 							float[] angles = {vert ? 0 : baseAngle, features.tailBend1, features.tailBend2, features.tailBend3};
-							if (features.tailBend1 != 0) {
-								segments++;
-								if (features.tailBend2 != 0) {
-									segments++;
-									if (features.tailBend3 != 0) {
-										segments++;
-									}
-								}
-							}
 							int segHeight = 12/segments;
 							for (int i = 0; i < segments; i++) {
 								delegate.rotate(angles[i]*(1-(swingAmount/2)), 1, 0, 0);
@@ -307,8 +298,8 @@ public class EarsCommon {
 						delegate.pop();
 					}
 					
-					boolean claws = features.protrusions.claws;
-					boolean horn = features.protrusions.horn;
+					boolean claws = features.claws;
+					boolean horn = features.horn;
 					
 					if (claws) {
 						if (!delegate.isWearingBoots()) {
@@ -410,7 +401,7 @@ public class EarsCommon {
 				
 				float chestSize = features.chestSize;
 				
-				if (chestSize > 0 && !delegate.isWearingChestplate()) {
+				if (chestSize > 0 && !delegate.isWearingChestplate() && (p == 0 || delegate.isJacketEnabled())) {
 					delegate.push();
 						delegate.anchorTo(BodyPart.TORSO);
 						delegate.translate(0, -10, 0);
@@ -474,7 +465,12 @@ public class EarsCommon {
 						boolean g = delegate.isGliding();
 						boolean f = delegate.isFlying();
 						delegate.push();
-							float wiggle = g ? -40 : ((float)(Math.sin((delegate.getTime()+8)/(f ? 2 : 12))*(f ? 20 : 2)))+(swingAmount*10);
+							float wiggle;
+							if (features.animateWings) {
+								wiggle = g ? -40 : ((float)(Math.sin((delegate.getTime()+8)/(f ? 2 : 12))*(f ? 20 : 2)))+(swingAmount*10);
+							} else {
+								wiggle = 0;
+							}
 							delegate.anchorTo(BodyPart.TORSO);
 							delegate.bind(TexSource.WING);
 							delegate.translate(2, -12, 4);

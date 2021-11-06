@@ -87,7 +87,13 @@ public final class Slice {
 
 	@Override
 	public String toString() {
-		return "["+len+" bytes]";
+		int a = 0;
+		int b = 0;
+		for (int i = 0; i < size(); i++) {
+	        a = (a + (get(i)&0xFF)) % 65521;
+	        b = (b + a) % 65521;
+		}
+		return "["+len+" bytes; a32("+Integer.toHexString(b<<16|a)+")]";
 	}
 
 	public static byte[] of(byte[] arr, int ofs, int len) {
