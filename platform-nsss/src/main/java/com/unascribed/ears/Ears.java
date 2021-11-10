@@ -32,7 +32,6 @@ import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService.ProfileLookupCallback;
 import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.Alfalfa;
 
 public class Ears {
 	
