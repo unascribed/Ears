@@ -47,7 +47,7 @@ public class Ears {
 	
 	public static void preprocessSkin(ImageBufferDownload subject, BufferedImage rawImg, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
-		EarsStorage.put(img, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(rawImg)));
+		EarsStorage.put(img, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(rawImg)));
 	}
 	
 	public static boolean interceptSetAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {

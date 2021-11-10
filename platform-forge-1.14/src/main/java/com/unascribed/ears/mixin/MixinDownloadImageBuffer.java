@@ -7,9 +7,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.Alfalfa;
+import com.unascribed.ears.NativeImageAdapter;
 import com.unascribed.ears.common.debug.EarsLog;
-import com.unascribed.ears.common.modern.RawEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
 
 import net.minecraft.client.renderer.DownloadImageBuffer;
@@ -28,7 +27,7 @@ public abstract class MixinDownloadImageBuffer implements IImageBuffer {
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {
 				ears$reentering = true;
-				EarsStorage.put(image, EarsStorage.Key.ALFALFA, Alfalfa.read(new RawEarsImage(image.makePixelArray(), image.getWidth(), image.getHeight(), false)));
+				EarsStorage.put(image, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new NativeImageAdapter(image)));
 				EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setAreaOpaque(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
 			} finally {
 				ears$reentering = false;

@@ -175,4 +175,6 @@ public interface EarsRenderDelegate {
 	boolean isWearingBoots();
 	boolean isJacketEnabled();
 	
+	Object getPeer();
+	
 }

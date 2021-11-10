@@ -161,7 +161,7 @@ public class Ears {
 
 			g.dispose();
 			
-			EarsStorage.put(newImg, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(newImg)));
+			EarsStorage.put(newImg, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(newImg)));
 			
 			setImageData(subject, ((DataBufferInt) newImg.getRaster().getDataBuffer()).getData());
 			EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setAreaOpaque(subject, _x1, _y1, _x2, _y2), true);

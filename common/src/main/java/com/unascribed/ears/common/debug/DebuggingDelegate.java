@@ -139,5 +139,10 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		EarsLog.debug("Platform:Renderer:Delegate", "isJacketEnabled() -> {}", b);
 		return b;
 	}
+
+	@Override
+	public Object getPeer() {
+		return delegate.getPeer();
+	}
 	
 }

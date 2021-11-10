@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = targetCompatibility = '1.6'
@@ -27,41 +28,13 @@ configurations {
 	teavm
 	agentShade
 	vlegacyShade
-	mixinLegacy {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	mixinModern {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	mixinVLegacy {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	legacy {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	modern {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	agentLegacy {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	agentModern {
-		canBeConsumed = true
-		canBeResolved = false
-	}
-	agentVLegacy {
-		canBeConsumed = true
-		canBeResolved = false
-	}
 }
 sourceSets {
-	normal {}
+	api {}
+	normal {
+		compileClasspath += sourceSets.api.output
+		compileClasspath += sourceSets.api.compileClasspath
+	}
 	dummy {}
 	main {
 		compileClasspath += sourceSets.normal.output
@@ -105,13 +78,33 @@ sourceSets {
 
 jar {
 	from sourceSets.normal.output
+	from sourceSets.main.output
 
-	classifier 'base'
+	classifier ''
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task apiJar(type: Jar) {
+	from sourceSets.api.output
+	
+	baseName 'ears'
+	classifier 'api'
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+task apiSourcesJar(type: Jar) {
+	from sourceSets.api.allSource
+	
+	baseName 'ears'
+	classifier 'api-sources'
 	
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 task mixinLegacyJar(type: Jar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.mixin.output
@@ -123,6 +116,7 @@ task mixinLegacyJar(type: Jar) {
 }
 
 task mixinModernJar(type: Jar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.mixin.output
@@ -134,6 +128,7 @@ task mixinModernJar(type: Jar) {
 }
 
 task mixinVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
@@ -150,6 +145,7 @@ task mixinVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shad
 }
 
 task legacyJar(type: Jar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
@@ -160,6 +156,7 @@ task legacyJar(type: Jar) {
 }
 
 task modernJar(type: Jar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.modern.output
@@ -170,6 +167,7 @@ task modernJar(type: Jar) {
 }
 
 task agentLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
@@ -185,6 +183,7 @@ task agentLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shado
 }
 
 task agentModernJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.modern.output
@@ -200,6 +199,7 @@ task agentModernJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shado
 }
 
 task agentVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	from sourceSets.api.output
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
@@ -216,6 +216,8 @@ task agentVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shad
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+build.dependsOn apiJar
+build.dependsOn apiSourcesJar
 build.dependsOn mixinLegacyJar
 build.dependsOn mixinModernJar
 build.dependsOn mixinVLegacyJar
@@ -224,16 +226,6 @@ build.dependsOn modernJar
 build.dependsOn agentLegacyJar
 build.dependsOn agentModernJar
 build.dependsOn agentVLegacyJar
-
-artifacts {
-	mixinLegacy mixinLegacyJar
-	mixinModern mixinModernJar
-	legacy legacyJar
-	modern modernJar
-	agentLegacy agentLegacyJar
-	agentVLegacy agentVLegacyJar
-	agentModern agentModernJar
-}
 
 dependencies {
 	implementation('org.spongepowered:mixin:0.7-SNAPSHOT') {
@@ -273,7 +265,9 @@ task teavm {
 		file('build/teavm').mkdirs()
 		def tool = new TeaVMTool()
 		tool.targetDirectory = file('build/teavm')
+		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/api/java')))
 		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
+		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/js/java')))
 		tool.sourceMapsFileGenerated = true
 		tool.mainClass = 'com.unascribed.ears.common.EarsJS'
 		tool.entryPointName = 'initCommon'
@@ -281,6 +275,7 @@ task teavm {
 		tool.log = new ConsoleTeaVMToolLog(true)
 		tool.obfuscated = false
 		def urls = []
+		urls.add(file('build/classes/java/api').toURI().toURL())
 		urls.add(file('build/classes/java/main').toURI().toURL())
 		urls.add(file('build/classes/java/js').toURI().toURL())
 		configurations.teavm.files.each {
@@ -301,4 +296,21 @@ task closure(type: Exec) {
 
 compileJava.doFirst {
 	'./replace-version.sh src/main/java/com/unascribed/ears/common/EarsVersion.java'.execute()
+}
+publishing {
+	repositories {
+		maven {
+			url "file:/mnt/unascribed.com/_subdomains/repo"
+		}
+	}
+	publications {
+		api(MavenPublication) {
+			groupId = 'com.unascribed'
+			artifactId = 'ears-api'
+			version = file('../version.txt').text.trim()
+
+			artifact source: apiJar, classifier: ''
+			artifact source: apiSourcesJar, classifier: 'sources'
+		}
+	}
 }

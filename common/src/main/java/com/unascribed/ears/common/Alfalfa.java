@@ -47,7 +47,7 @@ public class Alfalfa {
 	
 	// cannot be longer than 64 entries (as if we'll ever reach that)
 	private static final List<String> PREDEF_KEYS = Collections.unmodifiableList(Arrays.asList(
-		"END", "wing"
+		"END", "wing", "erase"
 	));
 	
 	public static final Alfalfa NONE = new Alfalfa(0, Collections.<String, Slice>emptyMap());

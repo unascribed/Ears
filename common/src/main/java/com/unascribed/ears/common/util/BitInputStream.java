@@ -2,6 +2,7 @@ package com.unascribed.ears.common.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.EOFException;
 import java.io.FilterInputStream;
 
 public class BitInputStream extends FilterInputStream {
@@ -15,7 +16,7 @@ public class BitInputStream extends FilterInputStream {
 	public int readBit() throws IOException {
 		if (index<0) {
 			data = in.read();
-			if (data<0) return -1;
+			if (data<0) throw new EOFException();
 			index = 6;
 			return (data >> 7) & 0x01;
 		}
@@ -38,7 +39,6 @@ public class BitInputStream extends FilterInputStream {
 		int result = 0;
 		for(int i=0; i<8; i++) {
 			int cur = readBit();
-			if (cur<0) return -1;
 			result <<= 1;
 			result |= cur;
 		}
@@ -52,7 +52,6 @@ public class BitInputStream extends FilterInputStream {
 		long result = 0L;
 		for(int i=0; i<bits; i++) {
 			int cur = readBit();
-			if (cur<0) return -1;
 			result <<= 1;
 			result |= cur;
 		}

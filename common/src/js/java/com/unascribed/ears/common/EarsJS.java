@@ -21,7 +21,6 @@ import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
 
-import com.unascribed.ears.common.EarsFeaturesParserV0.MagicPixel;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 import com.unascribed.ears.common.util.Slice;
 
@@ -90,7 +89,7 @@ public class EarsJS {
 		};
 		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img));
 		final JSArray<JSObject> objects = JSArray.create();
-		EarsCommon.render(feat, new EarsRenderDelegate() {
+		EarsRenderer.render(feat, new EarsRenderDelegate() {
 			
 			private TexSource texture = TexSource.SKIN;
 			private JSArray<JSObject> moves = JSArray.create();
@@ -101,6 +100,9 @@ public class EarsJS {
 
 			@Override
 			public void tearDown() {}
+			
+			@Override
+			public Object getPeer() { return null; }
 
 			@Override
 			public void bind(TexSource src) {

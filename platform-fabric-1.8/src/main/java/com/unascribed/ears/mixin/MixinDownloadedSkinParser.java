@@ -27,7 +27,7 @@ public abstract class MixinDownloadedSkinParser {
 	
 	@Inject(at=@At("RETURN"), method="parseSkin(Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage;")
 	public void parseSkin(BufferedImage img, CallbackInfoReturnable<BufferedImage> ci) {
-		EarsStorage.put(ci.getReturnValue(), EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(img)));
+		EarsStorage.put(ci.getReturnValue(), EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(img)));
 	}
 	
 	@Inject(at = @At("HEAD"), method = "setOpaque(IIII)V", cancellable = true)

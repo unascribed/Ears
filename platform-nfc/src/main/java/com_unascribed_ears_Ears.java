@@ -35,7 +35,7 @@ public class com_unascribed_ears_Ears {
 	
 	public static void preprocessSkin(rr subject, BufferedImage rawImg, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
-		EarsStorage.put(img, EarsStorage.Key.ALFALFA, Alfalfa.read(new AWTEarsImage(rawImg)));
+		EarsStorage.put(img, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(rawImg)));
 	}
 	
 	private static boolean reenteringOpaque = false;

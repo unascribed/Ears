@@ -10,6 +10,7 @@ import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
 import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.Alfalfa;
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 
@@ -62,7 +63,7 @@ public class EarsDownloadThread {
 				imageConnection.connect();
 				if (imageConnection.getResponseCode() / 100 != 4) {
 					BufferedImage rawImage = ImageIO.read(imageConnection.getInputStream());
-					Alfalfa alfalfa = Alfalfa.read(new AWTEarsImage(rawImage));
+					Alfalfa alfalfa = EarsCommon.preprocessSkin(new AWTEarsImage(rawImage));
 					if (imageProcessor == null) {
 						EarsDownloadThread.this.image = rawImage;
 					} else {

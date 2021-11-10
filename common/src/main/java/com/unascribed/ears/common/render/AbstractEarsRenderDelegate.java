@@ -48,6 +48,11 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		setUpRenderState();
 	}
 	
+	@Override
+	public TPeer getPeer() {
+		return peer;
+	}
+	
 	protected abstract void setUpRenderState();
 
 	@Override
