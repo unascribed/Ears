@@ -87,6 +87,14 @@ public class EarsCommon {
 		return features.animateWings && features.wingMode != WingMode.NONE;
 	}
 	
+	public static String getConfigPreviewUrl() {
+		return "https://unascribed.com/ears/";
+	}
+	
+	public static String getConfigUrl(String username, String uuid) {
+		return "https://unascribed.com/ears/#v="+EarsVersion.COMMON+(uuid == null ? ",username="+username : ",id="+uuid);
+	}
+	
 	public static Alfalfa preprocessSkin(WritableEarsImage img) {
 		Alfalfa a = Alfalfa.read(img);
 		Slice erase = a.data.get("erase");

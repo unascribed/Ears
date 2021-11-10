@@ -44,8 +44,9 @@ dependencies {
 	modImplementation("com.github.minecraft-cursed-legacy:cursed-fabric-loader:${project.loader_version}") {
 		transitive false
 	}
+	modImplementation files('./modmenu.jar')
 	
-	modImplementation files('../common/build/libs/ears-common-mixin-vlegacy.jar')
+	implementation files('../common/build/libs/ears-common-mixin-vlegacy.jar')
 	shade files('../common/build/libs/ears-common-mixin-vlegacy.jar')
 }
 

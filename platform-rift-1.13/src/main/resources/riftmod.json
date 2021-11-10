@@ -1,7 +1,9 @@
 {
   "id": "ears",
   "name": "Ears",
+  "version": "${version}",
   "description": "Faithful fancy fashion features for fuzzy folk.",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/ears",
   "authors": [ "unascribed" ],
   "listeners": [ "com.unascribed.ears.EarsMod" ],
   "icon_file": "ears-icon.png"

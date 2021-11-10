@@ -17,7 +17,6 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;

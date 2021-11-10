@@ -10,7 +10,6 @@ import java.util.WeakHashMap;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
@@ -30,7 +29,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true, acceptedMinecraftVersions="(1.9,1.12.99)")
+@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true, acceptedMinecraftVersions="(1.9,1.12.99)", guiFactory="com.unascribed.ears.EarsGuiFactory")
 public class Ears {
 	
 	public Ears() {

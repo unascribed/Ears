@@ -16,7 +16,8 @@
 
   "environment": "client",
   "entrypoints": {
-    "client": ["com.unascribed.ears.EarsMod"]
+    "main": [ "com.unascribed.ears.EarsMod" ],
+    "modmenu": [ "com.unascribed.ears.EarsModMenu" ]
   },
   "mixins": ["ears.mixins.json"],
 

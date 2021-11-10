@@ -44,6 +44,7 @@ dependencies {
 	modImplementation ("net.fabricmc:fabric-loader-1.8.9:${project.loader_version}") {
 		exclude module: "guava"
 	}
+	modImplementation "io.github.boogiemonster1o1:modmenu:0.1.0+1.8.9"
 	
 	implementation files('../common/build/libs/ears-common-mixin-legacy.jar')
 }

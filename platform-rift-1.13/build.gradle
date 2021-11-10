@@ -44,8 +44,22 @@ repositories {
 dependencies {
 	implementation 'com.github.unascribed:Rift:FINAL:dev'
 	implementation('org.dimdev:mixin:0.7.11-evil') { transitive = false }
+	implementation files('./ModList.jar')
 	
 	implementation files('../common/build/libs/ears-common-mixin-modern.jar')
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	from(sourceSets.main.resources.srcDirs) {
+		include "riftmod.json"
+		expand "version": project.version
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "riftmod.json"
+	}
 }
 
 jar {

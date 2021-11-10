@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
@@ -31,7 +30,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true)
+@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true, clientSideOnly=true, guiFactory="com.unascribed.ears.EarsGuiFactory")
 public class Ears {
 	
 	public static final Map<ITextureObject, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
