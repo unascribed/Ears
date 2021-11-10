@@ -39,7 +39,7 @@ import net.minecraft.src.RenderLiving;
 import net.minecraft.src.RenderPlayer;
 import net.minecraftforge.common.ForgeVersion;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.0"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.1"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
