@@ -164,5 +164,10 @@ public class LayerEars {
 		public boolean isWearingElytra() {
 			return false;
 		}
+		
+		@Override
+		public boolean needsSecondaryLayersDrawn() {
+			return true;
+		}
 	};
 }

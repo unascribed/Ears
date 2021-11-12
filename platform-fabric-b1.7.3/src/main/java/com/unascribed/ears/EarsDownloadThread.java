@@ -6,8 +6,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
+import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.Alfalfa;
 import com.unascribed.ears.common.EarsCommon;
@@ -29,32 +28,9 @@ public class EarsDownloadThread {
 				URL url = new URL(string);
 				if (string.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && string.endsWith(".png")) {
 					String username = string.substring(39, string.length() - 4);
-					final String[] newUrl = {null};
-					EarsMod.profileService.findProfilesByName(new String[]{username}, new ProfileService.ProfileLookupCallback() {
-						@Override
-						public void onProfileLookupSucceeded(GameProfile profile) {
-							try {
-								EarsMod.sessionService.fillProfileProperties(profile);
-								if (profile.getTexture(GameProfile.TextureType.SKIN).getModel() == GameProfile.TextureModel.SLIM) {
-									EarsMod.slimUsers.add(username);
-								} else {
-									EarsMod.slimUsers.remove(username);
-								}
-								newUrl[0] = profile.getTexture(GameProfile.TextureType.SKIN, false).getURL();
-							} catch (Throwable t) {
-								t.printStackTrace();
-								System.err.println("[Ears] Profile lookup failed");
-							}
-						}
-
-						@Override
-						public void onProfileLookupFailed(GameProfile profile, Exception e) {
-							e.printStackTrace();
-							System.err.println("[Ears] Profile lookup failed");
-						}
-					}, false);
-					if (newUrl[0] == null) return;
-					url = new URL(newUrl[0]);
+					String newUrl = LegacyHelper.getSkinUrl(username);
+					if (newUrl == null) return;
+					url = new URL(newUrl);
 				}
 
 				imageConnection = (HttpURLConnection)url.openConnection();

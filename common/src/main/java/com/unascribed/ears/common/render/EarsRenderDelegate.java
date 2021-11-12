@@ -174,6 +174,7 @@ public interface EarsRenderDelegate {
 	boolean isWearingChestplate();
 	boolean isWearingBoots();
 	boolean isJacketEnabled();
+	boolean needsSecondaryLayersDrawn();
 	
 	Object getPeer();
 	

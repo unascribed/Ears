@@ -213,4 +213,9 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		return buf;
 	}
 	
+	@Override
+	public boolean needsSecondaryLayersDrawn() {
+		return false;
+	}
+	
 }

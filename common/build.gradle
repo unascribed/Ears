@@ -22,7 +22,6 @@ repositories {
 	maven { url 'https://libraries.minecraft.net/'; metadataSources { artifact() } }
 	maven { url 'https://repo.spongepowered.org/maven/'; metadataSources { artifact() } }
 	maven { url 'https://teavm.org/maven/repository/' }
-	maven { url 'https://jitpack.io' }
 }
 configurations {
 	teavm
@@ -48,6 +47,12 @@ sourceSets {
 		compileClasspath += sourceSets.dummy.output
 		runtimeClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+	vlegacy {
+		compileClasspath += sourceSets.legacy.compileClasspath
+		compileClasspath += sourceSets.legacy.output
+		runtimeClasspath += sourceSets.legacy.runtimeClasspath
+		runtimeClasspath += sourceSets.legacy.output
 	}
 	mixin {
 		compileClasspath += sourceSets.main.output
@@ -132,11 +137,11 @@ task mixinVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shad
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
+	from sourceSets.vlegacy.output
 	from sourceSets.mixin.output
 	
 	configurations = [project.configurations.vlegacyShade]
-	relocate 'com.google.gson', 'com.unascribed.ears.common.legacy.gson'
-	relocate 'com.github.steveice10.mc.auth', 'com.unascribed.ears.common.legacy.mcauthlib'
+	relocate 'com.grack.nanojson', 'com.unascribed.ears.common.legacy.nanojson'
 	exclude 'module-info.class'
 	
 	classifier 'mixin-vlegacy'
@@ -203,12 +208,12 @@ task agentVLegacyJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shad
 	from sourceSets.main.output
 	from sourceSets.normal.output
 	from sourceSets.legacy.output
+	from sourceSets.vlegacy.output
 	from sourceSets.agent.output
 	
 	configurations = [project.configurations.agentShade, project.configurations.vlegacyShade]
 	relocate 'org.objectweb.asm', 'com.unascribed.ears.common.agent.mini.asm'
-	relocate 'com.google.gson', 'com.unascribed.ears.common.legacy.gson'
-	relocate 'com.github.steveice10.mc.auth', 'com.unascribed.ears.common.legacy.mcauthlib'
+	relocate 'com.grack.nanojson', 'com.unascribed.ears.common.legacy.nanojson'
 	exclude 'module-info.class'
 	
 	classifier 'agent-vlegacy'
@@ -242,11 +247,6 @@ dependencies {
 	agentShade 'org.ow2.asm:asm:9.2'
 	agentShade 'org.ow2.asm:asm-tree:9.2'
 	
-	
-	implementation "com.github.Steveice10:MCAuthLib:1.3"
-	implementation "com.google.code.gson:gson:2.8.6"
-	vlegacyShade "com.github.Steveice10:MCAuthLib:1.3"
-	vlegacyShade "com.google.code.gson:gson:2.8.6"
 	
 	teavm 'org.teavm:teavm-classlib:0.7.0-dev-1196'
 }

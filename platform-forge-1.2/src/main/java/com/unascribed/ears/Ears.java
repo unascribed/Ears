@@ -5,19 +5,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureModel;
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureType;
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService.ProfileLookupCallback;
 import com.unascribed.ears.common.util.EarsStorage;
-import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
+import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -40,11 +31,8 @@ public class Ears {
 	
 	public static boolean forceBipedTextureHeight = false;
 	
-	private static final SessionService sessionService = new SessionService();
-	private static final ProfileService profileService = new ProfileService();
 	private static LayerEars layer;
 	
-	public static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	public static ModelRenderer slimLeftArm;
 	public static ModelRenderer slimRightArm;
 	public static ModelRenderer fatLeftArm;
@@ -86,13 +74,6 @@ public class Ears {
 		model.bipedLeftLeg.addBox(-2, 0, -2, 4, 12, 4, 0);
 		model.bipedLeftLeg.setRotationPoint(1.9f, 12, 0);
 		
-		// non-head secondary layers
-		ModelTransBox.addBoxTo(model.bipedLeftArm, 48, 48, -1, -2, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedBody, 16, 32, -4, 0, -2, 8, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedRightArm, 40, 32, -3, -2, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedLeftLeg, 0, 48, -2, 0, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedRightLeg, 0, 32, -2, 0, -2, 4, 12, 4, 0.25f);
-		
 		fatLeftArm = model.bipedLeftArm;
 		fatRightArm = model.bipedRightArm;
 		
@@ -100,12 +81,10 @@ public class Ears {
 		slimLeftArm = new ModelRenderer(model, 32, 48);
 		slimLeftArm.addBox(-1, -2, -2, 3, 12, 4, 0);
 		slimLeftArm.setRotationPoint(5, 2.5f, 0);
-		ModelTransBox.addBoxTo(slimLeftArm, 48, 48, -1, -2, -2, 3, 12, 4, 0.25f);
 		
 		slimRightArm = new ModelRenderer(model, 40, 16);
 		slimRightArm.addBox(-2, -2, -2, 3, 12, 4, 0);
 		slimRightArm.setRotationPoint(-5, 2.5f, 0);
-		ModelTransBox.addBoxTo(slimRightArm, 40, 32, -2, -2, -2, 3, 12, 4, 0.25f);
 	}
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
@@ -173,34 +152,7 @@ public class Ears {
 		EarsLog.debug("Platform:Inject", "Amend skin URL {}", url);
 		if (url.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && url.endsWith(".png")) {
 			final String username = url.substring(39, url.length()-4);
-			// this is called in the download thread, so it's ok to block
-			final String[] newUrl = {null};
-			profileService.findProfilesByName(new String[] {username}, new ProfileLookupCallback() {
-				
-				@Override
-				public void onProfileLookupSucceeded(GameProfile profile) {
-					try {
-						sessionService.fillProfileProperties(profile);
-						if (profile.getTexture(TextureType.SKIN).getModel() == TextureModel.SLIM) {
-							slimUsers.add(username);
-						} else {
-							slimUsers.remove(username);
-						}
-						newUrl[0] = profile.getTexture(TextureType.SKIN, false).getURL();
-						EarsLog.debug("Platform:Inject", "Profile lookup successful, slim={} url={}", profile.getTexture(TextureType.SKIN).getModel() == TextureModel.SLIM, newUrl[0]);
-					} catch (Throwable t) {
-						t.printStackTrace();
-						System.err.println("[Ears] Profile lookup failed");
-					}
-				}
-				
-				@Override
-				public void onProfileLookupFailed(GameProfile profile, Exception e) {
-					e.printStackTrace();
-					System.err.println("[Ears] Profile lookup failed");
-				}
-			}, false);
-			return newUrl[0];
+			return LegacyHelper.getSkinUrl(username);
 		}
 		return url;
 	}
@@ -211,7 +163,7 @@ public class Ears {
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
 		EarsLog.debug("Platform:Inject", "Before render rp={} player={}", rp, player);
-		boolean slim = slimUsers.contains(player.username);
+		boolean slim = LegacyHelper.isSlimArms(player.username);
 		ModelBiped modelBipedMain = getModelBipedMain(rp);
 		if (slim) {
 			modelBipedMain.bipedLeftArm = slimLeftArm;

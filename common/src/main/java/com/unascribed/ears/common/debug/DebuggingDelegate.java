@@ -145,4 +145,11 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		return delegate.getPeer();
 	}
 	
+	@Override
+	public boolean needsSecondaryLayersDrawn() {
+		boolean b = delegate.needsSecondaryLayersDrawn();
+		EarsLog.debug("Platform:Renderer:Delegate", "needsSecondaryLayersDrawn() -> {}", b);
+		return b;
+	}
+	
 }

@@ -250,6 +250,12 @@ public class EarsJS {
 			public boolean isJacketEnabled() {
 				return getJacketState();
 			}
+			
+			@Override
+			public boolean needsSecondaryLayersDrawn() {
+				return false;
+			}
+			
 		}, 0, getSlimState());
 		assignToWindow("renderObjects", objects);
 		JSMapLike<JSObject> alfalfaData = JSObjects.create();

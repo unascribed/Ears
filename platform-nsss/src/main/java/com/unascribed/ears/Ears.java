@@ -5,13 +5,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.unascribed.ears.common.util.EarsStorage;
+import com.unascribed.ears.legacy.LegacyHelper;
 import com.mojang.minecraft.Minecraft;
 import com.mojang.minecraft.entity.EntityPlayer;
 import com.mojang.minecraft.entity.model.ModelBiped;
@@ -25,12 +22,6 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile;
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureModel;
-import com.unascribed.ears.common.legacy.mcauthlib.data.GameProfile.TextureType;
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService.ProfileLookupCallback;
-import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
 import com.unascribed.ears.common.EarsFeatures;
 
 public class Ears {
@@ -41,27 +32,15 @@ public class Ears {
 	
 	public static boolean forceTextureHeight = false;
 	
-	private static final SessionService sessionService = new SessionService();
-	private static final ProfileService profileService = new ProfileService();
 	private static LayerEars layer;
-	
-	public static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	
 	public static ModelBiped myModel;
 	
-	public static ModelRenderer bodywear;
-	public static ModelRenderer leftLegwear;
-	public static ModelRenderer rightLegwear;
-	
 	public static ModelRenderer slimLeftArm;
 	public static ModelRenderer slimRightArm;
-	public static ModelRenderer slimLeftArmwear;
-	public static ModelRenderer slimRightArmwear;
 	
 	public static ModelRenderer fatLeftArm;
 	public static ModelRenderer fatRightArm;
-	public static ModelRenderer fatLeftArmwear;
-	public static ModelRenderer fatRightArmwear;
 	
 	public static void init(Minecraft minecraft) {
 		game = minecraft;
@@ -81,45 +60,6 @@ public class Ears {
 			apositiontexurevertex[2] = apositiontexurevertex[2].func_1115_a(i / 64.0F + f, l / 64.0F - f1);
 			apositiontexurevertex[3] = apositiontexurevertex[3].func_1115_a(k / 64.0F - f, l / 64.0F - f1);
 		}
-	}
-	
-	public static void postSetRotationAngles(ModelBiped model, float f, float f1, float f2, float f3, float f4, float f5) {
-		if (model == myModel) {
-			copyAngles(model.bipedBody, bodywear);
-			copyAngles(model.bipedLeftArm, slimLeftArmwear);
-			copyAngles(model.bipedLeftArm, fatLeftArmwear);
-			copyAngles(model.bipedRightArm, slimRightArmwear);
-			copyAngles(model.bipedRightArm, fatRightArmwear);
-			copyAngles(model.bipedLeftLeg, leftLegwear);
-			copyAngles(model.bipedRightLeg, rightLegwear);
-		}
-	}
-	
-	public static void postRenderModel(ModelBiped model, float f, float f1, float f2, float f3, float f4, float f5) {
-		if (model == myModel) {
-			bodywear.render(f5);
-			if (model.bipedLeftArm == slimLeftArm) {
-				slimLeftArmwear.render(f5);
-			} else {
-				fatLeftArmwear.render(f5);
-			}
-			if (model.bipedRightArm == slimRightArm) {
-				slimRightArmwear.render(f5);
-			} else {
-				fatRightArmwear.render(f5);
-			}
-			leftLegwear.render(f5);
-			rightLegwear.render(f5);
-		}
-	}
-	
-	private static void copyAngles(ModelRenderer a, ModelRenderer b) {
-		b.rotateAngleX = a.rotateAngleX;
-		b.rotateAngleY = a.rotateAngleY;
-		b.rotateAngleZ = a.rotateAngleZ;
-		b.field_1410_a = a.field_1410_a;
-		b.field_1409_b = a.field_1409_b;
-		b.field_1408_c = a.field_1408_c;
 	}
 
 	public static void amendPlayerRenderer(RenderPlayer rp) throws IllegalArgumentException, IllegalAccessException {
@@ -147,46 +87,17 @@ public class Ears {
 		model.bipedLeftLeg.func_923_a(-2, 0, -2, 4, 12, 4, 0);
 		model.bipedLeftLeg.func_925_a(1.9f, 12, 0);
 		
-		// non-head secondary layers
-		bodywear = new ModelRendererTrans(16, 32);
-		bodywear.func_923_a(-4, 0, -2, 8, 12, 4, 0.25f);
-		bodywear.func_925_a(0, 0, 0);
-		
-		leftLegwear = new ModelRendererTrans(0, 48);
-		leftLegwear.func_923_a(-2, 0, -2, 4, 12, 4, 0.25f);
-		leftLegwear.func_925_a(2, 12, 2);
-		
-		rightLegwear = new ModelRendererTrans(0, 32);
-		rightLegwear.func_923_a(-2, 0, -2, 4, 12, 4, 0.25f);
-		rightLegwear.func_925_a(2, 12, 2);
-		
 		fatLeftArm = model.bipedLeftArm;
 		fatRightArm = model.bipedRightArm;
-		
-		fatLeftArmwear = new ModelRendererTrans(48, 48);
-		fatLeftArmwear.func_923_a(-1, -2, -2, 4, 12, 4, 0.25f);
-		fatLeftArmwear.func_925_a(5, 2, 0);
-		
-		fatRightArmwear = new ModelRendererTrans(40, 32);
-		fatRightArmwear.func_923_a(-3, -2, -2, 4, 12, 4, 0.25f);
-		fatRightArmwear.func_925_a(-5, 2, 0);
 		
 		// slim arms
 		slimLeftArm = new ModelRenderer(32, 48);
 		slimLeftArm.func_923_a(-1, -2, -2, 3, 12, 4, 0);
 		slimLeftArm.func_925_a(5, 2.5f, 0);
 		
-		slimLeftArmwear = new ModelRendererTrans(48, 48);
-		slimLeftArmwear.func_923_a(-1, -2, -2, 3, 12, 4, 0.25f);
-		slimLeftArmwear.func_925_a(5, 2.5f, 0);
-		
 		slimRightArm = new ModelRenderer(40, 16);
 		slimRightArm.func_923_a(-2, -2, -2, 3, 12, 4, 0);
 		slimRightArm.func_925_a(-5, 2.5f, 0);
-		
-		slimRightArmwear = new ModelRendererTrans(40, 32);
-		slimRightArmwear.func_923_a(-2, -2, -2, 3, 12, 4, 0.25f);
-		slimRightArmwear.func_925_a(-5, 2.5f, 0);
 		
 		flipBottom(model.bipedHead);
 		flipBottom(model.bipedBody);
@@ -197,13 +108,6 @@ public class Ears {
 		flipBottom(model.bipedLeftLeg);
 		flipBottom(model.bipedRightLeg);
 		flipBottom(model.bipedHeadwear);
-		flipBottom(bodywear);
-		flipBottom(fatLeftArmwear);
-		flipBottom(slimLeftArmwear);
-		flipBottom(fatRightArmwear);
-		flipBottom(slimRightArmwear);
-		flipBottom(leftLegwear);
-		flipBottom(rightLegwear);
 		
 		forceTextureHeight = false;
 	}
@@ -282,34 +186,7 @@ public class Ears {
 	
 	public static String amendSkinUrl(String username) {
 		EarsLog.debug("Platform:Inject", "Amend skin URL {}", username);
-		// this is called in the download thread, so it's ok to block
-		final String[] newUrl = {null};
-		profileService.findProfilesByName(new String[] {username}, new ProfileLookupCallback() {
-			
-			@Override
-			public void onProfileLookupSucceeded(GameProfile profile) {
-				try {
-					sessionService.fillProfileProperties(profile);
-					if (profile.getTexture(TextureType.SKIN).getModel() == TextureModel.SLIM) {
-						slimUsers.add(username);
-					} else {
-						slimUsers.remove(username);
-					}
-					newUrl[0] = profile.getTexture(TextureType.SKIN, false).getURL();
-					EarsLog.debug("Platform:Inject", "Profile lookup successful, slim={} url={}", profile.getTexture(TextureType.SKIN).getModel() == TextureModel.SLIM, newUrl[0]);
-				} catch (Throwable t) {
-					t.printStackTrace();
-					System.err.println("[Ears] Profile lookup failed");
-				}
-			}
-			
-			@Override
-			public void onProfileLookupFailed(GameProfile profile, Exception e) {
-				e.printStackTrace();
-				System.err.println("[Ears] Profile lookup failed");
-			}
-		}, false);
-		return newUrl[0];
+		return LegacyHelper.getSkinUrl(username);
 	}
 	
 	public static void beforeRender(RenderPlayer rp) {
@@ -318,7 +195,7 @@ public class Ears {
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
 		EarsLog.debug("Platform:Inject:Renderer", "Before render rp={} player={}", rp, player);
-		boolean slim = slimUsers.contains(player.playerName);
+		boolean slim = LegacyHelper.isSlimArms(player.playerName);
 		ModelBiped modelBipedMain = getModelBipedMain(rp);
 		if (slim) {
 			modelBipedMain.bipedLeftArm = slimLeftArm;
@@ -330,12 +207,6 @@ public class Ears {
 	}
 	
 	public static void renderFirstPersonArm(RenderPlayer rp) {
-		ModelBiped modelBipedMain = getModelBipedMain(rp);
-		if (modelBipedMain.bipedRightArm == slimRightArm) {
-			slimRightArmwear.render(0.0625f);
-		} else {
-			fatRightArmwear.render(0.0625f);
-		}
 		layer.renderRightArm(rp, game.thePlayer);
 	}
 	

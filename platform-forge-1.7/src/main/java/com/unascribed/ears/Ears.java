@@ -95,13 +95,6 @@ public class Ears {
 		model.bipedLeftLeg.addBox(-2, 0, -2, 4, 12, 4, 0);
 		model.bipedLeftLeg.setRotationPoint(1.9f, 12, 0);
 		
-		// non-head secondary layers
-		ModelTransBox.addBoxTo(model.bipedLeftArm, 48, 48, -1, -2, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedBody, 16, 32, -4, 0, -2, 8, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedRightArm, 40, 32, -3, -2, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedLeftLeg, 0, 48, -2, 0, -2, 4, 12, 4, 0.25f);
-		ModelTransBox.addBoxTo(model.bipedRightLeg, 0, 32, -2, 0, -2, 4, 12, 4, 0.25f);
-		
 		fatLeftArm = model.bipedLeftArm;
 		fatRightArm = model.bipedRightArm;
 		
@@ -109,12 +102,10 @@ public class Ears {
 		slimLeftArm = new ModelRenderer(model, 32, 48);
         slimLeftArm.addBox(-1, -2, -2, 3, 12, 4, 0);
         slimLeftArm.setRotationPoint(5, 2.5f, 0);
-        ModelTransBox.addBoxTo(slimLeftArm, 48, 48, -1, -2, -2, 3, 12, 4, 0.25f);
         
         slimRightArm = new ModelRenderer(model, 40, 16);
         slimRightArm.addBox(-2, -2, -2, 3, 12, 4, 0);
         slimRightArm.setRotationPoint(-5, 2.5f, 0);
-        ModelTransBox.addBoxTo(slimRightArm, 40, 32, -2, -2, -2, 3, 12, 4, 0.25f);
 	}
 	
 	@SubscribeEvent

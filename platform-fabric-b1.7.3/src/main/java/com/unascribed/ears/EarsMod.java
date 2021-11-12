@@ -1,13 +1,7 @@
 package com.unascribed.ears;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.unascribed.ears.common.legacy.mcauthlib.service.ProfileService;
-import com.unascribed.ears.common.legacy.mcauthlib.service.SessionService;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 
@@ -19,24 +13,14 @@ import net.minecraft.client.model.ModelPart;
 public class EarsMod implements ClientModInitializer {
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
 
-	public static final SessionService sessionService = new SessionService();
-	public static final ProfileService profileService = new ProfileService();
-	public static LayerEars layer;
+	public static final LayerEars layer = new LayerEars();
 
 	public static Minecraft client;
 	
-	public static final Set<String> slimUsers = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-
 	public static ModelPart slimLeftArm;
 	public static ModelPart slimRightArm;
 	public static ModelPart fatLeftArm;
 	public static ModelPart fatRightArm;
-
-	public static ModelPart slimLeftSleeve;
-	public static ModelPart slimRightSleeve;
-	public static ModelPart fatLeftSleeve;
-	public static ModelPart fatRightSleeve;
-
 
 	@Override
 	public void onInitializeClient() {
@@ -45,7 +29,5 @@ public class EarsMod implements ClientModInitializer {
 					FabricLoader.getInstance().getModContainer("fabricloader").get().getMetadata().getVersion().getFriendlyString(),
 					FabricLoader.getInstance().getEnvironmentType());
 		}
-
-		layer = new LayerEars();
 	}
 }

@@ -18,6 +18,7 @@ import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.util.Decider;
+import com.unascribed.ears.legacy.LegacyHelper;
 
 public class LayerEars {
 	
@@ -50,7 +51,7 @@ public class LayerEars {
 		
 		@Override
 		protected boolean isSlim() {
-			return Ears.slimUsers.contains(peer.playerName);
+			return LegacyHelper.isSlimArms(peer.playerName);
 		}
 		
 		@Override
@@ -152,6 +153,11 @@ public class LayerEars {
 		@Override
 		protected float getBrightness() {
 			return brightness;
+		}
+		
+		@Override
+		public boolean needsSecondaryLayersDrawn() {
+			return true;
 		}
 	};
 }

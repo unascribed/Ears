@@ -11,7 +11,6 @@ public class Patches {
 		out.add(new SkinUrlGetPostTransformer());
 		out.add(new TexturedQuadTransformer());
 		out.add(new ImageBufferDownloadTransformer());
-		out.add(new ModelBipedTransformer());
 		out.add(new RenderPlayerTransformer());
 		out.add(new ThreadDownloadImageTransformer());
 	}

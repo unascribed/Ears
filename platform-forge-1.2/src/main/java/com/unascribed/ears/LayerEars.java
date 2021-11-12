@@ -9,6 +9,7 @@ import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.util.Decider;
+import com.unascribed.ears.legacy.LegacyHelper;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.src.EntityPlayer;
@@ -49,7 +50,7 @@ public class LayerEars {
 		
 		@Override
 		protected boolean isSlim() {
-			return Ears.slimUsers.contains(peer.username);
+			return LegacyHelper.isSlimArms(peer.username);
 		}
 		
 		@Override
@@ -146,6 +147,11 @@ public class LayerEars {
 		@Override
 		public boolean isWearingElytra() {
 			return false;
+		}
+		
+		@Override
+		public boolean needsSecondaryLayersDrawn() {
+			return true;
 		}
 	};
 }

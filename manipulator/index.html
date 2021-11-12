@@ -841,6 +841,28 @@ SOFTWARE.
 			document.body.classList.remove("loading");
 		}
 	}
+	function defineCheat(cheat, func) {
+		Object.defineProperty(window, atob(cheat), {
+			enumerable: false,
+			configurable: false,
+			get: func
+		});
+	}
+	defineCheat('eHl6enk=', () => {
+		if ($("#chest-outer").style.display === "table-row") {
+			return 'Nothing happens.';
+		}
+		$("#chest-outer").style.display = "table-row";
+		return "Something happens.";
+	});
+	defineCheat('eXp6eXg=', () => {
+		if (document.body.style.transformOrigin === "center top") {
+			return 'Nothing happens.';
+		}
+		document.body.style.transformOrigin = "center top";
+		document.body.style.transform = "scaleY(-0.5) translateY(-100%)";
+		return "Twice as much happens.";
+	});
 	async function updateWing() {
 		usingSampleWing = false;
 		let files = $("#wing-upload").files;
@@ -850,12 +872,12 @@ SOFTWARE.
 		try {
 			let bitmap = await createImageBitmap(file);
 			if (bitmap.width != 12) {
-				alert("This doesn't look like a Ears wing; the width is wrong. Needs to be 12px.");
+				alert("This doesn't look like an Ears wing; the width is wrong. Needs to be 12px.");
 				$("#wing-upload").value = null;
 				return;
 			}
 			if (bitmap.height != 12) {
-				alert("This doesn't look like a Ears wing; the height is wrong. Needs to be 12px.");
+				alert("This doesn't look like an Ears wing; the height is wrong. Needs to be 12px.");
 				$("#wing-upload").value = null;
 				return;
 			}
