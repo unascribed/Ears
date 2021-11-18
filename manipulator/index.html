@@ -244,6 +244,8 @@ SOFTWARE.
 						<option value="cyan">Around</option>
 						<option value="orange">Floppy</option>
 						<option value="pink">Cross</option>
+						<option value="white">Tall</option>
+						<option value="gray">Tall Cross</option>
 						<option value="purple">Behind (old, prefer Out)</option>
 					</select>
 				</td>
@@ -377,6 +379,17 @@ SOFTWARE.
 				</td>
 				<td style="text-align: left"><canvas id="wings" width="12" height="12"></canvas></td>
 			</tr>
+			<tr>
+				<td>
+					<label for="wing-anim">Wing Animations</label>
+				</td>
+				<td>
+					<select disabled id="wing-anim">
+						<option value="blue">Normal</option>
+						<option value="red">None</option>
+					</select>
+				</td>
+			</tr>
 		</table>
 		<table>
 			<tr>
@@ -424,6 +437,14 @@ SOFTWARE.
 		<div class="notice" style="display: none;margin-bottom:8px" id="req-140-notice">
 			<b><i>Selected options require new features added in v1.4.0.</i></b><br/>
 			Before v1.4.0, wings will not render.
+		</div>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-141-notice">
+			<b><i>Selected options require new features added in v1.4.1.</i></b><br/>
+			Before v1.4.1:
+			<ul>
+			<li id="tall-ears-mode">Tall ears mode will not render</li>
+			<li id="wing-anim-off">Wing animations cannot be disabled</li>
+			</ul>
 		</div>
 		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
@@ -550,6 +571,7 @@ SOFTWARE.
 		let req123 = $("#req-123-notice");
 		let req130 = $("#req-130-notice");
 		let req140 = $("#req-140-notice");
+		let req141 = $("#req-141-notice");
 		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
@@ -560,6 +582,7 @@ SOFTWARE.
 		req124.style.display = "none";
 		req130.style.display = "none";
 		req140.style.display = "none";
+		req141.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		bug140.style.display = "none";
@@ -571,6 +594,8 @@ SOFTWARE.
 		$("#claws-clip").style.display = "none";
 		$("#alfalfa-notice").style.display = alfalfaData.version > 0 ? "block" : "none";
 		$("#alfalfa-notice-unneeded").style.display = "none";
+		$("#tall-ears-mode").style.display = "none";
+		$("#wing-anim-off").style.display = "none";
 		let earMode = $("#ear-mode").value;
 		let earAnchor = $("#ear-anchor").value;
 		if (earMode === "pink") {
@@ -589,7 +614,11 @@ SOFTWARE.
 			if (earAnchor === "red") {
 				$("#out-anchor-back").style.display = "inline";
 			}
-		} 
+		}
+		if (earMode === "white" || earMode === "gray") {
+			req141.style.display = "block";
+			$("#tall-ears-mode").style.display = "list-item";
+		}
 		let protrusions = $("#protrusions").value;
 		if (protrusions === "cyan" || protrusions === "green") {
 			if ($("#slim-enabled").checked) {
@@ -629,6 +658,10 @@ SOFTWARE.
 		} else {
 			$("#alfalfa-notice-unneeded").style.display = "block";
 		}
+		if ($("#wing-anim").value === "red") {
+			req141.style.display = "block";
+			$("#wing-anim-off").style.display = "list-item";
+		}
 	}
 	
 	rebuildGeom = null;
@@ -662,6 +695,7 @@ SOFTWARE.
 	wireElement("chest", -1);
 	wireElement("wings-mode", 8);
 	wireElement("wing-upload", -1);
+	wireElement("wing-anim", 9);
 	async function updateSkin() {
 		usingSample = false;
 		usingSampleWing = false;
@@ -952,6 +986,8 @@ SOFTWARE.
 					ctx.drawImage(img, 0, 64, 64, 64, 0, 0, 64, 64);
 				} else if (earMode === "green" || earMode == "purple" || earMode == "orange" || earMode == "pink" || earMode === "purple2") {
 					ctx.drawImage(img, 64, 64, 64, 64, 0, 0, 64, 64);
+				} else if (earMode === "white" || earMode === "gray") {
+					ctx.drawImage(img, 128, 128, 64, 64, 0, 0, 64, 64);
 				}
 				if ($("#tail-mode").value !== "red") {
 					ctx.drawImage(img, 0, 128, 64, 64, 0, 0, 64, 64);
@@ -1542,6 +1578,11 @@ SOFTWARE.
 			camera.position.y *= zoom;
 			camera.position.z *= zoom;
 			camera.lookAt(new THREE.Vector3(0, 0, 0));
+			
+			let earMode = $("#ear-mode").value;
+			if ($("#ears-enabled").checked && (earMode === "gray" || earMode === "white")) {
+				camera.position.y += 5;
+			}
 			
 			renderer.render(scene, camera);
 		}

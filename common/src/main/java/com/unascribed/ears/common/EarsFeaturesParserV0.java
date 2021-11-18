@@ -25,6 +25,8 @@ class EarsFeaturesParserV0 {
 		ORANGE(0xD87823),
 		PINK(0xD823B7),
 		PURPLE2(0xD823FF),
+		WHITE(0xFEFDF2),
+		GRAY(0x5E605A),
 		;
 		private static final Map<Integer, MagicPixel> rgbToValue = new HashMap<Integer, MagicPixel>();
 		static {
@@ -89,7 +91,9 @@ class EarsFeaturesParserV0 {
 			MagicPixel.CYAN, EarMode.AROUND,
 			MagicPixel.ORANGE, EarMode.FLOPPY,
 			MagicPixel.PINK, EarMode.CROSS,
-			MagicPixel.PURPLE2, EarMode.OUT
+			MagicPixel.PURPLE2, EarMode.OUT,
+			MagicPixel.WHITE, EarMode.TALL,
+			MagicPixel.GRAY, EarMode.TALL_CROSS
 	);
 	public static final Map<MagicPixel, EarAnchor> EAR_ANCHOR_BY_MAGIC = buildMap(
 			MagicPixel.BLUE, EarAnchor.CENTER,

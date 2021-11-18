@@ -207,6 +207,55 @@ class EarsRenderer {
 								delegate.renderFront(32, 0, 8, 8, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 								delegate.renderBack(56, 36, 8, 8, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
 							delegate.pop();
+						} else if (earMode == EarMode.TALL) {
+							delegate.push();
+								delegate.anchorTo(BodyPart.HEAD);
+								delegate.translate(0, -8, 4);
+								float ang = (earAnchor == EarAnchor.FRONT ? 20 : earAnchor == EarAnchor.CENTER ? 0 : -20);
+								ang += swingAmount*-20;
+								
+								delegate.rotate(ang/3, 1, 0, 0);
+								delegate.translate(0, -4, 0);
+								delegate.renderFront(24, 0, 8, 4, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderBack(56, 40, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								
+								delegate.rotate(ang, 1, 0, 0);
+								delegate.translate(0, -4, 0);
+								delegate.renderFront(28, 0, 8, 4, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderBack(56, 36, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								
+								delegate.rotate(ang/2, 1, 0, 0);
+								delegate.translate(0, -4, 0);
+								delegate.renderFront(32, 0, 8, 4, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderBack(56, 32, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								
+								delegate.rotate(ang, 1, 0, 0);
+								delegate.translate(0, -4, 0);
+								delegate.renderFront(36, 0, 8, 4, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderBack(56, 28, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.pop();
+						} else if (earMode == EarMode.TALL_CROSS) {
+							delegate.push();
+								delegate.anchorTo(BodyPart.HEAD);
+								if (earAnchor == EarAnchor.CENTER) {
+									delegate.translate(0, 0, 4);
+								} else if (earAnchor == EarAnchor.BACK) {
+									delegate.translate(0, 0, 8);
+								}
+								delegate.translate(4, -24, 0);
+								delegate.push();
+									delegate.rotate(45, 0, 1, 0);
+									delegate.translate(-4, 0, 0);
+									delegate.renderFront(24, 0, 8, 16, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+									delegate.renderBack(56, 28, 8, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.pop();
+								delegate.push();
+									delegate.rotate(-45, 0, 1, 0);
+									delegate.translate(-4, 0, 0);
+									delegate.renderFront(24, 0, 8, 16, TexRotation.CW, TexFlip.NONE, QuadGrow.NONE);
+									delegate.renderBack(56, 28, 8, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.pop();
+							delegate.pop();
 						}
 						
 						TailMode tailMode = features.tailMode;

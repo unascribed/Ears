@@ -16,6 +16,8 @@ public class EarsFeatures {
 		FLOPPY,
 		CROSS,
 		OUT,
+		TALL,
+		TALL_CROSS,
 	}
 	public enum EarAnchor {
 		CENTER,
