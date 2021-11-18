@@ -458,7 +458,7 @@ SOFTWARE.
 	</div>
 	<script src="WebGL.js"></script>
 	<script src="three.min.js"></script>
-	<script src="ears-common.js?v=1.4.0"></script>
+	<script src="ears-common.js?v=1.4.1"></script>
 	<script>
 	if (location.hash === "#debug") {
 		window.EarsDebug = true;
@@ -1005,6 +1005,38 @@ SOFTWARE.
 			img.onerror = reject;
 			img.src = 'sample_skin_atlas.png';
 		});
+	}
+	function exportBbmodel() {
+		let model = {
+			meta: {
+				format_version: "4.0",
+				creation_time: Math.floor(Date.now()/1000),
+				model_format: "skin",
+				box_uv: false
+			},
+			name: "Ears Manipulator Export",
+			geometry_name: "ears-manipulator-export",
+			visible_box: [ 1, 1, 0 ],
+			variable_placeholders: "",
+			resolution: {
+				width: 64,
+				height: 64
+			},
+			elements: [],
+			outliner: []
+		};
+	}
+	function randomUUID() {
+		return randhex(8) + "-" + randhex(4) + "-4" + randhex(3) + "-" + choice(["8", "9", "a", "b"]) + randhex(3) + "-" + randhex(12);
+	}
+	let scratchTarr = new Uint32Array(1);
+	function choice(arr) {
+		crypto.getRandomValues(scratchTarr);
+		return arr[Math.floor(scratchTarr[0]%arr.length)]
+	}
+	function randhex(count) {
+		crypto.getRandomValues(scratchTarr);
+		return ("00000000"+scratchTarr[0].toString(16)).slice(-count);
 	}
 	$("#sample").addEventListener('click', () => {
 		usingSample = true;

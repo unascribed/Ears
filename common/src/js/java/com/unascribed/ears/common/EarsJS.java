@@ -33,6 +33,11 @@ public class EarsJS {
 	private interface NullFunctor extends JSObject {
 		void invoke() throws Exception;
 	}
+
+	@JSFunctor
+	private interface StringFunctor extends JSObject {
+		String invoke() throws Exception;
+	}
 	
 	/**
 	 * Called "initCommon" in JavaScript.
@@ -325,6 +330,8 @@ public class EarsJS {
 	private static native void assignToWindow(String name, JSObject obj);
 	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
 	private static native void assignFuncToWindow(String name, NullFunctor obj);
+	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
+	private static native void assignFuncToWindow(String name, StringFunctor obj);
 	@JSBody(params={"name"}, script="return window[name];")
 	private static native JSObject retrieveFromWindow(String name);
 	@JSBody(params={"obj"}, script="return Object.entries(obj);")

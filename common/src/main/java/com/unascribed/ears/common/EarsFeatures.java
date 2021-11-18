@@ -79,7 +79,7 @@ public class EarsFeatures {
 		this.chestSize = 0;
 		this.wingMode = WingMode.NONE;
 		this.animateWings = true;
-		this.alfalfa = null;
+		this.alfalfa = Alfalfa.NONE;
 	}
 	
 	public EarsFeatures(

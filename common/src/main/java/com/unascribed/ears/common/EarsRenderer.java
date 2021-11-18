@@ -1,7 +1,10 @@
 package com.unascribed.ears.common;
 
+import com.unascribed.ears.Identified;
 import com.unascribed.ears.api.EarsFeatureType;
-import com.unascribed.ears.api.EarsInhibitorRegistry;
+import com.unascribed.ears.api.EarsStateType;
+import com.unascribed.ears.api.registry.EarsInhibitorRegistry;
+import com.unascribed.ears.api.registry.EarsStateOverriderRegistry;
 import com.unascribed.ears.common.EarsFeatures.EarAnchor;
 import com.unascribed.ears.common.EarsFeatures.EarMode;
 import com.unascribed.ears.common.EarsFeatures.TailMode;
@@ -226,7 +229,7 @@ class EarsRenderer {
 								swing = -20;
 							}
 							float baseAngle = features.tailBend0;
-							if (delegate.isGliding()) {
+							if (isActive(delegate, EarsStateType.GLIDING)) {
 								baseAngle = -30;
 								ang = 0;
 							}
@@ -264,7 +267,7 @@ class EarsRenderer {
 						boolean horn = features.horn;
 						
 						if (claws) {
-							if (!delegate.isWearingBoots()) {
+							if (!isActive(delegate, EarsStateType.WEARING_BOOTS)) {
 								if (!isInhibited(delegate, EarsFeatureType.CLAW_LEFT_LEG)) {
 									delegate.push();
 										delegate.anchorTo(BodyPart.LEFT_LEG);
@@ -371,7 +374,7 @@ class EarsRenderer {
 					
 					float chestSize = features.chestSize;
 					
-					if (chestSize > 0 && !delegate.isWearingChestplate() && (p == 0 || delegate.isJacketEnabled()) && !isInhibited(delegate, EarsFeatureType.OTHER_TORSO)) {
+					if (chestSize > 0 && !isActive(delegate, EarsStateType.WEARING_CHESTPLATE) && (p == 0 || delegate.isJacketEnabled()) && !isInhibited(delegate, EarsFeatureType.OTHER_TORSO)) {
 						delegate.push();
 							delegate.anchorTo(BodyPart.TORSO);
 							delegate.translate(0, -10, 0);
@@ -432,8 +435,8 @@ class EarsRenderer {
 						WingMode wingMode = features.wingMode;
 			
 						if (wingMode != WingMode.NONE) {
-							boolean g = delegate.isGliding();
-							boolean f = delegate.isFlying();
+							boolean g = isActive(delegate, EarsStateType.GLIDING);
+							boolean f = isActive(delegate, EarsStateType.CREATIVE_FLYING);
 							delegate.push();
 								float wiggle;
 								if (features.animateWings) {
@@ -514,6 +517,40 @@ class EarsRenderer {
 			return true;
 		}
 		return false;
+	}
+
+	private static boolean isActive(EarsRenderDelegate delegate, EarsStateType state) {
+		boolean def = false;
+		switch (state) {
+			case CREATIVE_FLYING:
+				def = delegate.isFlying();
+				break;
+			case GLIDING:
+				def = delegate.isGliding();
+				break;
+			case WEARING_BOOTS:
+				def = delegate.isWearingBoots();
+				break;
+			case WEARING_CHESTPLATE:
+				def = delegate.isWearingChestplate();
+				break;
+			case WEARING_ELYTRA:
+				def = delegate.isWearingElytra();
+				break;
+			case WEARING_HELMET:
+				def = false;
+				break;
+			case WEARING_LEGGINGS:
+				def = false;
+				break;
+			default:
+				break;
+		}
+		Identified<Boolean> id = EarsStateOverriderRegistry.isActive(state, delegate.getPeer(), def);
+		if (id.getNamespace() != null) {
+			EarsLog.debug("Common:API", "State of {} is being overridden to {} from {} by {}", state, id.getValue(), def, id.getNamespace());
+		}
+		return id.getValue();
 	}
 
 }

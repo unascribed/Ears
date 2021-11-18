@@ -105,8 +105,8 @@ public class EarsCommon {
 				while (true) {
 					int x = bis.read(6); // 0-63
 					int y = bis.read(6);
-					int w = bis.read(5); // 0-31
-					int h = bis.read(5);
+					int w = bis.read(5)+1; // 1-32
+					int h = bis.read(5)+1;
 					for (int xi = x; xi < x+w; xi++) {
 						for (int yi = y; yi < y+h; yi++) {
 							img.setARGB(xi, yi, 0);

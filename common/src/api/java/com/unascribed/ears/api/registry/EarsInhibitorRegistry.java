@@ -1,22 +1,16 @@
-package com.unascribed.ears.api;
+package com.unascribed.ears.api.registry;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.unascribed.ears.Identified;
+import com.unascribed.ears.api.Cork;
+import com.unascribed.ears.api.EarsFeatureType;
+import com.unascribed.ears.api.iface.EarsInhibitor;
+
 public final class EarsInhibitorRegistry {
 
-	private static final class IdentifiedEarsInhibitor {
-		public final String namespace;
-		public final EarsInhibitor inhibitor;
-		
-		public IdentifiedEarsInhibitor(String namespace, EarsInhibitor inhibitor) {
-			this.namespace = namespace;
-			this.inhibitor = inhibitor;
-		}
-	}
-
-
-	private static final List<IdentifiedEarsInhibitor> inhibitors = new ArrayList<IdentifiedEarsInhibitor>();
+	private static final List<Identified<EarsInhibitor>> inhibitors = new ArrayList<Identified<EarsInhibitor>>();
 	
 	
 	/**
@@ -36,12 +30,12 @@ public final class EarsInhibitorRegistry {
 	 */
 	public static Cork register(String namespace, EarsInhibitor inhibitor) {
 		synchronized(inhibitors) {
-			final IdentifiedEarsInhibitor iei = new IdentifiedEarsInhibitor(namespace, inhibitor);
+			final Identified<EarsInhibitor> iei = Identified.of(namespace, inhibitor);
 			inhibitors.add(iei);
 			return new Cork() {
 				@Override
 				public void cork() {
-					synchronized (inhibitors) {
+					synchronized(inhibitors) {
 						inhibitors.remove(iei);
 					}
 				}
@@ -55,14 +49,14 @@ public final class EarsInhibitorRegistry {
 	 */
 	public static String isInhibited(EarsFeatureType feature, Object peer) {
 		synchronized(inhibitors) {
-			for (IdentifiedEarsInhibitor iei : inhibitors) {
+			for (Identified<EarsInhibitor> iei : inhibitors) {
 				try {
-					if (iei.inhibitor.shouldInhibit(feature, peer)) {
-						return iei.namespace;
+					if (iei.getValue().shouldInhibit(feature, peer)) {
+						return iei.getNamespace();
 					}
 				} catch (Throwable t) {
 					t.printStackTrace();
-					System.err.println("[Ears] An inhibitor registered by "+iei.namespace+" threw an exception while checking if "+feature+" should be inhibited for "+peer);
+					System.err.println("[Ears] An inhibitor registered by "+iei.getNamespace()+" threw an exception while checking if "+feature+" should be inhibited for "+peer);
 				}
 			}
 		}
