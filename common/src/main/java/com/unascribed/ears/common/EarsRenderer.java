@@ -98,7 +98,6 @@ class EarsRenderer {
 					if (p == 0) {
 						EarMode earMode = features.earMode;
 						EarAnchor earAnchor = features.earAnchor;
-						earMode = EarMode.TALL;
 						
 						if (earMode != EarMode.NONE && isInhibited(delegate, EarsFeatureType.EARS)) earMode = EarMode.NONE;
 						
@@ -224,6 +223,8 @@ class EarsRenderer {
 								double yawX = Math.sin(bodyYaw * 0.017453292F);
 								double yawZ = (-Math.cos(bodyYaw * 0.017453292F));
 								float dXPolar = (float)(dX * yawX + dZ * yawZ) * 25.0F;
+								if (dXPolar > 80) dXPolar = 80;
+								if (dXPolar < -80) dXPolar = -80;
 								ang -= dXPolar;
 								
 								delegate.rotate(ang/3, 1, 0, 0);
