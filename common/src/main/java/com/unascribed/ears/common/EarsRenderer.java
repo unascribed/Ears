@@ -533,7 +533,7 @@ class EarsRenderer {
 						}
 					}
 					
-					if (p == 0 && features.capeEnabled && !isInhibited(delegate, EarsFeatureType.CAPE)) {
+					if (p == 0 && features.capeEnabled && !isInhibited(delegate, EarsFeatureType.CAPE) && !isActive(delegate, EarsStateType.WEARING_ELYTRA)) {
 						delegate.push();
 							delegate.anchorTo(BodyPart.TORSO);
 							delegate.translate(4, -12, 5);
