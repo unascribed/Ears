@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
@@ -48,15 +49,15 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 	@Override
 	public void render(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, scratch(), entity, limbDistance, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
+		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
 	}
 	
 	public void renderLeftArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
+		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, scratch(), entity, 0, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
+		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
 	// official Mojang mappings continue to baffle me. PoseStack????????????
@@ -93,7 +94,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		}
 
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return ((AccessorPlayerModel)getParentModel()).ears$isSlim();
 		}
 
@@ -194,6 +195,56 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		@Override
 		public boolean isWearingElytra() {
 			return peer.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.walkDistO, peer.walkDist, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.animationSpeedOld, peer.animationSpeed, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.oBob, peer.bob, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.yBodyRotO, peer.yBodyRot, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.xCloakO, peer.xCloak, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.yCloakO, peer.yCloak, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.zCloakO, peer.zCloak, Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.xOld, peer.getX(), Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.yOld, peer.getY(), Minecraft.getInstance().getDeltaFrameTime());
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.zOld, peer.getZ(), Minecraft.getInstance().getDeltaFrameTime());
 		}
 	};
 }

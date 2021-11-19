@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
 
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
@@ -31,14 +32,14 @@ public class LayerEars {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.render = render;
 		this.tickDelta = partialTicks;
-		delegate.render(entity, limbDistance);
+		delegate.render(entity);
 	}
 	
 	public void renderRightArm(RenderPlayer render, EntityPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", render, entity);
 		this.render = render;
 		this.tickDelta = 0;
-		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
+		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 	
 	private final UnmanagedEarsRenderDelegate<EntityPlayer, ModelRenderer> delegate = new UnmanagedEarsRenderDelegate<EntityPlayer, ModelRenderer>() {
@@ -49,7 +50,7 @@ public class LayerEars {
 		}
 		
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return LegacyHelper.isSlimArms(peer.username);
 		}
 		
@@ -153,6 +154,56 @@ public class LayerEars {
 		@Override
 		public boolean needsSecondaryLayersDrawn() {
 			return true;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.prevDistanceWalkedModified, peer.distanceWalkedModified, tickDelta);
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.prevLimbYaw, peer.limbYaw, tickDelta);
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.prevCameraYaw, peer.cameraYaw, tickDelta);
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.prevRenderYawOffset, peer.renderYawOffset, tickDelta);
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.field_71091_bM, peer.field_71094_bP, tickDelta);
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.field_71096_bN, peer.field_71095_bQ, tickDelta);
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.field_71097_bO, peer.field_71085_bR, tickDelta);
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.prevPosX, peer.posX, tickDelta);
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.prevPosY, peer.posY, tickDelta);
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.prevPosZ, peer.posZ, tickDelta);
 		}
 	};
 }

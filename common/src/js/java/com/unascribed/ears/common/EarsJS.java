@@ -21,7 +21,7 @@ import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
 
-import com.unascribed.ears.common.render.EarsRenderDelegate;
+import com.unascribed.ears.common.render.AbstractDetachedEarsRenderDelegate;
 import com.unascribed.ears.common.util.Slice;
 
 /**
@@ -94,20 +94,11 @@ public class EarsJS {
 		};
 		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img));
 		final JSArray<JSObject> objects = JSArray.create();
-		EarsRenderer.render(feat, new EarsRenderDelegate() {
+		EarsRenderer.render(feat, new AbstractDetachedEarsRenderDelegate() {
 			
 			private TexSource texture = TexSource.SKIN;
 			private JSArray<JSObject> moves = JSArray.create();
 			private JSArray<JSArray<JSObject>> movesStack = JSArray.create();
-			
-			@Override
-			public void setUp() {}
-
-			@Override
-			public void tearDown() {}
-			
-			@Override
-			public Object getPeer() { return null; }
 
 			@Override
 			public void bind(TexSource src) {
@@ -222,46 +213,16 @@ public class EarsJS {
 			}
 
 			@Override
-			public float getTime() {
-				return 0;
-			}
-
-			@Override
-			public boolean isFlying() {
-				return false;
-			}
-
-			@Override
-			public boolean isGliding() {
-				return false;
-			}
-
-			@Override
-			public boolean isWearingElytra() {
-				return false;
-			}
-
-			@Override
-			public boolean isWearingChestplate() {
-				return false;
-			}
-
-			@Override
-			public boolean isWearingBoots() {
-				return false;
-			}
-
-			@Override
 			public boolean isJacketEnabled() {
 				return getJacketState();
 			}
 			
 			@Override
-			public boolean needsSecondaryLayersDrawn() {
-				return false;
+			public boolean isSlim() {
+				return getSlimState();
 			}
 			
-		}, 0, getSlimState());
+		});
 		assignToWindow("renderObjects", objects);
 		JSMapLike<JSObject> alfalfaData = JSObjects.create();
 		alfalfaData.set("version", JSNumber.valueOf(feat.alfalfa.version));

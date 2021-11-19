@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
@@ -42,17 +43,17 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	public void render(AbstractClientPlayerEntity entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
-		delegate.render(entity, limbDistance, null);
+		delegate.render(entity, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayerEntity entity) {
 		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
-		delegate.render(entity, 0, BodyPart.LEFT_ARM);
+		delegate.render(entity, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
-		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
+		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 	
 	@Override
@@ -106,7 +107,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		}
 
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return ((AccessorPlayerEntityModel)getContextModel()).ears$isThinArms();
 		}
 
@@ -217,6 +218,56 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		@Override
 		public boolean isWearingElytra() {
 			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.prevHorizontalSpeed, peer.horizontalSpeed, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.lastLimbDistance, peer.limbDistance, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.field_7505, peer.field_7483, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.field_6220, peer.field_6283, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.field_7524, peer.field_7500, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.field_7502, peer.field_7521, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.field_7522, peer.field_7499, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.prevX, peer.x, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.prevY, peer.y, MinecraftClient.getInstance().getTickDelta());
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.prevZ, peer.z, MinecraftClient.getInstance().getTickDelta());
 		}
 	};
 

@@ -151,5 +151,82 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		EarsLog.debug("Platform:Renderer:Delegate", "needsSecondaryLayersDrawn() -> {}", b);
 		return b;
 	}
+
+	@Override
+	public float getLimbSwing() {
+		float t = delegate.getLimbSwing();
+		EarsLog.debug("Platform:Renderer:Delegate", "getLimbSwing() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public float getHorizontalSpeed() {
+		float t = delegate.getHorizontalSpeed();
+		EarsLog.debug("Platform:Renderer:Delegate", "getHorizontalSpeed() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public float getStride() {
+		float t = delegate.getStride();
+		EarsLog.debug("Platform:Renderer:Delegate", "getStride() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public boolean isSlim() {
+		boolean b = delegate.isSlim();
+		EarsLog.debug("Platform:Renderer:Delegate", "isSlim() -> {}", b);
+		return b;
+	}
+
+	@Override
+	public float getBodyYaw() {
+		float t = delegate.getBodyYaw();
+		EarsLog.debug("Platform:Renderer:Delegate", "getBodyYaw() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getX() {
+		double t = delegate.getX();
+		EarsLog.debug("Platform:Renderer:Delegate", "getX() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getY() {
+		double t = delegate.getY();
+		EarsLog.debug("Platform:Renderer:Delegate", "getY() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getZ() {
+		double t = delegate.getZ();
+		EarsLog.debug("Platform:Renderer:Delegate", "getZ() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getCapeX() {
+		double t = delegate.getCapeX();
+		EarsLog.debug("Platform:Renderer:Delegate", "getCapeX() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getCapeY() {
+		double t = delegate.getCapeY();
+		EarsLog.debug("Platform:Renderer:Delegate", "getCapeY() -> {}", t);
+		return t;
+	}
+
+	@Override
+	public double getCapeZ() {
+		double t = delegate.getCapeZ();
+		EarsLog.debug("Platform:Renderer:Delegate", "getCapeZ() -> {}", t);
+		return t;
+	}
 	
 }

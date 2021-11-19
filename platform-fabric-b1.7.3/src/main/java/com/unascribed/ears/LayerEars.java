@@ -3,6 +3,8 @@ package com.unascribed.ears;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
+
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;
@@ -29,7 +31,7 @@ public class LayerEars {
 		this.renderer = renderer;
 		this.tickDelta = partialTicks;
 		this.brightness = entity.getBrightnessAtEyes(partialTicks);
-		delegate.render(entity, limbDistance);
+		delegate.render(entity);
 	}
 
 	public void renderRightArm(PlayerRenderer renderer, Player entity) {
@@ -37,7 +39,7 @@ public class LayerEars {
 		this.renderer = renderer;
 		this.tickDelta = 0;
 		this.brightness = entity.getBrightnessAtEyes(0);
-		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
+		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 	
 	private final ImmediateEarsRenderDelegate<Player, ModelPart> delegate = new ImmediateEarsRenderDelegate<Player, ModelPart>() {
@@ -76,7 +78,7 @@ public class LayerEars {
 		}
 
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return LegacyHelper.isSlimArms(peer.name);
 		}
 
@@ -140,6 +142,56 @@ public class LayerEars {
 		@Override
 		public boolean needsSecondaryLayersDrawn() {
 			return true;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.field_1634, peer.field_1635, tickDelta);
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.field_1048, peer.limbDistance, tickDelta);
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.field_524, peer.field_525, tickDelta);
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.field_1013, peer.field_1012, tickDelta);
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.field_530, peer.field_533, tickDelta);
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.field_531, peer.field_534, tickDelta);
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.field_532, peer.field_535, tickDelta);
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.prevX, peer.x, tickDelta);
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.prevY, peer.y, tickDelta);
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.prevZ, peer.z, tickDelta);
 		}
 		
 	};

@@ -93,7 +93,7 @@ public class com_unascribed_ears_Ears {
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
 		this.tickDelta = partialTicks;
-		delegate.render(entity, 0);
+		delegate.render(entity);
 		this.render = null;
 	}
 	
@@ -102,7 +102,7 @@ public class com_unascribed_ears_Ears {
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
 		this.tickDelta = partialTicks;
-		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
+		delegate.render(entity, BodyPart.RIGHT_ARM);
 		this.render = null;
 	}
 	
@@ -114,7 +114,7 @@ public class com_unascribed_ears_Ears {
 		}
 		
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return false;
 		}
 		
@@ -204,6 +204,56 @@ public class com_unascribed_ears_Ears {
 		@Override
 		public boolean isWearingElytra() {
 			return false;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.bi, peer.bj, tickDelta);
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.ak, peer.al, tickDelta);
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.h, peer.i, tickDelta);
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.I, peer.H, tickDelta);
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.o, peer.r, tickDelta);
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.p, peer.s, tickDelta);
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.q, peer.t, tickDelta);
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.aJ, peer.aM, tickDelta);
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.aK, peer.aN, tickDelta);
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.aL, peer.aO, tickDelta);
 		}
 	};
 

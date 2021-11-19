@@ -1,9 +1,11 @@
 <ul>
-<li>Rewrote the rendering system on every version to reduce duplicate code</li>
-<li>Added support for wings, via encoding data in the alpha channel of forced-opaque skin regions</li>
-<li>Manipulator now honors system theme</li>
-<li>Various tweaks to Manipulator appearance and behavior</li>
-<li>Some platforms have received bugfixes by virtue of the rendering rewrite</li>
-<li>Ported to Not So Seecret Saturday</li>
-<li>Fixed capes being stretched out in 1.7</li>
+<li>Refactored vlegacy ports (again)</li>
+<li>vlegacy ports are now smaller due to using Nanojson instead of Gson</li>
+<li>vlegacy ports now cache username lookups</li>
+<li>Added an API for other mods to affect when Ears features render</li>
+<li>Experimental functionality to erase skin regions, so you can have a vanilla ear/tail and have it vanish when Ears is present (not yet supported in the Manipulator)</li>
+<li>New "binary" magic pixel format which will eventually replace the current "pixelwise" format</li>
+<li>All ports (where possible) now support a "Config" button, which opens the Manipulator in your browser</li>
+<li>Wing animations can now be disabled, if you use them for something other than wings (e.g. hair, fins)</li>
+<li>New "Tall" and "Tall Cross" ears modes</li>
 </ul>

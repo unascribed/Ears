@@ -45,6 +45,7 @@ public interface EarsRenderDelegate {
 	public enum TexSource {
 		SKIN(64, 64),
 		WING(12, 12),
+		CAPE(20, 16),
 		;
 		public final int width, height;
 		public final String lowerName;
@@ -167,6 +168,22 @@ public interface EarsRenderDelegate {
 	void renderDebugDot(float r, float g, float b, float a);
 	
 	float getTime();
+	
+	float getLimbSwing();
+	float getHorizontalSpeed();
+	float getStride();
+	
+	float getBodyYaw();
+	
+	double getX();
+	double getY();
+	double getZ();
+	
+	double getCapeX();
+	double getCapeY();
+	double getCapeZ();
+	
+	boolean isSlim();
 	
 	boolean isFlying();
 	boolean isGliding();

@@ -28,6 +28,14 @@ public class Ears {
 	
 	public static Minecraft game;
 	
+	public static final EarsStorage.Key<Double> CAPE_X = new EarsStorage.Key<>(0D);
+	public static final EarsStorage.Key<Double> CAPE_Y = new EarsStorage.Key<>(0D);
+	public static final EarsStorage.Key<Double> CAPE_Z = new EarsStorage.Key<>(0D);
+	
+	public static final EarsStorage.Key<Double> PREV_CAPE_X = new EarsStorage.Key<>(0D);
+	public static final EarsStorage.Key<Double> PREV_CAPE_Y = new EarsStorage.Key<>(0D);
+	public static final EarsStorage.Key<Double> PREV_CAPE_Z = new EarsStorage.Key<>(0D);
+	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
 	
 	public static boolean forceTextureHeight = false;
@@ -48,6 +56,49 @@ public class Ears {
 			EarsLog.debugva("Platform", "Initialized - Not So Seecret Saturday");
 		}
 		layer = new LayerEars();
+	}
+
+	public static void onUpdate(EntityPlayer p) {
+		EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
+		EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
+		EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
+		double slopX = p.posX - EarsStorage.get(p, CAPE_X);
+		double slopY = p.posY - EarsStorage.get(p, CAPE_Y);
+		double slopZ = p.posZ - EarsStorage.get(p, CAPE_Z);
+		double limit = 10;
+		if (slopX > limit) {
+			EarsStorage.put(p, CAPE_X, p.posX);
+			EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
+		}
+
+		if (slopZ > limit) {
+			EarsStorage.put(p, CAPE_Z, p.posZ);
+			EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
+		}
+
+		if (slopY > limit) {
+			EarsStorage.put(p, CAPE_Y, p.posY);
+			EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
+		}
+
+		if (slopX < -limit) {
+			EarsStorage.put(p, CAPE_X, p.posX);
+			EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
+		}
+
+		if (slopZ < -limit) {
+			EarsStorage.put(p, CAPE_Z, p.posZ);
+			EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
+		}
+
+		if (slopY < -limit) {
+			EarsStorage.put(p, CAPE_Y, p.posY);
+			EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
+		}
+
+		EarsStorage.put(p, CAPE_X, EarsStorage.get(p, CAPE_X) + (slopX / 4));
+		EarsStorage.put(p, CAPE_Y, EarsStorage.get(p, CAPE_Z) + (slopY / 4));
+		EarsStorage.put(p, CAPE_Z, EarsStorage.get(p, CAPE_Y) + (slopZ / 4));
 	}
 	
 	public static void amendTexturedQuad(TexturedQuad subject, PositionTexureVertex[] apositiontexurevertex, int i, int j, int k, int l) {

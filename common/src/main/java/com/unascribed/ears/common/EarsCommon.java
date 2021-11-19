@@ -83,6 +83,14 @@ public class EarsCommon {
 		}
 	}
 	
+	public static float lerpDelta(float prev, float cur, float tickDelta) {
+		return prev + ((cur-prev)*tickDelta);
+	}
+	
+	public static double lerpDelta(double prev, double cur, float tickDelta) {
+		return prev + ((cur-prev)*tickDelta);
+	}
+	
 	public static boolean shouldSuppressElytra(EarsFeatures features) {
 		return features.animateWings && features.wingMode != WingMode.NONE;
 	}
@@ -127,8 +135,8 @@ public class EarsCommon {
 	/**
 	 * Render all the features described in {@code features} using {@code delegate}.
 	 */
-	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount, boolean slim) {
-		EarsRenderer.render(features, delegate, swingAmount, slim);
+	public static void render(EarsFeatures features, EarsRenderDelegate delegate) {
+		EarsRenderer.render(features, delegate);
 	}
 
 	/**

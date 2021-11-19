@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
@@ -44,17 +45,17 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 	public void doRenderLayer(AbstractClientPlayer entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
-		delegate.render(entity, limbDistance, null);
+		delegate.render(entity, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
-		delegate.render(entity, 0, BodyPart.LEFT_ARM);
+		delegate.render(entity, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayer entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
-		delegate.render(entity, 0, BodyPart.RIGHT_ARM);
+		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 	
 	@Override
@@ -115,7 +116,7 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		}
 
 		@Override
-		protected boolean isSlim() {
+		public boolean isSlim() {
 			return Ears.isSmallArms(render.getMainModel());
 		}
 
@@ -226,6 +227,56 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		public boolean isWearingElytra() {
 			return peer.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemElytra;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return EarsCommon.lerpDelta(peer.prevDistanceWalkedModified, peer.distanceWalkedModified, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public float getLimbSwing() {
+			return EarsCommon.lerpDelta(peer.prevLimbSwingAmount, peer.limbSwingAmount, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public float getStride() {
+			return EarsCommon.lerpDelta(peer.prevCameraYaw, peer.cameraYaw, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public float getBodyYaw() {
+			return EarsCommon.lerpDelta(peer.prevRenderYawOffset, peer.renderYawOffset, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getCapeX() {
+			return EarsCommon.lerpDelta(peer.prevChasingPosX, peer.chasingPosX, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getCapeY() {
+			return EarsCommon.lerpDelta(peer.prevChasingPosY, peer.chasingPosY, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getCapeZ() {
+			return EarsCommon.lerpDelta(peer.prevChasingPosZ, peer.chasingPosZ, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getX() {
+			return EarsCommon.lerpDelta(peer.prevPosX, peer.posX, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getY() {
+			return EarsCommon.lerpDelta(peer.prevPosY, peer.posY, Minecraft.getMinecraft().getRenderPartialTicks());
+		}
+
+		@Override
+		public double getZ() {
+			return EarsCommon.lerpDelta(peer.prevPosZ, peer.posZ, Minecraft.getMinecraft().getRenderPartialTicks());
 		}
 	};
 }

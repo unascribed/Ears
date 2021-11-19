@@ -17,6 +17,7 @@ import com.unascribed.ears.common.render.EarsRenderDelegate.QuadGrow;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexSource;
+
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 
 class EarsRenderer {
@@ -24,8 +25,10 @@ class EarsRenderer {
 	/**
 	 * Render all the features described in {@code features} using {@code delegate}.
 	 */
-	public static void render(EarsFeatures features, EarsRenderDelegate delegate, float swingAmount, boolean slim) {
-		EarsLog.debug("Common:Renderer", "render({}, {}, {})", features, delegate, swingAmount);
+	public static void render(EarsFeatures features, EarsRenderDelegate delegate) {
+		EarsLog.debug("Common:Renderer", "render({}, {})", features, delegate);
+		boolean slim = delegate.isSlim();
+		float swingAmount = delegate.getLimbSwing();
 		
 		if (EarsLog.DEBUG && EarsLog.shouldLog("Platform:Renderer:Delegate")) {
 			delegate = new DebuggingDelegate(delegate);
@@ -95,6 +98,7 @@ class EarsRenderer {
 					if (p == 0) {
 						EarMode earMode = features.earMode;
 						EarAnchor earAnchor = features.earAnchor;
+						earMode = EarMode.TALL;
 						
 						if (earMode != EarMode.NONE && isInhibited(delegate, EarsFeatureType.EARS)) earMode = EarMode.NONE;
 						
@@ -212,7 +216,15 @@ class EarsRenderer {
 								delegate.anchorTo(BodyPart.HEAD);
 								delegate.translate(0, -8, 4);
 								float ang = (earAnchor == EarAnchor.FRONT ? 20 : earAnchor == EarAnchor.CENTER ? 0 : -20);
-								ang += swingAmount*-20;
+								
+								double dX = delegate.getCapeX()-delegate.getX();
+								double dZ = delegate.getCapeZ()-delegate.getZ();
+								
+								float bodyYaw = delegate.getBodyYaw();
+								double yawX = Math.sin(bodyYaw * 0.017453292F);
+								double yawZ = (-Math.cos(bodyYaw * 0.017453292F));
+								float dXPolar = (float)(dX * yawX + dZ * yawZ) * 25.0F;
+								ang -= dXPolar;
 								
 								delegate.rotate(ang/3, 1, 0, 0);
 								delegate.translate(0, -4, 0);

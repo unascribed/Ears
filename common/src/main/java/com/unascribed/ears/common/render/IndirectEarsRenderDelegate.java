@@ -19,11 +19,11 @@ public abstract class IndirectEarsRenderDelegate<TMatrixStack, TVertexConsumerPr
 	protected TVertexConsumer vc;
 	protected int light, overlay;
 	
-	public void render(TMatrixStack matrices, TVertexConsumerProvider vertexConsumers, TPeer peer, float limbDistance, int light, int overlay) {
-		render(matrices, vertexConsumers, peer, limbDistance, light, overlay, null);
+	public void render(TMatrixStack matrices, TVertexConsumerProvider vertexConsumers, TPeer peer, int light, int overlay) {
+		render(matrices, vertexConsumers, peer, light, overlay, null);
 	}
 	
-	public void render(TMatrixStack matrices, TVertexConsumerProvider vertexConsumers, TPeer peer, float limbDistance, int light, int overlay, BodyPart permittedBodyPart) {
+	public void render(TMatrixStack matrices, TVertexConsumerProvider vertexConsumers, TPeer peer, int light, int overlay, BodyPart permittedBodyPart) {
 		this.matrices = matrices;
 		this.vcp = vertexConsumers;
 		this.peer = peer;
@@ -32,7 +32,7 @@ public abstract class IndirectEarsRenderDelegate<TMatrixStack, TVertexConsumerPr
 		this.vc = getVertexConsumer(TexSource.SKIN);
 		this.light = light;
 		this.overlay = overlay;
-		EarsCommon.render(this.feat, this, limbDistance, isSlim());
+		EarsCommon.render(this.feat, this);
 		matrices = null;
 		vertexConsumers = null;
 		vc = null;
