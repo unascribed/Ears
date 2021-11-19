@@ -213,8 +213,14 @@ class EarsRenderer {
 						} else if (earMode == EarMode.TALL) {
 							delegate.push();
 								delegate.anchorTo(BodyPart.HEAD);
-								delegate.translate(0, -8, 4);
-								float ang = (earAnchor == EarAnchor.FRONT ? 20 : earAnchor == EarAnchor.CENTER ? 0 : -20);
+								delegate.translate(0, -8, 0);
+								if (earAnchor == EarAnchor.CENTER) {
+									delegate.translate(0, 0, 4);
+								} else if (earAnchor == EarAnchor.BACK) {
+									delegate.translate(0, 0, 8);
+								}
+								
+								float ang = -6;
 								
 								double dX = delegate.getCapeX()-delegate.getX();
 								double dZ = delegate.getCapeZ()-delegate.getZ();
