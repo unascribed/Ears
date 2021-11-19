@@ -59,46 +59,40 @@ public class Ears {
 	}
 
 	public static void onUpdate(EntityPlayer p) {
-		EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
-		EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
-		EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
-		double slopX = p.posX - EarsStorage.get(p, CAPE_X);
-		double slopY = p.posY - EarsStorage.get(p, CAPE_Y);
-		double slopZ = p.posZ - EarsStorage.get(p, CAPE_Z);
+		double capeX = EarsStorage.get(p, CAPE_X);
+		double capeY = EarsStorage.get(p, CAPE_Y);
+		double capeZ = EarsStorage.get(p, CAPE_Z);
+		
+		EarsStorage.put(p, PREV_CAPE_X, capeX);
+		EarsStorage.put(p, PREV_CAPE_Y, capeY);
+		EarsStorage.put(p, PREV_CAPE_Z, capeZ);
+		
+		double slopX = p.posX - capeX;
+		double slopY = p.posY - capeY;
+		double slopZ = p.posZ - capeZ;
 		double limit = 10;
-		if (slopX > limit) {
-			EarsStorage.put(p, CAPE_X, p.posX);
-			EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
+		if (slopX > limit || slopX < -limit) {
+			capeX = p.posX;
+			EarsStorage.put(p, PREV_CAPE_X, p.posX);
 		}
 
-		if (slopZ > limit) {
-			EarsStorage.put(p, CAPE_Z, p.posZ);
-			EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
+		if (slopZ > limit || slopZ < -limit) {
+			capeZ = p.posZ;
+			EarsStorage.put(p, PREV_CAPE_Z, p.posZ);
 		}
 
-		if (slopY > limit) {
-			EarsStorage.put(p, CAPE_Y, p.posY);
-			EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
+		if (slopY > limit || slopY < -limit) {
+			capeY = p.posY;
+			EarsStorage.put(p, PREV_CAPE_Y, p.posY);
 		}
 
-		if (slopX < -limit) {
-			EarsStorage.put(p, CAPE_X, p.posX);
-			EarsStorage.put(p, PREV_CAPE_X, EarsStorage.get(p, CAPE_X));
-		}
-
-		if (slopZ < -limit) {
-			EarsStorage.put(p, CAPE_Z, p.posZ);
-			EarsStorage.put(p, PREV_CAPE_Z, EarsStorage.get(p, CAPE_Z));
-		}
-
-		if (slopY < -limit) {
-			EarsStorage.put(p, CAPE_Y, p.posY);
-			EarsStorage.put(p, PREV_CAPE_Y, EarsStorage.get(p, CAPE_Y));
-		}
-
-		EarsStorage.put(p, CAPE_X, EarsStorage.get(p, CAPE_X) + (slopX / 4));
-		EarsStorage.put(p, CAPE_Y, EarsStorage.get(p, CAPE_Z) + (slopY / 4));
-		EarsStorage.put(p, CAPE_Z, EarsStorage.get(p, CAPE_Y) + (slopZ / 4));
+		capeX += (slopX * 0.25);
+		capeY += (slopY * 0.25);
+		capeZ += (slopZ * 0.25);
+		
+		EarsStorage.put(p, CAPE_X, capeX);
+		EarsStorage.put(p, CAPE_Y, capeY);
+		EarsStorage.put(p, CAPE_Z, capeZ);
 	}
 	
 	public static void amendTexturedQuad(TexturedQuad subject, PositionTexureVertex[] apositiontexurevertex, int i, int j, int k, int l) {

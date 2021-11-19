@@ -63,8 +63,11 @@ public interface EarsRenderDelegate {
 		
 		public byte[] getPNGData(EarsFeatures feat) {
 			if (this == SKIN) return null;
-			if (this == WING) {
+			if (this == WING && feat.alfalfa.data.get("wing") != null) {
 				return feat.alfalfa.data.get("wing").toByteArray();
+			}
+			if (this == CAPE && feat.alfalfa.data.get("cape") != null) {
+				return feat.alfalfa.data.get("cape").toByteArray();
 			}
 			return null;
 		}

@@ -46,6 +46,7 @@ public class EarsFeaturesWriterV1 {
 		if (feat.wingMode != WingMode.NONE) {
 			bos.write(feat.animateWings);
 		}
+		bos.write(feat.capeEnabled);
 		bos.flush();
 	}
 	

@@ -219,13 +219,13 @@ class EarsRenderer {
 								double dX = delegate.getCapeX()-delegate.getX();
 								double dZ = delegate.getCapeZ()-delegate.getZ();
 								
-								float bodyYaw = delegate.getBodyYaw();
-								double yawX = Math.sin(bodyYaw * 0.017453292F);
-								double yawZ = (-Math.cos(bodyYaw * 0.017453292F));
-								float dXPolar = (float)(dX * yawX + dZ * yawZ) * 25.0F;
-								if (dXPolar > 80) dXPolar = 80;
-								if (dXPolar < -80) dXPolar = -80;
-								ang -= dXPolar;
+								float yaw = delegate.getBodyYaw();
+								double yawX = Math.sin(Math.toRadians(yaw));
+								double yawZ = -Math.cos(Math.toRadians(yaw));
+								float dForward = (float)(dX * yawX + dZ * yawZ) * 25.0F;
+								if (dForward > 80) dForward = 80;
+								if (dForward < -80) dForward = -80;
+								ang -= dForward;
 								
 								delegate.rotate(ang/3, 1, 0, 0);
 								delegate.translate(0, -4, 0);
@@ -532,6 +532,63 @@ class EarsRenderer {
 							delegate.pop();
 						}
 					}
+					
+					if (p == 0 && features.capeEnabled && !isInhibited(delegate, EarsFeatureType.CAPE)) {
+						delegate.push();
+							delegate.anchorTo(BodyPart.TORSO);
+							delegate.translate(4, -12, 5);
+							double dX = delegate.getCapeX() - delegate.getX();
+							double dY = delegate.getCapeY() - delegate.getY();
+							double dZ = delegate.getCapeZ() - delegate.getZ();
+							float yaw = delegate.getBodyYaw();
+							double yawX = Math.sin(Math.toRadians(yaw));
+							double yawZ = -Math.cos(Math.toRadians(yaw));
+							float dUp = (float)dY * 10;
+							dUp = clamp(dUp, -6, 32);
+							float dForward = (float)(dX * yawX + dZ * yawZ) * 100f;
+							dForward = clamp(dForward, 0, 150);
+							float dSide = (float)(dX * yawZ - dZ * yawX) * 100f;
+							dSide = clamp(dSide, -20, 20);
+							if (dForward < 0) {
+								dForward = 0;
+							}
+	
+							float stride = delegate.getStride();
+							dUp += Math.sin(delegate.getHorizontalSpeed() * 6) * 32 * stride;
+	
+							delegate.rotate(6.0F + dForward / 2.0F + dUp, 1, 0, 0);
+							delegate.rotate(dSide / 2.0F, 0, 0, 1);
+							delegate.rotate(180.0F - dSide / 2.0F, 0, 1, 0);
+							
+							delegate.bind(TexSource.CAPE);
+							delegate.translate(-5, 0, 0);
+							// front
+							delegate.renderDoubleSided(0, 0, 10, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.push();
+								// left
+								delegate.translate(10, 0, 1);
+								delegate.rotate(90, 0, 1, 0);
+								delegate.renderDoubleSided(0, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+								// back
+								delegate.translate(0, 0, 0);
+								delegate.rotate(90, 0, 1, 0);
+								delegate.renderDoubleSided(10, 0, 10, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								// right
+								delegate.translate(10, 0, 1);
+								delegate.rotate(90, 0, 1, 0);
+								delegate.renderDoubleSided(9, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+							delegate.pop();
+							
+							// top
+							delegate.rotate(90, 1, 0, 0);
+							delegate.renderDoubleSided(0, 0, 10, 1, TexRotation.NONE, TexFlip.VERTICAL, QuadGrow.NONE);
+							
+							// bottom
+							delegate.translate(0, 0, -16);
+							delegate.renderDoubleSided(10, 15, 10, 1, TexRotation.NONE, TexFlip.VERTICAL, QuadGrow.NONE);
+							delegate.bind(TexSource.SKIN);
+						delegate.pop();
+					}
 				}
 				
 			}
@@ -539,6 +596,10 @@ class EarsRenderer {
 			delegate.bind(TexSource.SKIN);
 			delegate.tearDown();
 		}
+	}
+
+	private static float clamp(float v, float min, float max) {
+		return Math.max(Math.min(v, max), min);
 	}
 
 	private static void drawVanillaCuboid(EarsRenderDelegate delegate, int u, int v, int w, int h, int d, float g) {

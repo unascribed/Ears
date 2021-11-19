@@ -195,6 +195,7 @@ class EarsFeaturesParserV0 {
 			wingMode = WingMode.NONE;
 		}
 		boolean animateWings = getMagicPixel(img, 9) != MagicPixel.RED;
+		boolean capeEnabled = (etc & 16) != 0;
 		return new EarsFeatures(
 				earMode, earAnchor,
 				protrusions.claws, protrusions.horn,
@@ -202,6 +203,7 @@ class EarsFeaturesParserV0 {
 				snoutOffset, snoutWidth, snoutHeight, snoutDepth,
 				chestSize,
 				wingMode, animateWings,
+				capeEnabled,
 				alfalfa);
 	}
 

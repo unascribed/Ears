@@ -48,7 +48,7 @@ public class LayerEars {
 		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 	
-	private final PartiallyUnmanagedEarsRenderDelegate<AbstractClientPlayer, ModelRenderer> delegate = new PartiallyUnmanagedEarsRenderDelegate<>() {
+	private final PartiallyUnmanagedEarsRenderDelegate<AbstractClientPlayer, ModelRenderer> delegate = new PartiallyUnmanagedEarsRenderDelegate<AbstractClientPlayer, ModelRenderer>() {
 		
 		@Override
 		protected boolean isVisible(ModelRenderer modelPart) {

@@ -41,7 +41,7 @@ public final class EarsStorage {
 	public static <T> T get(Object peer, Key<T> key) {
 		Map<Object, Map<Key<?>, Object>> stor = storage.get();
 		Map<Key<?>, Object> map = stor.get(peer);
-		if (map == null) return key.def;
+		if (map == null || !map.containsKey(key)) return key.def;
 		return (T)map.get(key);
 	}
 

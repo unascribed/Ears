@@ -101,6 +101,9 @@ class EarsFeaturesParserV1 {
 			boolean animateWings = wingMode == WingMode.NONE ? false : bis.readBoolean();
 			EarsLog.debug("Common:Features", "detect(...): Wing 3yte: {} (mode={} + animated={})", wingI, wingMode, animateWings);
 			
+			boolean capeEnabled = bis.readBoolean();
+			EarsLog.debug("Common:Features", "detect(...): Cape: {}", capeEnabled);
+			
 			return new EarsFeatures(
 					earMode, earAnchor,
 					claws, horn,
@@ -108,6 +111,7 @@ class EarsFeaturesParserV1 {
 					snoutOffset, snoutWidth, snoutHeight, snoutDepth,
 					chestSize,
 					wingMode, animateWings,
+					capeEnabled,
 					alfalfa);
 		} catch (IOException e) {
 			EarsLog.debug("Common:Features", "detect(...): Error while parsing v1 (Binary) data. Disabling", e);

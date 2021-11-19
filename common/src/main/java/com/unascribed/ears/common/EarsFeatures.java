@@ -59,6 +59,7 @@ public class EarsFeatures {
 	public final float chestSize;
 	public final WingMode wingMode;
 	public final boolean animateWings;
+	public final boolean capeEnabled;
 	
 	public final Alfalfa alfalfa;
 
@@ -81,6 +82,7 @@ public class EarsFeatures {
 		this.chestSize = 0;
 		this.wingMode = WingMode.NONE;
 		this.animateWings = true;
+		this.capeEnabled = false;
 		this.alfalfa = Alfalfa.NONE;
 	}
 	
@@ -91,6 +93,7 @@ public class EarsFeatures {
 			int snoutOffset, int snoutWidth, int snoutHeight, int snoutDepth,
 			float chestSize,
 			WingMode wingMode, boolean animateWings,
+			boolean capeEnabled,
 			Alfalfa alfalfa) {
 		this.enabled = true;
 		this.earMode = earMode;
@@ -110,6 +113,7 @@ public class EarsFeatures {
 		this.chestSize = chestSize;
 		this.wingMode = wingMode;
 		this.animateWings = animateWings;
+		this.capeEnabled = capeEnabled;
 		this.alfalfa = alfalfa;
 	}
 

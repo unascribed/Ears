@@ -99,22 +99,23 @@ SOFTWARE.
 			font-weight: normal;
 			font-size: 0.6em;
 		}
-		#skin, #wings {
+		.tex {
 			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEVmZmaZmZmoZ+Z2AAAAD0lEQVQIW2PkZ4TADxAIABIoBAXF3RsYAAAAAElFTkSuQmCC');
-		}
-		#skin {
 			image-rendering: -moz-crisp-edges;
 			image-rendering: crisp-edges;
 			image-rendering: pixelated;
+		}
+		#skin {
 			width: 128px;
 			height: 128px;
 		}
 		#wings {
-			image-rendering: -moz-crisp-edges;
-			image-rendering: crisp-edges;
-			image-rendering: pixelated;
 			width: 24px;
 			height: 24px;
+		}
+		#cape {
+			width: 40px;
+			height: 32px;
 		}
 		#three {
 			width: 512px;
@@ -205,7 +206,7 @@ SOFTWARE.
 		<input type="file" id="skin-upload" accept="image/png,.png"></input><br/><br/>
 		Alternatively, you can <button id="sample">load a sample skin</button> which will change to demonstrate any options you select below.<br/>
 		<div>
-		<canvas id="skin" width="64" height="64"></canvas>
+		<canvas id="skin" class="tex" width="64" height="64"></canvas>
 		</div>
 		<small>* This entire thing is client-sided. You're not actually uploading or downloading anything, those are just the words people are familiar with.</small>
 		<h2>Vanilla Skin Customization<br/>
@@ -364,6 +365,8 @@ SOFTWARE.
 					<input id="chest-size" type="range" disabled value="1" min="1" max="128" step="1">
 				</td>
 			</tr>
+		</table>
+		<table>
 			<tr>
 				<td>
 					<label for="wings-mode">Wings Mode</label>
@@ -377,7 +380,6 @@ SOFTWARE.
 						<option value="orange">Asymmetric Single (Right)</option>
 					</select>
 				</td>
-				<td style="text-align: left"><canvas id="wings" width="12" height="12"></canvas></td>
 			</tr>
 			<tr>
 				<td>
@@ -391,6 +393,7 @@ SOFTWARE.
 				</td>
 			</tr>
 		</table>
+		<canvas id="wings" class="tex" width="12" height="12"></canvas>
 		<table>
 			<tr>
 				<td></td>
@@ -401,6 +404,25 @@ SOFTWARE.
 			<tr>
 			<td></td>
 				<td style="text-align: left; vertical-align: top"><small>Must be 12x12</small></td>
+			</tr>
+		</table>
+		<br/>
+		<table>
+			<tr>
+				<td><input id="cape-enabled" disabled type="checkbox"><label for="cape-enabled"> Cape</label></td>
+			</tr>
+		</table>
+		<canvas id="cape" class="tex" width="20" height="16"></canvas>
+		<table>
+			<tr>
+				<td></td>
+				<td>
+					<input disabled type="file" id="cape-upload" accept="image/png,.png"></input><br/>
+				</td>
+			</tr>
+			<tr>
+			<td></td>
+				<td style="text-align: left; vertical-align: top"><small>Must be 20x16 (Ears format) or 64x32 (Mojang format)<br/>Mojang format capes will be converted to Ears format.</small></td>
 			</tr>
 		</table>
 		<br/>
@@ -445,6 +467,10 @@ SOFTWARE.
 			<li id="tall-ears-mode">Tall ears mode will not render</li>
 			<li id="wing-anim-off">Wing animations cannot be disabled</li>
 			</ul>
+		</div>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-142-notice">
+			<b><i>Selected options require new features added in v1.4.2.</i></b><br/>
+			Before v1.4.2, capes will not render.
 		</div>
 		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
@@ -498,12 +524,12 @@ SOFTWARE.
 	
 	let skinTexNeedsUpdate = false;
 	function updateDpr() {
-		let s = (64*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
-		$("#skin").style.width = s+"px";
-		$("#skin").style.height = s+"px";
-		s = (12*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
-		$("#wings").style.width = s+"px";
-		$("#wings").style.height = s+"px";
+		$$(".tex").forEach((e) => {
+			let w = (e.width*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
+			let h = (e.height*(3*Math.ceil(devicePixelRatio)))/devicePixelRatio;
+			e.style.width = w+"px";
+			e.style.height = h+"px";
+		});
 	}
 	function drawImage(ctx, img,
 			dx1, dy1, dx2, dy2,
@@ -561,17 +587,20 @@ SOFTWARE.
 	
 	let usingSample = false;
 	let usingSampleWing = false;
+	let usingSampleCape = false;
 	let earsElements = [];
 	let tailBends = [$("#tail-bend-0"), $("#tail-bend-1"), $("#tail-bend-2"), $("#tail-bend-3")];
 	let tailBendAngles = [$("#tail-bend-0-angle"), $("#tail-bend-1-angle"), $("#tail-bend-2-angle"), $("#tail-bend-3-angle")];
 	
 	function updateNotices() {
+		// TODO this is a huge mess
 		let req121 = $("#req-121-notice");
 		let req122 = $("#req-122-notice");
 		let req123 = $("#req-123-notice");
 		let req130 = $("#req-130-notice");
 		let req140 = $("#req-140-notice");
 		let req141 = $("#req-141-notice");
+		let req142 = $("#req-142-notice");
 		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
@@ -583,6 +612,7 @@ SOFTWARE.
 		req130.style.display = "none";
 		req140.style.display = "none";
 		req141.style.display = "none";
+		req142.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		bug140.style.display = "none";
@@ -653,14 +683,21 @@ SOFTWARE.
 		}
 		$("#req-130-and").style.display = req130Count > 1 ? "inline" : "none";
 		let wingsMode = $("#wings-mode").value;
+		let wingsEnabled = false;
 		if (wingsMode !== "red" && wingsMode !== "blue") {
 			req140.style.display = "block";
-		} else {
-			$("#alfalfa-notice-unneeded").style.display = "block";
+			wingsEnabled = true;
 		}
 		if ($("#wing-anim").value === "red") {
 			req141.style.display = "block";
 			$("#wing-anim-off").style.display = "list-item";
+		}
+		let capeEnabled = $("#cape-enabled").checked;
+		if (!capeEnabled && !wingsEnabled) {
+			$("#alfalfa-notice-unneeded").style.display = "block";
+		}
+		if (capeEnabled) {
+			req142.style.display = "block";
 		}
 	}
 	
@@ -696,9 +733,12 @@ SOFTWARE.
 	wireElement("wings-mode", 8);
 	wireElement("wing-upload", -1);
 	wireElement("wing-anim", 9);
+	wireElement("cape-enabled", -1);
+	wireElement("cape-upload", -1);
 	async function updateSkin() {
 		usingSample = false;
 		usingSampleWing = false;
+		usingSampleCape = false;
 		let files = $("#skin-upload").files;
 		if (!files || files.length == 0) return;
 		let file = files[0];
@@ -858,22 +898,30 @@ SOFTWARE.
 			rebuildQuads();
 			if (alfalfaData.wing) {
 				$("#wing-upload").value = null;
-				await new Promise((resolve, reject) => {
-					let img = new Image();
-					img.onload = () => {
-						let ctx = $("#wings").getContext("2d");
-						ctx.clearRect(0, 0, 12, 12);
-						ctx.drawImage(img, 0, 0, 12, 12, 0, 0, 12, 12);
-						resolve();
-					};
-					img.onerror = reject;
-					img.src = 'data:image/png;base64,'+btoa(alfalfaData.wing);
-				});
+				await copyFromAlfalfa("wing", "#wings");
+			}
+			if (alfalfaData.cape) {
+				$("#cape-upload").value = null;
+				await copyFromAlfalfa("cape", "#cape");
 			}
 			await rebuild();
 		} finally {
 			document.body.classList.remove("loading");
 		}
+	}
+	function copyFromAlfalfa(id, sel) {
+		return new Promise((resolve, reject) => {
+				let img = new Image();
+				img.onload = () => {
+					let canvas = $(sel);
+					let ctx = canvas.getContext("2d");
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+					resolve();
+				};
+				img.onerror = reject;
+				img.src = 'data:image/png;base64,'+btoa(alfalfaData[id]);
+			});
 	}
 	function defineCheat(cheat, func) {
 		Object.defineProperty(window, atob(cheat), {
@@ -918,18 +966,46 @@ SOFTWARE.
 			let ctx = $("#wings").getContext("2d");
 			ctx.clearRect(0, 0, 12, 12);
 			ctx.drawImage(bitmap, 0, 0);
-			encodeWingToAlfalfa();
+			encodeToAlfalfa("wing", "#wings");
 			await rebuild();
 		} finally {
 			document.body.classList.remove("loading");
 		}
 	}
-	function encodeWingToAlfalfa() {
-		if (!!window.alfalfaData || !window.alfalfaData.version) {
+	async function updateCape() {
+		usingSampleCape = false;
+		let files = $("#cape-upload").files;
+		if (!files || files.length == 0) return;
+		let file = files[0];
+		document.body.classList.add("loading");
+		try {
+			let bitmap = await createImageBitmap(file);
+			if (!((bitmap.width === 20 && bitmap.height === 16) || (bitmap.width === 64 && bitmap.height === 32))) {
+				alert("This doesn't look like an Ears cape or Mojang cape; the size is wrong. Needs to be 20x16 (Ears) or 64x32 (Mojang).");
+				$("#cape-upload").value = null;
+				return;
+			}
+			let ctx = $("#cape").getContext("2d");
+			ctx.clearRect(0, 0, 20, 16);
+			if (bitmap.height == 32) {
+				console.log("Converting Mojang cape.");
+				ctx.drawImage(bitmap, 1, 1, 10, 16, 0, 0, 10, 16);
+				ctx.drawImage(bitmap, 12, 1, 10, 16, 10, 0, 10, 16);
+			} else {
+				ctx.drawImage(bitmap, 0, 0);
+			}
+			encodeToAlfalfa("cape", "#cape");
+			await rebuild();
+		} finally {
+			document.body.classList.remove("loading");
+		}
+	}
+	function encodeToAlfalfa(id, sel) {
+		if (!window.alfalfaData || !window.alfalfaData.version) {
 			window.alfalfaData = {version:1};
 		}
-		let data = $("#wings").toDataURL('image/png');
-		window.alfalfaData.wing = atob(data.substr(data.indexOf(',')+1));
+		let data = $(sel).toDataURL('image/png');
+		window.alfalfaData[id] = atob(data.substr(data.indexOf(',')+1));
 		encodeAlfalfa();
 	}
 	$("#ears-enabled").addEventListener('input', () => {
@@ -1028,13 +1104,33 @@ SOFTWARE.
 					let wingsMode = $("#wings-mode").value;
 					if (wingsMode !== "red" && wingsMode !== "blue") {
 						wingsCtx.drawImage(img, 0, 192, 12, 12, 0, 0, 12, 12);
-						encodeWingToAlfalfa();
+						encodeToAlfalfa("wing", "#wings");
 					} else {
-						window.alfalfaData = {version:0};
+						delete window.alfalfaData.wing;
+						if (Object.keys(window.alfalfaData).length === 1) {
+							window.alfalfaData.version = 0;
+						}
 						encodeAlfalfa();
 					}
 				} else {
-					encodeWingToAlfalfa();
+					encodeToAlfalfa("wing", "#wings");
+				}
+				if (usingSampleCape) {
+					let capeCtx = $("#cape").getContext("2d");
+					capeCtx.clearRect(0, 0, 12, 12);
+					let capeEnabled = $("#cape-enabled").checked;
+					if (capeEnabled) {
+						capeCtx.drawImage(img, 12, 192, 20, 16, 0, 0, 20, 16);
+						encodeToAlfalfa("cape", "#cape");
+					} else {
+						delete window.alfalfaData.cape;
+						if (Object.keys(window.alfalfaData).length === 1) {
+							window.alfalfaData.version = 0;
+						}
+						encodeAlfalfa();
+					}
+				} else {
+					encodeToAlfalfa("cape", "#cape");
 				}
 				resolve();
 			};
@@ -1077,6 +1173,7 @@ SOFTWARE.
 	$("#sample").addEventListener('click', () => {
 		usingSample = true;
 		usingSampleWing = true;
+		usingSampleCape = true;
 		rebuild();
 	});
 	$("#slim-enabled").addEventListener("change", (e) => {
@@ -1167,7 +1264,7 @@ SOFTWARE.
 		scratch.data[3] = 255;
 		scratch.data[4] = $("#chest").checked ? $("#chest-size").value : 0;
 		scratch.data[5] = offset;
-		scratch.data[6] = 0;
+		scratch.data[6] = ($("#cape-enabled").checked ? 16 : 0);
 		scratch.data[7] = 255;
 		ctx.putImageData(scratch, 2, 33);
 		rebuild();
@@ -1183,11 +1280,19 @@ SOFTWARE.
 		updateSnoutAndEtcPixel();
 		rebuild();
 	});
+	$("#cape-enabled").addEventListener('input', () => {
+		updateSnoutAndEtcPixel();
+		rebuild();
+	});
 	$("#skin-upload").addEventListener('change', () => updateSkin());
 	$("#wing-upload").addEventListener('change', () => updateWing());
+	$("#cape-upload").addEventListener('change', () => updateCape());
 	$("#remove-alfalfa").addEventListener('click', () => {
 		if (usingSample && !usingSampleWing) {
 			usingSampleWing = true;
+		}
+		if (usingSample && !usingSampleCape) {
+			usingSampleCape = true;
 		}
 		$("#wings").getContext('2d').clearRect(0, 0, 12, 12);
 		window.alfalfaData = {version:0};
@@ -1253,10 +1358,16 @@ SOFTWARE.
 			$("#wings"), THREE.UVMapping,
 			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
 			THREE.NearestFilter, THREE.NearestFilter);
+		
+		let capeTex = new THREE.CanvasTexture(
+			$("#cape"), THREE.UVMapping,
+			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
+			THREE.NearestFilter, THREE.NearestFilter);
 			
 		let textures = {
 			skin: skinTex,
-			wing: wingsTex
+			wing: wingsTex,
+			cape: capeTex
 		}
 		
 		let mat = new THREE.MeshLambertMaterial({
@@ -1556,8 +1667,7 @@ SOFTWARE.
 			requestAnimationFrame(render);
 			
 			if (skinTexNeedsUpdate) {
-				skinTex.needsUpdate = true;
-				wingsTex.needsUpdate = true;
+				Object.values(textures).forEach((e) => e.needsUpdate = true);
 				skinTexNeedsUpdate = false;
 			}
 			
