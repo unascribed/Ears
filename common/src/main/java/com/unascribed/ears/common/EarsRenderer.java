@@ -321,6 +321,7 @@ class EarsRenderer {
 									delegate.rotate(90, 1, 0, 0);
 								}
 								int segments = features.tailSegments;
+								if (segments <= 0) segments = 1;
 								float[] angles = {vert ? 0 : baseAngle, features.tailBend1, features.tailBend2, features.tailBend3};
 								int segHeight = 12/segments;
 								for (int i = 0; i < segments; i++) {
