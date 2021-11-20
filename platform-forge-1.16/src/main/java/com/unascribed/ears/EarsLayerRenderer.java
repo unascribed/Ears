@@ -48,25 +48,21 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
-	private IRenderTypeBuffer.Impl scratch() {
-		return Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-	}
-	
 	@Override
 	public void render(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, scratch(), entity, light, LivingRenderer.getPackedOverlay(entity, 0));
+		delegate.render(m, vertexConsumers, entity, light, LivingRenderer.getPackedOverlay(entity, 0));
 	}
 	
 	public void renderLeftArm(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, scratch(), entity, light, LivingRenderer.getPackedOverlay(entity, 0), BodyPart.LEFT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingRenderer.getPackedOverlay(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(MatrixStack m, IRenderTypeBuffer vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, scratch(), entity, light, LivingRenderer.getPackedOverlay(entity, 0), BodyPart.RIGHT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingRenderer.getPackedOverlay(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
-	private final IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer.Impl, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer> delegate = new IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer.Impl, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer>() {
+	private final IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer> delegate = new IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelRenderer> decideModelPart(Decider<BodyPart, ModelRenderer> d) {
@@ -149,7 +145,9 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		
 		@Override
 		protected void commitQuads() {
-			vcp.finish();
+			if (vcp instanceof IRenderTypeBuffer.Impl) {
+				((IRenderTypeBuffer.Impl)vcp).finish();
+			}
 		}
 		
 		@Override

@@ -42,27 +42,23 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
-	private MultiBufferSource.BufferSource scratch() {
-		return Minecraft.getInstance().renderBuffers().bufferSource();
-	}
-	
 	@Override
 	public void render(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
 	}
 	
 	public void renderLeftArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
 	// official Mojang mappings continue to baffle me. PoseStack????????????
 	// MCP mappings were bad but they never managed to make me irrationally angry
-	private final IndirectEarsRenderDelegate<PoseStack, MultiBufferSource.BufferSource, VertexConsumer, AbstractClientPlayer, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
+	private final IndirectEarsRenderDelegate<PoseStack, MultiBufferSource, VertexConsumer, AbstractClientPlayer, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -145,7 +141,9 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 		
 		@Override
 		protected void commitQuads() {
-			vcp.endLastBatch();
+			if (vcp instanceof MultiBufferSource.BufferSource) {
+				((MultiBufferSource.BufferSource)vcp).endLastBatch();
+			}
 		}
 		
 		@Override

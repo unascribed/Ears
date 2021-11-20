@@ -42,25 +42,21 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		EarsLog.debug("Platform:Renderer", "Constructed");
 	}
 	
-	private VertexConsumerProvider.Immediate scratch() {
-		return MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-	}
-	
 	@Override
 	public void render(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlay(entity, 0));
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0));
 	}
 	
 	public void renderLeftArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.LEFT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, scratch(), entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.RIGHT_ARM);
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
-	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider.Immediate, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
+	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -141,8 +137,11 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(light).normal(mn, nX, nY, nZ).next();
 		}
 		
+		@Override
 		protected void commitQuads() {
-			vcp.drawCurrentLayer();
+			if (vcp instanceof VertexConsumerProvider.Immediate) {
+				((VertexConsumerProvider.Immediate)vcp).drawCurrentLayer();
+			}
 		}
 		
 		@Override
