@@ -181,13 +181,18 @@ class EarsFeaturesParserV0 {
 			EarsLog.debug("Common:Features", "detect(...): The snout pixel is #{} and the etc pixel is #{} - snout geometry is {}x{}x{}+0,{}", upperHex24Dbg(snout), upperHex24Dbg(etc), snoutWidth, snoutHeight, snoutDepth, snoutOffset);
 		}
 		float chestSize = 0;
+		boolean capeEnabled = false;
 		if (MagicPixel.from(etc) == MagicPixel.BLUE) {
 			EarsLog.debug("Common:Features", "detect(...): The etc pixel is Magic Blue, pretending it's black");
 		} else {
 			// leave the upper half of the range in case we want it for something later
 			chestSize = ((etc&0x00FF0000)>>16)/128f;
 			if (chestSize > 1) chestSize = 1;
-			EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - {}% size", upperHex24Dbg(etc), (int)(chestSize*100));
+			capeEnabled = (etc & 16) != 0;
+			if (chestSize > 0) {
+				EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - {}% size", upperHex24Dbg(etc), (int)(chestSize*100));
+			}
+			EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - cape enabled: {}", upperHex24Dbg(etc), capeEnabled);
 		}
 		WingMode wingMode = getMagicPixel(img, 8, WING_MODE_BY_MAGIC, WingMode.NONE, "wing mode");
 		if (wingMode != WingMode.NONE && !alfalfa.data.containsKey("wing")) {
@@ -195,7 +200,6 @@ class EarsFeaturesParserV0 {
 			wingMode = WingMode.NONE;
 		}
 		boolean animateWings = getMagicPixel(img, 9) != MagicPixel.RED;
-		boolean capeEnabled = (etc & 16) != 0;
 		return new EarsFeatures(
 				earMode, earAnchor,
 				protrusions.claws, protrusions.horn,
