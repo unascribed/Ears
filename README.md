@@ -3,6 +3,8 @@
   <h3 align="center">Faithful fancy fashion features for fuzzy folk.</h3>
 </p>
 
+**The GitHub repository for Ears is now a [mirror of the Gitea repository](https://git.sleeping.town/unascribed/Ears).** GitHub-side issues will still be responded to.
+
 Ears is a player model customization mod available for a dizzying number of Minecraft versions.
 
 Get it and/or learn more at [CurseForge](https://www.curseforge.com/minecraft/mc-mods/ears), [Modrinth](https://modrinth.com/mod/ears),
