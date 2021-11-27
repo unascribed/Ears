@@ -30,7 +30,6 @@ import com.unascribed.ears.common.util.Decider;
 public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements EarsRenderDelegate {
 	
 	protected abstract EarsFeatures getEarsFeatures();
-	public abstract boolean isSlim();
 	
 	protected TPeer peer;
 	protected EarsFeatures feat;
