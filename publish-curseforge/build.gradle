@@ -98,7 +98,6 @@ switch (target) {
 	case "forge-1.17":
 		prefix = "FORGE 1.17"
 		stability = 'beta'
-		requires = ['mixinbootstrap']
 		gameVersions = ['Forge', '1.17', '1.17.1']
 		break
 	case "rift-1.13":
