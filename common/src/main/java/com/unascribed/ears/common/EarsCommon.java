@@ -92,7 +92,7 @@ public class EarsCommon {
 	}
 	
 	public static boolean shouldSuppressElytra(EarsFeatures features) {
-		return features.animateWings && features.wingMode != WingMode.NONE;
+		return features != null && features.animateWings && features.wingMode != WingMode.NONE;
 	}
 	
 	public static String getConfigPreviewUrl() {
