@@ -113,7 +113,8 @@ public class EarsFeatures {
 		this.chestSize = chestSize;
 		this.wingMode = wingMode;
 		this.animateWings = animateWings;
-		this.capeEnabled = capeEnabled;
+		this.capeEnabled = false; // TODO do we want this?
+//		this.capeEnabled = capeEnabled;
 		this.alfalfa = alfalfa;
 	}
 
