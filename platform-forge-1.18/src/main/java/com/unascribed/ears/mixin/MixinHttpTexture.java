@@ -34,7 +34,9 @@ public abstract class MixinHttpTexture extends SimpleTexture implements EarsFeat
 	private void load(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		NativeImage cur = ci.getReturnValue();
-		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
+		if (cur != null) {
+			earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
+		}
 	}
 	
 	private static boolean ears$reentering;

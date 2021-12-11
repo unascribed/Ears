@@ -34,7 +34,9 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 	private void loadTexture(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		NativeImage cur = ci.getReturnValue();
-		earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
+		if (cur != null) {
+			earsFeatures = EarsFeatures.detect(new RawEarsImage(cur.makePixelArray(), cur.getWidth(), cur.getHeight(), false), EarsStorage.get(cur, EarsStorage.Key.ALFALFA));
+		}
 	}
 	
 	private static boolean ears$reentering;
