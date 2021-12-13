@@ -12,9 +12,11 @@ for j in 8 11 17; do
 		arch=$(uname -m)
 		case $arch in
 			x86_64) arch=x64 ;;
+			i386) arch=x86 ;;
 			i686) arch=x86 ;;
 			armv7*) arch=arm ;;
 			armv8*) arch=aarch64 ;;
+			aarch64*) arch=aarch64 ;;
 			ppc*le) arch=ppc64le ;;
 			ppc*) arch=ppc64 ;;
 			s390*) arch=s390x ;;
