@@ -5,10 +5,52 @@ if [[ "$(uname -s)" =~ ^CYGWIN || "$(uname -s)" =~ ^MINGW || "$(uname -s)" =~ ^M
 	sleep 3
 fi
 
+needShift=
+for j in 8 11 17; do
+	if [[ "$1" == "--download" && ! -e ".java/$j/bin/java" ]]; then
+		needShift=1
+		arch=$(uname -m)
+		case $arch in
+			x86_64) arch=x64 ;;
+			i686) arch=x86 ;;
+			armv7*) arch=arm ;;
+			armv8*) arch=aarch64 ;;
+			ppc*le) arch=ppc64le ;;
+			ppc*) arch=ppc64 ;;
+			s390*) arch=s390x ;;
+			riscv*) arch=riscv64 ;;
+			*) echo "Unknown architecture; please download Java yourself" && exit 2 ;;
+		esac
+		mkdir -p .java/tmp
+		echo "Downloading Eclipse Temurin $j..."
+		curl -L "https://api.adoptium.net/v3/binary/latest/$j/ga/linux/$arch/jdk/hotspot/normal/eclipse?project=jdk" -o .java/tmp/$j.tar.gz || (echo "Failed to download Java $j for $arch" && exit 1)
+		rm -rf .java/tmp/$j .java/$j
+		mkdir -p .java/tmp/$j
+		cd .java/tmp/$j
+		echo "Extracting Eclipse Temurin $j..."
+		tar xf ../$j.tar.gz || (echo "Failed to extract Java $j" && exit 1)
+		mv * ../../$j
+		cd ../../..
+		rm -rf .java/tmp
+	fi
+	if [ -d ".java/$j" ]; then
+		export JAVA${j}_HOME=$(pwd)/.java/$j
+	fi
+done
+
+if [ -d ".java/17" ]; then
+	export JAVA16_HOME=$JAVA17_HOME
+fi
+
+if [ "$needShift" == 1 ]; then
+	shift
+fi
+
 if [[ -z "$JAVA8_HOME" || -z "$JAVA11_HOME" || -z "$JAVA17_HOME" ]]; then
 	echo "Building Ears requires Java 8, Java 11, and Java 17." 1>&2
 	echo "Please install them and set the JAVA8_HOME, JAVA11_HOME, and JAVA17_HOME env vars." 1>&2
 	echo "You can get all three of these from https://adoptium.net/" 1>&2
+	echo "Alternatively, run this script again with --download as the first argument to do it for you. (This will only work on Linux, and will download and execute binaries from adoptium.net.)" 1>&2
 	exit 1
 fi
 
