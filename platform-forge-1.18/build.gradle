@@ -17,7 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group = 'com.unascribed.ears'
-archivesBaseName = 'ears-forge-1.17'
+archivesBaseName = 'ears-forge-1.18'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = 17
 

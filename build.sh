@@ -32,7 +32,7 @@ check_java() {
 	if [ -n "$3" ]; then
 		echo $v |grep -q "^$3" >/dev/null && color=33
 	fi
-	highlighted=$(echo $highlighted |sed "s/31/$color/")
+	highlighted=$(echo $highlighted |sed "s/31/$color/" |sed 's/1.8/ 8/')
 	echo "Java $1: $highlighted"
 }
 
