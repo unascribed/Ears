@@ -8,7 +8,7 @@ if [ ! -s "changelog.html" ]; then
 	exit 1
 fi
 
-common="fabric-1.8 fabric-1.14 fabric-1.16 fabric-1.17 forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17"
+common="fabric-1.8 fabric-1.14 fabric-1.16 fabric-1.17 forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17 forge-1.18"
 curse="$common rift-1.13"
 modrinth="$common fabric-b1.7.3"
 

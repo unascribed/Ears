@@ -37,7 +37,7 @@ switch (target) {
 		prefix = "FABRIC 1.17/18"
 		stability = 'release'
 		loaders = ['fabric']
-		gameVersions = ['1.17', '1.17.1', '21w37a', '21w38a', '21w39a', '21w40a']
+		gameVersions = ['1.17', '1.17.1', '1.18', '1.18.1']
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
@@ -110,6 +110,12 @@ switch (target) {
 		stability = 'beta'
 		loaders = ['forge']
 		gameVersions = ['1.17', '1.17.1']
+		break
+	case "forge-1.18":
+		prefix = "FORGE 1.18"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.18', '1.18.1']
 		break
 	case "fabric-b1.7.3":
 		prefix = "FABRIC b1.7.3"

@@ -408,6 +408,7 @@ SOFTWARE.
 			</tr>
 		</table>
 		<br/>
+		<div style="display: none">
 		<table>
 			<tr>
 				<td><input id="cape-enabled" disabled type="checkbox"><label for="cape-enabled"> Cape</label></td>
@@ -426,6 +427,7 @@ SOFTWARE.
 				<td style="text-align: left; vertical-align: top"><small>Must be 20x16 (Ears format) or 64x32 (Mojang format)<br/>Mojang format capes will be converted to Ears format.</small></td>
 			</tr>
 		</table>
+		</div>
 		<br/>
 		<div class="notice info" style="display: none;margin-bottom:8px" id="alfalfa-notice">
 			<b><i>There is data encoded in the alpha channel of the skin.</i></b><br/>
@@ -469,9 +471,9 @@ SOFTWARE.
 			<li id="wing-anim-off">Wing animations cannot be disabled</li>
 			</ul>
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-142-notice">
-			<b><i>Selected options require new features added in v1.4.2.</i></b><br/>
-			Before v1.4.2, capes will not render.
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-143-notice">
+			<b><i>Selected options require new features added in v1.4.3.</i></b><br/>
+			Before v1.4.3, capes will not render.
 		</div>
 		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
@@ -601,7 +603,7 @@ SOFTWARE.
 		let req130 = $("#req-130-notice");
 		let req140 = $("#req-140-notice");
 		let req141 = $("#req-141-notice");
-		let req142 = $("#req-142-notice");
+		let req143 = $("#req-143-notice");
 		let req124 = $("#req-124-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
@@ -613,7 +615,7 @@ SOFTWARE.
 		req130.style.display = "none";
 		req140.style.display = "none";
 		req141.style.display = "none";
-		req142.style.display = "none";
+		req143.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		bug140.style.display = "none";
@@ -698,7 +700,7 @@ SOFTWARE.
 			$("#alfalfa-notice-unneeded").style.display = "block";
 		}
 		if (capeEnabled) {
-			req142.style.display = "block";
+			req143.style.display = "block";
 		}
 	}
 	

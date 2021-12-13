@@ -300,7 +300,11 @@ compileJava.doFirst {
 publishing {
 	repositories {
 		maven {
-			url "file:/mnt/unascribed.com/_subdomains/repo"
+			url "https://repo-api.sleeping.town/"
+			credentials {
+				username project.hasProperty("publish-username") ? project.getProperty("publish-username") : null
+				password project.hasProperty("publish-password") ? project.getProperty("publish-password") : null
+			}
 		}
 	}
 	publications {

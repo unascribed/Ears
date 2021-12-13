@@ -3,10 +3,11 @@
 normal="fabric-1.8 fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3 rift-1.13"
 needsJ8="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
+needsJ17="forge-1.18"
 # these ones can't be built in parallel
 special="nfc nsss forge-1.2 forge-1.4 forge-1.5"
 
-toBuild=" $normal $needsJ8 $needsJ16 $special "
+toBuild=" $normal $needsJ8 $needsJ16 $needsJ17 $special "
 if [ -n "$1" ]; then
 	toBuild=" $@ "
 fi
@@ -43,7 +44,12 @@ echo "Building $count platform$s..."
 build $normal
 build $nobodyCares
 JAVA_HOME=$JAVA8_HOME build $needsJ8
-JAVA_HOME=$JAVA16_HOME build $needsJ16
+if [ -n "$JAVA16_HOME" ]; then
+	JAVA_HOME=$JAVA16_HOME build $needsJ16
+else
+	JAVA_HOME=$JAVA17_HOME build $needsJ16
+fi
+JAVA_HOME=$JAVA17_HOME build $needsJ16
 wait
 for proj in $special; do
 	(
