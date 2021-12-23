@@ -167,7 +167,7 @@ public class LayerEars {
 		
 		@Override
 		public boolean needsSecondaryLayersDrawn() {
-			return true;
+			return !peer.getHasActivePotion();
 		}
 
 		@Override

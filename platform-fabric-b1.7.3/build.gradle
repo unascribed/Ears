@@ -102,3 +102,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 build.doLast {
 	file(shadowJar.archivePath).delete()
 }
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

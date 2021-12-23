@@ -71,6 +71,7 @@ public class Ears {
 	}
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
+		if (img == null) return;
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));

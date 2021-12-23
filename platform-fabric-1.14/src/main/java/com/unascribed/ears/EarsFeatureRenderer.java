@@ -20,7 +20,6 @@ import net.minecraft.client.model.Box;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.PlayerModelPart;
@@ -93,6 +92,9 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		
 		@Override
 		protected void doAnchorTo(BodyPart part, ModelPart modelPart) {
+			if (peer.isInSneakingPose() && permittedBodyPart == null) {
+				GlStateManager.translatef(0, 0.2f, 0);
+			}
 			modelPart.applyTransform(1/16f);
 			Box cuboid = modelPart.boxes.get(0);
 			GlStateManager.scalef(1/16f, 1/16f, 1/16f);

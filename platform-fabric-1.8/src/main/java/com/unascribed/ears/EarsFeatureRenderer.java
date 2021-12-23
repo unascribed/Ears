@@ -107,17 +107,13 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		
 		@Override
 		protected void doAnchorTo(BodyPart part, ModelPart modelPart) {
+			if (peer.isSneaking() && permittedBodyPart == null) {
+				GlStateManager.translatef(0, 0.2f, 0);
+			}
 			modelPart.method_3106(1/16f);
 			ModelBox cuboid = modelPart.field_3941.get(0);
 			GlStateManager.scalef(1/16f, 1/16f, 1/16f);
 			GlStateManager.translatef(cuboid.minX, cuboid.maxY, cuboid.minZ);
-			if (peer.isSneaking()) {
-				if (part == BodyPart.LEFT_LEG || part == BodyPart.RIGHT_LEG) {
-					GlStateManager.translated(0, 0.1875, 0);
-				} else {
-					GlStateManager.translated(0, 0.2125, 0);
-				}
-			}
 		}
 		
 		@Override

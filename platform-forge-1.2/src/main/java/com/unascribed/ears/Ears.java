@@ -152,6 +152,7 @@ public class Ears {
 	}
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
+		if (img == null) return;
 		EarsLog.debug("Platform:Inject", "Process player skin");
 		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {

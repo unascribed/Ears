@@ -93,17 +93,13 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		
 		@Override
 		protected void doAnchorTo(BodyPart part, ModelRenderer modelPart) {
+			if (peer.isSneaking() && permittedBodyPart == null) {
+				GlStateManager.translate(0, 0.2f, 0);
+			}
 			modelPart.postRender(1/16f);
 			ModelBox cuboid = modelPart.cubeList.get(0);
 			GlStateManager.scale(1/16f, 1/16f, 1/16f);
 			GlStateManager.translate(cuboid.posX1, cuboid.posY2, cuboid.posZ1);
-			if (peer.isSneaking()) {
-				if (part == BodyPart.LEFT_LEG || part == BodyPart.RIGHT_LEG) {
-					GlStateManager.translate(0, 0.1875f, 0);
-				} else {
-					GlStateManager.translate(0, 0.2125f, 0);
-				}
-			}
 		}
 		
 		@Override

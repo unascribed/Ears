@@ -249,3 +249,8 @@ def parseConfig(File config) {
 		return (new ConfigSlurper().parse(prop))
 	}
 }
+
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}
