@@ -179,7 +179,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 
 		@Override
 		public float getTime() {
-			return peer.tickCount+Minecraft.getInstance().getDeltaFrameTime();
+			return peer.tickCount+Minecraft.getInstance().getFrameTime();
 		}
 
 		@Override
@@ -214,52 +214,52 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 
 		@Override
 		public float getHorizontalSpeed() {
-			return EarsCommon.lerpDelta(peer.walkDistO, peer.walkDist, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.walkDistO, peer.walkDist, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public float getLimbSwing() {
-			return EarsCommon.lerpDelta(peer.animationSpeedOld, peer.animationSpeed, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.animationSpeedOld, peer.animationSpeed, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public float getStride() {
-			return EarsCommon.lerpDelta(peer.oBob, peer.bob, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.oBob, peer.bob, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public float getBodyYaw() {
-			return EarsCommon.lerpDelta(peer.yBodyRotO, peer.yBodyRot, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.yBodyRotO, peer.yBodyRot, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getCapeX() {
-			return EarsCommon.lerpDelta(peer.xCloakO, peer.xCloak, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.xCloakO, peer.xCloak, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getCapeY() {
-			return EarsCommon.lerpDelta(peer.yCloakO, peer.yCloak, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.yCloakO, peer.yCloak, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getCapeZ() {
-			return EarsCommon.lerpDelta(peer.zCloakO, peer.zCloak, Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.zCloakO, peer.zCloak, Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getX() {
-			return EarsCommon.lerpDelta(peer.xOld, peer.getX(), Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.xOld, peer.getX(), Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getY() {
-			return EarsCommon.lerpDelta(peer.yOld, peer.getY(), Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.yOld, peer.getY(), Minecraft.getInstance().getFrameTime());
 		}
 
 		@Override
 		public double getZ() {
-			return EarsCommon.lerpDelta(peer.zOld, peer.getZ(), Minecraft.getInstance().getDeltaFrameTime());
+			return EarsCommon.lerpDelta(peer.zOld, peer.getZ(), Minecraft.getInstance().getFrameTime());
 		}
 	};
 }
