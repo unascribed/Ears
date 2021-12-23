@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
@@ -179,6 +180,20 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		@Override
 		protected void drawQuad() {
 			Tessellator.getInstance().draw();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.activeTexture(GLX.GL_TEXTURE1);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture();
+			}
+			GlStateManager.activeTexture(GLX.GL_TEXTURE0);
 		}
 		
 		@Override

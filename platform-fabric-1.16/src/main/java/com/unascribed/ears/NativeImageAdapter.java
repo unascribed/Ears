@@ -1,6 +1,8 @@
 package com.unascribed.ears;
 
 import com.unascribed.ears.common.SwappedEarsImage;
+import com.unascribed.ears.common.WritableEarsImage;
+
 import net.minecraft.client.texture.NativeImage;
 
 public class NativeImageAdapter extends SwappedEarsImage {
@@ -30,7 +32,13 @@ public class NativeImageAdapter extends SwappedEarsImage {
 	public int getWidth() {
 		return img.getWidth();
 	}
-	
+
+	@Override
+	public WritableEarsImage copy() {
+		NativeImage copy = new NativeImage(img.getFormat(), img.getWidth(), img.getHeight(), false);
+		copy.copyFrom(img);
+		return new NativeImageAdapter(copy);
+	}
 	
 	
 }

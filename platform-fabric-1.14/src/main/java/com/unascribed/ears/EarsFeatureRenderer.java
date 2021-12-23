@@ -2,6 +2,8 @@ package com.unascribed.ears;
 
 import java.io.IOException;
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -18,6 +20,7 @@ import net.minecraft.client.model.Box;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.PlayerModelPart;
@@ -172,6 +175,20 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		@Override
 		protected void drawQuad() {
 			Tessellator.getInstance().draw();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.activeTexture(GLX.GL_TEXTURE1);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture();
+			}
+			GlStateManager.activeTexture(GLX.GL_TEXTURE0);
 		}
 		
 		@Override

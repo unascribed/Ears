@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.AdvancedOpenGlManager;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
@@ -201,6 +202,20 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		@Override
 		protected void drawQuad() {
 			Tessellator.getInstance().draw();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.activeTexture(AdvancedOpenGlManager.lightmapTextureUnit);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture();
+			}
+			GlStateManager.activeTexture(AdvancedOpenGlManager.textureUnit);
 		}
 		
 		@Override

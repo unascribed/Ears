@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
 
+import org.lwjgl.opengl.GL11;
+
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -16,6 +18,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -100,6 +103,18 @@ public class LayerEars {
 		}
 		
 		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+			if (emissive) {
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+			} else {
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+			}
+			OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+		}
+		
+		@Override
 		protected void drawQuad() {
 			Tessellator.instance.draw();
 		}
@@ -153,7 +168,7 @@ public class LayerEars {
 		
 		@Override
 		public boolean needsSecondaryLayersDrawn() {
-			return true;
+			return !peer.isInvisible();
 		}
 
 		@Override

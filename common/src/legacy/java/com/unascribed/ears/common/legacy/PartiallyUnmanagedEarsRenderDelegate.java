@@ -62,4 +62,14 @@ public abstract class PartiallyUnmanagedEarsRenderDelegate<TPeer, TModelPart> ex
 		glEnable(GL_TEXTURE_2D);
 	}
 	
+	@Override
+	public void setEmissive(boolean emissive) {
+		super.setEmissive(emissive);
+		if (emissive) {
+			glDisable(GL_LIGHTING);
+		} else {
+			glEnable(GL_LIGHTING);
+		}
+	}
+	
 }

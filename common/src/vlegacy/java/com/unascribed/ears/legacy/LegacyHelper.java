@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.legacy.mcauthlib.data.GameProfile;
 import com.unascribed.ears.legacy.mcauthlib.service.ProfileService;
 import com.unascribed.ears.legacy.mcauthlib.service.SessionService;
@@ -49,18 +50,83 @@ public class LegacyHelper {
 	
 	private static final Set<UUID> slimUsers = Collections.synchronizedSet(new HashSet<UUID>());
 	private static final Map<UUID, String> skinUrls = Collections.synchronizedMap(new HashMap<UUID, String>());
+	private static final Set<UUID> beingLookedUp = Collections.synchronizedSet(new HashSet<UUID>());
+	private static final Set<String> namesBeingLookedUp = Collections.synchronizedSet(new HashSet<String>());
 	
 	private static final Map<String, CacheEntry> cache = Collections.synchronizedMap(new HashMap<String, CacheEntry>());
 	
 	private static boolean loaded;
 	
-	public static boolean isSlimArms(String username) {
-		if (!cache.containsKey(username)) return false;
-		return slimUsers.contains(getUuid(username));
+	/**
+	 * Does not block. May start a new thread to perform a lookup.
+	 */
+	public static void ensureLookedUpAsynchronously(final String username) {
+		if (cache.containsKey(username) || namesBeingLookedUp.contains(username)) return;
+		namesBeingLookedUp.add(username);
+		Thread t = new Thread("Ears lookup thread ("+username+")") {
+			@Override
+			public void run() {
+				try {
+					getSkinUrl(username);
+					namesBeingLookedUp.remove(username);
+				} catch (Throwable t) {
+					EarsLog.debug("Common", "Error while looking up {}", username, t);
+				}
+			}
+		};
+		t.setDaemon(true);
+		t.start();
 	}
 	
+	/**
+	 * Does not block. May start a new thread to perform a lookup.
+	 */
+	public static void ensureLookedUpAsynchronously(final UUID uuid, final String username) {
+		if (skinUrls.containsKey(uuid) || beingLookedUp.contains(uuid)) return;
+		beingLookedUp.add(uuid);
+		Thread t = new Thread("Ears lookup thread ("+uuid+")") {
+			@Override
+			public void run() {
+				try {
+					getSkinUrl(uuid, username);
+					beingLookedUp.remove(uuid);
+				} catch (Throwable t) {
+					EarsLog.debug("Common", "Error while looking up {}", uuid, t);
+				}
+			}
+		};
+		t.setDaemon(true);
+		t.start();
+	}
+	
+	/**
+	 * Does not block. If getSkinUrl has not been used, {@link #ensureLookedUpAsynchronously} must
+	 * be called.
+	 */
+	public static boolean isSlimArms(String username) {
+		if (!cache.containsKey(username)) return false;
+		return isSlimArms(getUuid(username));
+	}
+	
+	/**
+	 * Does not block. If getSkinUrl has not been used, {@link #ensureLookedUpAsynchronously} must
+	 * be called.
+	 */
+	public static boolean isSlimArms(UUID uuid) {
+		return slimUsers.contains(uuid);
+	}
+	
+	/**
+	 * May block.
+	 */
 	public static String getSkinUrl(String username) {
-		UUID id = getUuid(username);
+		return getSkinUrl(getUuid(username), username);
+	}
+	
+	/**
+	 * May block.
+	 */
+	public static String getSkinUrl(UUID id, String username) {
 		if (!skinUrls.containsKey(id)) {
 			try {
 				GameProfile profile = new GameProfile(id, username);

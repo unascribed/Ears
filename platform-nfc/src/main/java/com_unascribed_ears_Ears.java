@@ -1,9 +1,12 @@
 import static org.lwjgl.opengl.GL11.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import javax.imageio.ImageIO;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
@@ -85,7 +88,8 @@ public class com_unascribed_ears_Ears {
 	
 	public static void checkSkin(String url, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "checkSkin({}, {})", url, img);
-		earsSkinFeatures.put(url, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
+		earsSkinFeatures.put(url, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public void render(ds render, gs entity, float partialTicks) {

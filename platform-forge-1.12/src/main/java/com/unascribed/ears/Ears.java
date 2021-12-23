@@ -1,12 +1,15 @@
 package com.unascribed.ears;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import javax.imageio.ImageIO;
 
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
@@ -69,7 +72,8 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
+		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public static void addLayer(RenderPlayer rp) {

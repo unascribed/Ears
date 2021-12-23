@@ -113,7 +113,7 @@ build() {
 			(
 				cd platform-$proj
 				rm -f build-ok
-				TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
+				TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok && echo "Built $proj successfully"
 				rm -f build/libs/*-dev.jar
 			) &
 		fi

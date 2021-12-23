@@ -1,6 +1,7 @@
 package com.unascribed.ears;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -47,7 +48,8 @@ public class EarsDownloadThread {
 					}
 
 					EarsLog.debug("Platform:Inject", "Process player skin");
-					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa));
+					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
+							data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 
 					return;
 				}

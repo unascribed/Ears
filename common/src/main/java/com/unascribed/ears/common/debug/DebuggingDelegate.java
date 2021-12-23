@@ -228,5 +228,11 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		EarsLog.debug("Platform:Renderer:Delegate", "getCapeZ() -> {}", t);
 		return t;
 	}
+
+	@Override
+	public void setEmissive(boolean emissive) {
+		EarsLog.debug("Platform:Renderer:Delegate", "setEmissive({})", emissive);
+		delegate.setEmissive(emissive);
+	}
 	
 }

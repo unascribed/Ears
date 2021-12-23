@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
@@ -136,11 +137,15 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 			}
 		}
 
+		private final Matrix3f IDENTITY3 = new Matrix3f(); {
+			IDENTITY3.setIdentity();
+		}
+		
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
 			Matrix4f mm = matrices.getLast().getMatrix();
-			Matrix3f mn = matrices.getLast().getNormal();
-			vc.pos(mm, x, y, z).color(r, g, b, a).tex(u, v).overlay(overlay).lightmap(light).normal(mn, nX, nY, nZ).endVertex();
+			Matrix3f mn = emissive ? IDENTITY3 : matrices.getLast().getNormal();
+			vc.pos(mm, x, y, z).color(r, g, b, a).tex(u, v).overlay(overlay).lightmap(emissive ? LightTexture.packLight(15, 15) : light).normal(mn, nX, nY, nZ).endVertex();
 		}
 		
 		@Override

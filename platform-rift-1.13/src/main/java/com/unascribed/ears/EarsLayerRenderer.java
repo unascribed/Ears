@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -176,6 +177,20 @@ public class EarsLayerRenderer implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
 			Tessellator.getInstance().getBuffer().pos(x, y, z).tex(u, v).normal(nX, nY, nZ).endVertex();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE1);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture2D();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture2D();
+			}
+			GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE0);
 		}
 
 		@Override

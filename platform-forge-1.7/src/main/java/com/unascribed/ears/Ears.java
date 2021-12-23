@@ -3,6 +3,7 @@ package com.unascribed.ears;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
@@ -10,20 +11,14 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
+import javax.imageio.ImageIO;
+
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Iterables;
-import com.google.common.io.BaseEncoding;
+import com.unascribed.ears.legacy.LegacyHelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -167,38 +162,13 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
+		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
-		boolean slim = false;
-		PropertyMap props = player.getGameProfile().getProperties();
-		if (props.containsKey("textures")) {
-			if (props.containsKey("com.unascribed.ears.legacySlim")) {
-				Property p = Iterables.getFirst(props.get("com.unascribed.ears.legacySlim"), null);
-				slim = (p != null && p.getValue().equals("true"));
-			} else {
-				Property p = Iterables.getFirst(props.get("textures"), null);
-				if (p != null) {
-					JsonObject payload = new Gson().fromJson(new String(BaseEncoding.base64().decode(p.getValue()), Charsets.UTF_8), JsonObject.class);
-					// aaaaaAAAAAAAAAAAAAAA
-					// where's Jankson's recursiveGet when you need it
-					if (payload.has("textures")) {
-						JsonElement ele = payload.get("textures");
-						if (ele.isJsonObject() && ele.getAsJsonObject().has("SKIN")) {
-							JsonElement skin = ele.getAsJsonObject().get("SKIN");
-							if (skin.isJsonObject() && skin.getAsJsonObject().has("metadata")) {
-								JsonElement meta = skin.getAsJsonObject().get("metadata");
-								if (meta.isJsonObject() && meta.getAsJsonObject().has("model")) {
-									slim = "slim".equals(meta.getAsJsonObject().get("model").getAsString());
-								}
-							}
-						}
-					}
-					props.put("com.unascribed.ears.legacySlim", new Property("com.unascribed.ears.legacySlim", slim ? "true" : "false"));
-				}
-			}
-		}
+		LegacyHelper.ensureLookedUpAsynchronously(player.getGameProfile().getId(), player.getGameProfile().getName());
+		boolean slim = LegacyHelper.isSlimArms(player.getGameProfile().getId());
 		if (slim) {
 			rp.modelBipedMain.bipedLeftArm = slimLeftArm;
 			rp.modelBipedMain.bipedRightArm = slimRightArm;

@@ -1,6 +1,12 @@
 package com.unascribed.ears.common.legacy;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.plaf.basic.BasicViewportUI;
 
 import com.unascribed.ears.common.WritableEarsImage;
 
@@ -38,6 +44,13 @@ public class AWTEarsImage implements WritableEarsImage {
 	@Override
 	public String toString() {
 		return "AWTEarsImage["+getWidth()+"x"+getHeight()+", delegate="+delegate+"]";
+	}
+	
+	@Override
+	public WritableEarsImage copy() {
+		WritableRaster raster = delegate.getRaster().createCompatibleWritableRaster();
+		delegate.copyData(raster);
+		return new AWTEarsImage(new BufferedImage(delegate.getColorModel(), raster, delegate.isAlphaPremultiplied(), null));
 	}
 	
 }

@@ -15,7 +15,7 @@ class EarsFeaturesParserV1 {
 
 	public static final int MAGIC = 0xEA2501; // EARS01
 	
-	public static EarsFeatures parse(EarsImage img, Alfalfa alfalfa) {
+	public static EarsFeatures.Builder parse(EarsImage img) {
 		ByteArrayOutputStream data = new ByteArrayOutputStream(((4*4)-1)*3);
 		for (int y = 0; y < 4; y++) {
 			for (int x = 0; x < 4; x++) {
@@ -104,18 +104,29 @@ class EarsFeaturesParserV1 {
 			boolean capeEnabled = bis.readBoolean();
 			EarsLog.debug("Common:Features", "detect(...): Cape: {}", capeEnabled);
 			
-			return new EarsFeatures(
-					earMode, earAnchor,
-					claws, horn,
-					tailMode, tailSegments, tailBend0, tailBend1, tailBend2, tailBend3,
-					snoutOffset, snoutWidth, snoutHeight, snoutDepth,
-					chestSize,
-					wingMode, animateWings,
-					capeEnabled,
-					alfalfa);
+			boolean emissive = bis.readBoolean();
+			EarsLog.debug("Common:Features", "detect(...): Emissive: {}", emissive);
+			
+			return EarsFeatures.builder()
+					.earMode(earMode)
+					.earAnchor(earAnchor)
+					.claws(claws)
+					.horn(horn)
+					.tailMode(tailMode)
+					.tailSegments(tailSegments)
+					.tailBends(tailBend0, tailBend1, tailBend2, tailBend3)
+					.snoutOffset(snoutOffset)
+					.snoutWidth(snoutWidth)
+					.snoutHeight(snoutHeight)
+					.snoutDepth(snoutDepth)
+					.chestSize(chestSize)
+					.wingMode(wingMode)
+					.animateWings(animateWings)
+					.capeEnabled(capeEnabled)
+					.emissive(emissive);
 		} catch (IOException e) {
 			EarsLog.debug("Common:Features", "detect(...): Error while parsing v1 (Binary) data. Disabling", e);
-			return EarsFeatures.DISABLED;
+			return null;
 		}
 	}
 

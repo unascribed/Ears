@@ -37,6 +37,7 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 	protected int stackDepth;
 	protected BodyPart permittedBodyPart;
 	protected TexSource bound;
+	protected boolean emissive;
 
 	@Override
 	public void setUp() {
@@ -139,13 +140,17 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip, bound);
 		float g = grow.grow;
 		
-		float b = getBrightness();
+		float b = emissive ? 1 : getBrightness();
 
+		float nX = 0;
+		float nY = emissive ? 1 : 0;
+		float nZ = emissive ? 0 : -1;
+		
 		beginQuad();
-		addVertex(-g, h+g, 0, b, b, b, 1f, uv[0][0], uv[0][1], 0, 0, -1);
-		addVertex(w+g, h+g, 0, b, b, b, 1f, uv[1][0], uv[1][1], 0, 0, -1);
-		addVertex(w+g, -g, 0, b, b, b, 1f, uv[2][0], uv[2][1], 0, 0, -1);
-		addVertex(-g, -g, 0, b, b, b, 1f, uv[3][0], uv[3][1], 0, 0, -1);
+		addVertex(-g, h+g, 0, b, b, b, 1f, uv[0][0], uv[0][1], nX, nY, nZ);
+		addVertex(w+g, h+g, 0, b, b, b, 1f, uv[1][0], uv[1][1], nX, nY, nZ);
+		addVertex(w+g, -g, 0, b, b, b, 1f, uv[2][0], uv[2][1], nX, nY, nZ);
+		addVertex(-g, -g, 0, b, b, b, 1f, uv[3][0], uv[3][1], nX, nY, nZ);
 		drawQuad();
 	}
 
@@ -156,13 +161,17 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		float[][] uv = EarsCommon.calculateUVs(u, v, w, h, rot, flip.flipHorizontally(), bound);
 		float g = grow.grow;
 		
-		float b = getBrightness();
+		float b = emissive ? 1 : getBrightness();
+		
+		float nX = 0;
+		float nY = emissive ? 1 : 0;
+		float nZ = emissive ? 0 : 1;
 		
 		beginQuad();
-		addVertex(-g, -g, 0, b, b, b, 1f, uv[3][0], uv[3][1], 0, 0, 1);
-		addVertex(w+g, -g, 0, b, b, b, 1f, uv[2][0], uv[2][1], 0, 0, 1);
-		addVertex(w+g, h+g, 0, b, b, b, 1f, uv[1][0], uv[1][1], 0, 0, 1);
-		addVertex(-g, h+g, 0, b, b, b, 1f, uv[0][0], uv[0][1], 0, 0, 1);
+		addVertex(-g, -g, 0, b, b, b, 1f, uv[3][0], uv[3][1], nX, nY, nZ);
+		addVertex(w+g, -g, 0, b, b, b, 1f, uv[2][0], uv[2][1], nX, nY, nZ);
+		addVertex(w+g, h+g, 0, b, b, b, 1f, uv[1][0], uv[1][1], nX, nY, nZ);
+		addVertex(-g, h+g, 0, b, b, b, 1f, uv[0][0], uv[0][1], nX, nY, nZ);
 		drawQuad();
 	}
 	
@@ -206,7 +215,7 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 	protected abstract void doBindSkin();
 	protected abstract void doBindAux(TexSource src, byte[] pngData);
 	
-	protected ByteBuffer toNativeBuffer(byte[] arr) {
+	public static ByteBuffer toNativeBuffer(byte[] arr) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(arr.length).order(ByteOrder.nativeOrder());
 		buf.put(arr).flip();
 		return buf;
@@ -215,6 +224,11 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 	@Override
 	public boolean needsSecondaryLayersDrawn() {
 		return false;
+	}
+	
+	@Override
+	public void setEmissive(boolean emissive) {
+		this.emissive = emissive;
 	}
 	
 }

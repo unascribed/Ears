@@ -20,6 +20,7 @@ import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -181,6 +182,20 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		protected void drawQuad() {
 			Tessellator.getInstance().draw();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture2D();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture2D();
+			}
+			GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		}
 		
 		@Override

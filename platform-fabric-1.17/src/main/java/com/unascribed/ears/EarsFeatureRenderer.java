@@ -15,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPart.Cuboid;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -130,11 +131,15 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			}
 		}
 
+		private final Matrix3f IDENTITY3 = new Matrix3f(); {
+			IDENTITY3.loadIdentity();
+		}
+		
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
 			Matrix4f mm = matrices.peek().getModel();
-			Matrix3f mn = matrices.peek().getNormal();
-			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(light).normal(mn, nX, nY, nZ).next();
+			Matrix3f mn = emissive ? IDENTITY3 : matrices.peek().getNormal();
+			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(emissive ? LightmapTextureManager.pack(15, 15) : light).normal(mn, nX, nY, nZ).next();
 		}
 		
 		@Override

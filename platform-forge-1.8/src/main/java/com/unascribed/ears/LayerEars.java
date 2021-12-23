@@ -19,6 +19,7 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -186,6 +187,20 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
 			Tessellator.getInstance().getWorldRenderer().pos(x, y, z).tex(u, v).color(r, g, b, a).normal(nX, nY, nZ).endVertex();
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+			if (emissive) {
+				GlStateManager.disableLighting();
+				GlStateManager.disableTexture2D();
+			} else {
+				GlStateManager.enableLighting();
+				GlStateManager.enableTexture2D();
+			}
+			GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		}
 
 		@Override

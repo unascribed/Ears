@@ -74,12 +74,12 @@ class EarsFeaturesParserV0 {
 			this.horn = horn;
 		}
 		
-		public static final Map<EarsFeaturesParserV0.MagicPixel, Protrusions> BY_MAGIC = buildMap(
-				EarsFeaturesParserV0.MagicPixel.BLUE, NONE,
-				EarsFeaturesParserV0.MagicPixel.RED, NONE,
-				EarsFeaturesParserV0.MagicPixel.GREEN, CLAWS,
-				EarsFeaturesParserV0.MagicPixel.PURPLE, HORN,
-				EarsFeaturesParserV0.MagicPixel.CYAN, CLAWS_AND_HORN
+		public static final Map<MagicPixel, Protrusions> BY_MAGIC = buildMap(
+				MagicPixel.BLUE, NONE,
+				MagicPixel.RED, NONE,
+				MagicPixel.GREEN, CLAWS,
+				MagicPixel.PURPLE, HORN,
+				MagicPixel.CYAN, CLAWS_AND_HORN
 		);
 	}
 	
@@ -124,7 +124,7 @@ class EarsFeaturesParserV0 {
 			MagicPixel.ORANGE, WingMode.ASYMMETRIC_R
 	);
 
-	public static EarsFeatures parse(EarsImage img, Alfalfa alfalfa) {
+	public static EarsFeatures.Builder parse(EarsImage img) {
 		EarsLog.debug("Common:Features", "detect(...): Found v0 (Pixelwise) data.");
 		EarMode earMode = getMagicPixel(img, 1, EAR_MODE_BY_MAGIC, EarMode.NONE, "ear mode");
 		EarAnchor earAnchor = getMagicPixel(img, 2, EAR_ANCHOR_BY_MAGIC, EarAnchor.CENTER, "ear anchor", earMode != EarMode.NONE && earMode != EarMode.BEHIND);
@@ -195,20 +195,25 @@ class EarsFeaturesParserV0 {
 			EarsLog.debug("Common:Features", "detect(...): The etc pixel is #{} - cape enabled: {}", upperHex24Dbg(etc), capeEnabled);
 		}
 		WingMode wingMode = getMagicPixel(img, 8, WING_MODE_BY_MAGIC, WingMode.NONE, "wing mode");
-		if (wingMode != WingMode.NONE && !alfalfa.data.containsKey("wing")) {
-			EarsLog.debug("Common:Features", "detect(...): Wings are enabled, but there's no wing texture in the alfalfa. Disabling");
-			wingMode = WingMode.NONE;
-		}
 		boolean animateWings = getMagicPixel(img, 9) != MagicPixel.RED;
-		return new EarsFeatures(
-				earMode, earAnchor,
-				protrusions.claws, protrusions.horn,
-				tailMode, tailSegments, tailBend0, tailBend1, tailBend2, tailBend3,
-				snoutOffset, snoutWidth, snoutHeight, snoutDepth,
-				chestSize,
-				wingMode, animateWings,
-				capeEnabled,
-				alfalfa);
+		boolean emissive = getMagicPixel(img, 10) == MagicPixel.ORANGE;
+		return EarsFeatures.builder()
+				.earMode(earMode)
+				.earAnchor(earAnchor)
+				.claws(protrusions.claws)
+				.horn(protrusions.horn)
+				.tailMode(tailMode)
+				.tailSegments(tailSegments)
+				.tailBends(tailBend0, tailBend1, tailBend2, tailBend3)
+				.snoutOffset(snoutOffset)
+				.snoutWidth(snoutWidth)
+				.snoutHeight(snoutHeight)
+				.snoutDepth(snoutDepth)
+				.chestSize(chestSize)
+				.wingMode(wingMode)
+				.animateWings(animateWings)
+				.capeEnabled(capeEnabled)
+				.emissive(emissive);
 	}
 
 	/**

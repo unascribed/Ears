@@ -92,13 +92,14 @@ public class EarsJS {
 				return argb;
 			}
 		};
-		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img));
+		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img), null); // TODO
 		final JSArray<JSObject> objects = JSArray.create();
 		EarsRenderer.render(feat, new AbstractDetachedEarsRenderDelegate() {
 			
 			private TexSource texture = TexSource.SKIN;
 			private JSArray<JSObject> moves = JSArray.create();
 			private JSArray<JSArray<JSObject>> movesStack = JSArray.create();
+			private boolean emissive = false;
 
 			@Override
 			public void bind(TexSource src) {
@@ -181,6 +182,7 @@ public class EarsJS {
 				q.set("height", JSNumber.valueOf(h));
 				q.set("back", JSBoolean.valueOf(back));
 				q.set("texture", JSString.valueOf(texture.lowerName));
+				q.set("emissive", JSBoolean.valueOf(emissive));
 				if (grow.grow > 0) {
 					pop();
 				}
@@ -220,6 +222,11 @@ public class EarsJS {
 			@Override
 			public boolean isSlim() {
 				return getSlimState();
+			}
+
+			@Override
+			public void setEmissive(boolean emissive) {
+				this.emissive = emissive;
 			}
 			
 		});
@@ -281,6 +288,11 @@ public class EarsJS {
 				int rgba = argb<<8;
 				rgba |= (argb>>24)&0xFF;
 				dv.setUint32(((y*64)+x)*4, rgba);
+			}
+
+			@Override
+			public WritableEarsImage copy() {
+				throw new UnsupportedOperationException();
 			}
 		};
 		a.write(img);

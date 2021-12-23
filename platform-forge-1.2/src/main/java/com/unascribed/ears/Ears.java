@@ -3,17 +3,25 @@ package com.unascribed.ears;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import javax.imageio.ImageIO;
+
 import com.unascribed.ears.common.util.EarsStorage;
 import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
+import com.unascribed.ears.common.EarsFeatures.PNGLoader;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsImage;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ReflectionHelper;
@@ -145,7 +153,13 @@ public class Ears {
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		EarsLog.debug("Platform:Inject", "Process player skin");
-		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA)));
+		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				new PNGLoader() {
+			@Override
+			public EarsImage load(byte[] data) throws IOException {
+				return new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)));
+			}
+		}));
 	}
 	
 	public static String amendSkinUrl(String url) {

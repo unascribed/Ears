@@ -46,6 +46,8 @@ public interface EarsRenderDelegate {
 		SKIN(64, 64),
 		WING(12, 12),
 		CAPE(20, 16),
+		EMISSIVE_SKIN(64, 64),
+		EMISSIVE_WING(12, 12),
 		;
 		public final int width, height;
 		public final String lowerName;
@@ -68,6 +70,12 @@ public interface EarsRenderDelegate {
 			}
 			if (this == CAPE && feat.alfalfa.data.get("cape") != null) {
 				return feat.alfalfa.data.get("cape").toByteArray();
+			}
+			if (this == EMISSIVE_SKIN && feat.emissive) {
+				return feat.emissiveSkin;
+			}
+			if (this == EMISSIVE_WING && feat.emissive) {
+				return feat.emissiveWing;
 			}
 			return null;
 		}
@@ -195,6 +203,8 @@ public interface EarsRenderDelegate {
 	boolean isWearingBoots();
 	boolean isJacketEnabled();
 	boolean needsSecondaryLayersDrawn();
+	
+	void setEmissive(boolean emissive);
 	
 	Object getPeer();
 	

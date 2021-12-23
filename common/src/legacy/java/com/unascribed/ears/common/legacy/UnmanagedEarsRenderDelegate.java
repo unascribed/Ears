@@ -19,6 +19,7 @@ public abstract class UnmanagedEarsRenderDelegate<TPeer, TModelPart> extends Par
 	
 	@Override
 	protected void doBindAux(TexSource src, byte[] pngData) {
+		if (pngData == null) return;
 		String id = src.addSuffix(getSkinUrl());
 		if (!subTextures.containsKey(id)) {
 			try {

@@ -84,6 +84,18 @@ public class EarsLog {
 		}
 	}
 
+	public static void debug(String tag, String fmt, float arg1) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1);
+		}
+	}
+
+	public static void debug(String tag, String fmt, double arg1) {
+		if (shouldLog(tag)) {
+			debugva(tag, fmt, arg1);
+		}
+	}
+
 	public static void debug(String tag, String fmt, boolean arg1) {
 		if (shouldLog(tag)) {
 			debugva(tag, fmt, arg1);

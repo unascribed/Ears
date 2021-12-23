@@ -41,11 +41,11 @@ jar {
 }
 
 dependencies {
-	compile files('../common/build/libs/ears-common-agent-legacy.jar')
+	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
 }
 
 jar {
-	from zipTree('../common/build/libs/ears-common-agent-legacy.jar')
+	from zipTree('../common/build/libs/ears-common-agent-vlegacy.jar')
 }
 
 processResources {

@@ -2,6 +2,7 @@ package com.unascribed.ears;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.unascribed.ears.common.SwappedEarsImage;
+import com.unascribed.ears.common.WritableEarsImage;
 
 public class NativeImageAdapter extends SwappedEarsImage {
 
@@ -29,6 +30,13 @@ public class NativeImageAdapter extends SwappedEarsImage {
 	@Override
 	public int getWidth() {
 		return img.getWidth();
+	}
+
+	@Override
+	public WritableEarsImage copy() {
+		NativeImage copy = new NativeImage(img.format(), img.getWidth(), img.getHeight(), false);
+		copy.copyFrom(img);
+		return new NativeImageAdapter(copy);
 	}
 	
 	

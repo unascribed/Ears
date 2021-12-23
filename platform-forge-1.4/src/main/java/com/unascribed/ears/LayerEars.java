@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
 
+import org.lwjgl.opengl.GL11;
+
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -19,6 +21,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModelBiped;
 import net.minecraft.src.ModelBox;
 import net.minecraft.src.ModelRenderer;
+import net.minecraft.src.OpenGlHelper;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.Tessellator;
@@ -96,6 +99,18 @@ public class LayerEars {
 			Tessellator.instance.setColorRGBA_F(r, g, b, a);
 			Tessellator.instance.setNormal(nX, nY, nZ);
 			Tessellator.instance.addVertexWithUV(x, y, z, u, v);
+		}
+		
+		@Override
+		public void setEmissive(boolean emissive) {
+			super.setEmissive(emissive);
+			OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+			if (emissive) {
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+			} else {
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+			}
+			OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		}
 		
 		@Override
