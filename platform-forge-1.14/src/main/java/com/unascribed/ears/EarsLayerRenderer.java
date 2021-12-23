@@ -8,6 +8,7 @@ import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.DirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -55,6 +57,16 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
 		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
 		delegate.render(entity, BodyPart.RIGHT_ARM);
+	}
+
+	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
+		ResourceLocation skin = peer.getLocationSkin();
+		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
+			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		}
+		return EarsFeatures.DISABLED;
 	}
 	
 	@Override
@@ -107,7 +119,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return EarsMod.getEarsFeatures(peer);
+			return EarsLayerRenderer.getEarsFeatures(peer);
 		}
 
 		@Override

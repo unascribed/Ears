@@ -10,6 +10,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -28,6 +29,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -55,6 +57,16 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 	
 	public void renderRightArm(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity) {
 		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0), BodyPart.RIGHT_ARM);
+	}
+
+	public static EarsFeatures getEarsFeatures(AbstractClientPlayer peer) {
+		ResourceLocation skin = peer.getSkinTextureLocation();
+		AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
+			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		}
+		return EarsFeatures.DISABLED;
 	}
 
 	// official Mojang mappings continue to baffle me. PoseStack????????????
@@ -87,7 +99,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return EarsMod.getEarsFeatures(peer);
+			return EarsLayerRenderer.getEarsFeatures(peer);
 		}
 
 		@Override

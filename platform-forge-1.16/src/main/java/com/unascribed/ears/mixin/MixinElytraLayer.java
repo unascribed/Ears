@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.unascribed.ears.EarsMod;
+import com.unascribed.ears.EarsLayerRenderer;
 import com.unascribed.ears.common.EarsCommon;
 
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -20,7 +20,7 @@ public class MixinElytraLayer {
 	@Inject(at=@At("HEAD"), method="render", cancellable=true)
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, LivingEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
 		if (entity instanceof AbstractClientPlayerEntity) {
-			if (EarsCommon.shouldSuppressElytra(EarsMod.getEarsFeatures((AbstractClientPlayerEntity)entity))) {
+			if (EarsCommon.shouldSuppressElytra(EarsLayerRenderer.getEarsFeatures((AbstractClientPlayerEntity)entity))) {
 				ci.cancel();
 			}
 		}

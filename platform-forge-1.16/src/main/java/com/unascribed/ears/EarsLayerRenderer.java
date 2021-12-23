@@ -9,6 +9,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -32,6 +33,7 @@ import net.minecraft.client.renderer.model.ModelRenderer.ModelBox;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -63,6 +65,16 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		delegate.render(m, vertexConsumers, entity, light, LivingRenderer.getPackedOverlay(entity, 0), BodyPart.RIGHT_ARM);
 	}
 
+	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
+		ResourceLocation skin = peer.getLocationSkin();
+		Texture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
+		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
+			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		}
+		return EarsFeatures.DISABLED;
+	}
+
 	private final IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer> delegate = new IndirectEarsRenderDelegate<MatrixStack, IRenderTypeBuffer, IVertexBuilder, AbstractClientPlayerEntity, ModelRenderer>() {
 		
 		@Override
@@ -91,7 +103,7 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return EarsMod.getEarsFeatures(peer);
+			return EarsLayerRenderer.getEarsFeatures(peer);
 		}
 
 		@Override
