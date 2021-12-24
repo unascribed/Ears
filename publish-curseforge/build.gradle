@@ -35,7 +35,7 @@ switch (target) {
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
-		stability = 'alpha'
+		stability = 'beta'
 		gameVersions = ['Forge', '1.2.5']
 		conflicts = ['lumy-skin-patch']
 		break
@@ -59,23 +59,23 @@ switch (target) {
 		break
 	case "forge-1.7":
 		prefix = "FORGE 1.7"
-		stability = 'beta'
+		stability = 'release'
 		gameVersions = ['Forge', '1.7.10']
 		conflicts = ['skinport', 'lumy-skin-patch']
 		break
 	case "forge-1.8":
 		prefix = "FORGE 1.8"
-		stability = 'beta'
+		stability = 'release'
 		gameVersions = ['Forge', '1.8.9']
 		break
 	case "forge-1.9":
 		prefix = "FORGE 1.9/10/11"
-		stability = 'beta'
+		stability = 'release'
 		gameVersions = ['Forge', '1.9.4', '1.10.2', '1.11.2']
 		break
 	case "forge-1.12":
 		prefix = "FORGE 1.12"
-		stability = 'beta'
+		stability = 'release'
 		gameVersions = ['Forge', '1.12.2']
 		break
 	case "forge-1.14":
@@ -107,7 +107,7 @@ switch (target) {
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13"
-		stability = 'beta'
+		stability = 'alpha'
 		gameVersions = ['Rift', '1.13.2']
 		break
 	default:

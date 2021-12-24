@@ -41,7 +41,7 @@ switch (target) {
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
-		stability = 'alpha'
+		stability = 'beta'
 		loaders = ['forge']
 		gameVersions = ['1.2.5']
 		break
