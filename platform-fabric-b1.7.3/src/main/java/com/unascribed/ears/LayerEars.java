@@ -27,7 +27,7 @@ public class LayerEars {
 	private float tickDelta;
 
 	public void doRenderLayer(PlayerRenderer renderer, Player entity, float limbDistance, float partialTicks) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.renderer = renderer;
 		this.tickDelta = partialTicks;
 		this.brightness = entity.getBrightnessAtEyes(partialTicks);
@@ -35,7 +35,7 @@ public class LayerEars {
 	}
 
 	public void renderRightArm(PlayerRenderer renderer, Player entity) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", renderer, entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({}, {})", renderer, entity);
 		this.renderer = renderer;
 		this.tickDelta = 0;
 		this.brightness = entity.getBrightnessAtEyes(0);

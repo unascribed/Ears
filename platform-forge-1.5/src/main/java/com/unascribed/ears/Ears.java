@@ -40,7 +40,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.3"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.4"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
@@ -54,7 +54,7 @@ public class Ears {
 	
 	public Ears() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - {} / Forge {}; Side={}",
 					Loader.instance().getMCVersionString(), ForgeVersion.getVersion(), FMLCommonHandler.instance().getSide());
 		}
 	}
@@ -67,7 +67,7 @@ public class Ears {
 		
 	
 	public static void amendPlayerRenderer(RenderPlayer rp) {
-		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
+		EarsLog.debug(EarsLog.Tag.PLATFORM, "Hacking 64x64 skin support into player model");
 		ModelBiped model = new ModelBiped(0, 0, 64, 64);
 		ReflectionHelper.setPrivateValue(RenderLiving.class, rp, model, "field_77045_g", "mainModel");
 		setModelBipedMain(rp, model);
@@ -108,7 +108,7 @@ public class Ears {
 		EntityPlayer player = e.entityPlayer;
 		float f = e.partialTicks;
 		RenderPlayer render = e.renderer;
-		EarsLog.debug("Platform:Renderer", "renderSpecials player={}, partialTicks={}", player, f);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderSpecials player={}, partialTicks={}", player, f);
 		EntityPlayerSP sp = (EntityPlayerSP)player;
 		layer.doRenderLayer(render, sp,
 				sp.prevLimbYaw + (player.limbYaw - player.prevLimbYaw) * f,
@@ -116,9 +116,9 @@ public class Ears {
 	}
 	
 	public static BufferedImage interceptParseUserSkin(final ImageBufferDownload subject, BufferedImage image) {
-		EarsLog.debug("Platform:Inject", "parseUserSkin({}, {})", subject, image);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin({}, {})", subject, image);
 		if (image == null) {
-			EarsLog.debug("Platform:Inject", "parseUserSkin(...): Image is null");
+			EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin(...): Image is null");
 			return null;
 		} else {
 			setImageWidth(subject, 64);
@@ -128,7 +128,7 @@ public class Ears {
 			g.drawImage(image, 0, 0, null);
 
 			if (image.getHeight() == 32) {
-				EarsLog.debug("Platform:Inject", "parseUserSkin(...): Upgrading legacy skin");
+				EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin(...): Upgrading legacy skin");
 				g.drawImage(newImg, 24, 48, 20, 52, 4, 16, 8, 20, null);
 				g.drawImage(newImg, 28, 48, 24, 52, 8, 16, 12, 20, null);
 				g.drawImage(newImg, 20, 52, 16, 64, 8, 20, 12, 32, null);
@@ -166,7 +166,7 @@ public class Ears {
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		if (img == null) return;
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
 			@Override
@@ -300,7 +300,7 @@ public class Ears {
 	}
 	private static void setAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		try {
-			EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {})", subject, x1, y1, x2, y2);
+			EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {})", subject, x1, y1, x2, y2);
 			setAreaOpaque.invoke(subject, x1, y1, x2, y2);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;

@@ -27,7 +27,7 @@ public abstract class MixinPlayerRenderer extends LivingEntityRenderer<AbstractC
 	
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider$Context;Z)V")
 	private void init(EntityRendererProvider.Context erd, boolean b, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "Construct player renderer");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Construct player renderer");
 		this.addLayer(ears$layerRenderer = new EarsLayerRenderer(this));
 	}
 

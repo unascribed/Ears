@@ -10,7 +10,7 @@ public class ThreadDownloadImageDataTransformer extends MiniTransformer {
 
 	@Patch.Method("func_147641_a(Ljava/awt/image/BufferedImage;)V")
 	public void patchSetBufferedImage(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching setBufferedImage");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Patching setBufferedImage");
 		ctx.jumpToStart();
 		// EarsMod.checkSkin(this, ...);
 		ctx.add(

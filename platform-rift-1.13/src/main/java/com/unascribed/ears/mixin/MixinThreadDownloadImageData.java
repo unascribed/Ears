@@ -28,7 +28,7 @@ public abstract class MixinThreadDownloadImageData extends SimpleTexture impleme
 
 	@Inject(at=@At("HEAD"), method = "setImage(Lnet/minecraft/client/renderer/texture/NativeImage;)V")
 	public void setImage(NativeImage cur, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		if (cur == null) return;
 		earsFeatures = EarsFeatures.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 				data -> new NativeImageAdapter(NativeImage.read(AbstractEarsRenderDelegate.toNativeBuffer(data))));

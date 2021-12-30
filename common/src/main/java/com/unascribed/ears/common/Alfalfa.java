@@ -100,13 +100,13 @@ public class Alfalfa {
 		dis.skipBytes(1);
 		int magic = dis.readInt();
 		if (magic != MAGIC) {
-			EarsLog.debug("Common:Features", "Alfalfa.read: Magic number does not match. Expected {}, got {}", Integer.toHexString(MAGIC), Long.toHexString(magic));
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Magic number does not match. Expected {}, got {}", Integer.toHexString(MAGIC), Long.toHexString(magic));
 			return NONE;
 		}
 		int version = dis.readUnsignedByte();
-		EarsLog.debug("Common:Features", "Alfalfa.read: Discovered Alfalfa v{} data", version);
+		EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Discovered Alfalfa v{} data", version);
 		if (version != 1) {
-			EarsLog.debug("Common:Features", "Alfalfa.read: Don't know how to read this version, ignoring");
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Don't know how to read this version, ignoring");
 			return NONE;
 		}
 		byte[] buf = new byte[255];
@@ -144,9 +144,9 @@ public class Alfalfa {
 			}
 			byte[] data = baos.toByteArray();
 			map.put(k, new Slice(data, 0, data.length));
-			EarsLog.debug("Common:Features", "Alfalfa.read: Found entry {} with {} byte{} of data", k, data.length, data.length == 1 ? "" : "s");
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Found entry {} with {} byte{} of data", k, data.length, data.length == 1 ? "" : "s");
 		}
-		EarsLog.debug("Common:Features", "Alfalfa.read: Found {} entr{}", map.size(), map.size() == 1 ? "y" : "ies");
+		EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Found {} entr{}", map.size(), map.size() == 1 ? "y" : "ies");
 		return new Alfalfa(version, map);
 	}
 	
@@ -202,14 +202,14 @@ public class Alfalfa {
 			}
 		}
 		if (bi.equals(BigInteger.ZERO)) {
-			EarsLog.debug("Common:Features", "Alfalfa.read: Found no data in alpha channel");
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Found no data in alpha channel");
 			return NONE;
 		}
-		EarsLog.debug("Common:Features", "Alfalfa.read: Read {} ayte{} of data from alpha channel", read, read == 1 ? "" : "s");
+		EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Read {} ayte{} of data from alpha channel", read, read == 1 ? "" : "s");
 		try {
 			return read(new ByteArrayInputStream(bi.toByteArray()));
 		} catch (Exception e) {
-			EarsLog.debug("Common:Features", "Alfalfa.read: Exception while reading data", e);
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Alfalfa.read: Exception while reading data", e);
 			return NONE;
 		}
 	}

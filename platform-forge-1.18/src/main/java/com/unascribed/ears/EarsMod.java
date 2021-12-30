@@ -20,7 +20,7 @@ public class EarsMod {
 	
 	public EarsMod() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft {} / Forge {}; Env={}:{}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft {} / Forge {}; Env={}:{}",
 					SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion(), FMLEnvironment.dist, FMLEnvironment.naming);
 		}
 		ModLoadingContext.get().registerExtensionPoint(DisplayTest.class, () -> new DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));

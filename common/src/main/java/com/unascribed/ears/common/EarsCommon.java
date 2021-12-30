@@ -76,7 +76,7 @@ public class EarsCommon {
 	 * which we give a use to.
 	 */
 	public static void carefullyStripAlpha(StripAlphaMethod sam, boolean sixtyFour) {
-		EarsLog.debug("Common", "carefullyStripAlpha({}, {})", sam, sixtyFour);
+		EarsLog.debug(EarsLog.Tag.COMMON, "carefullyStripAlpha({}, {})", sam, sixtyFour);
 		for (Rectangle rect : FORCED_OPAQUE_REGIONS) {
 			if (!sixtyFour && rect.y1 > 32) continue;
 			sam.stripAlpha(rect.x1, rect.y1, rect.x2, rect.y2);
@@ -123,11 +123,11 @@ public class EarsCommon {
 				}
 			} catch (EOFException e) {
 			} catch (IOException e) {
-				EarsLog.debug("Common:Features", "Exception while parsing eraser data", e);
+				EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Exception while parsing eraser data", e);
 			}
-			EarsLog.debug("Common:Features", "Discovered and applied {} eraser rectangle{}", count, count == 1 ? "" : "s");
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Discovered and applied {} eraser rectangle{}", count, count == 1 ? "" : "s");
 		} else {
-			EarsLog.debug("Common:Features", "Discovered no eraser data");
+			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "Discovered no eraser data");
 		}
 		return a;
 	}
@@ -152,7 +152,7 @@ public class EarsCommon {
 	 * texture, "pinching" the UVs in by the specified amount to avoid UV bleed.
 	 */
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src, float pinch) {
-		EarsLog.debug("Common:Renderer", "calculateUVs(u={}, v={}, w={}, h={}, rot={}, flip={}, src={})", u, v, w, h, rot, flip, src);
+		EarsLog.debug(EarsLog.Tag.COMMON_RENDERER, "calculateUVs(u={}, v={}, w={}, h={}, rot={}, flip={}, src={})", u, v, w, h, rot, flip, src);
 		float tw = src.width;
 		float th = src.height;
 		

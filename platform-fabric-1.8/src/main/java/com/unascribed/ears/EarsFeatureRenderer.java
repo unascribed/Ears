@@ -42,7 +42,7 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 	
 	public EarsFeatureRenderer(PlayerEntityRenderer render) {
 		this.render = render;
-		EarsLog.debug("Platform:Renderer", "Constructed");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 		((SetTranslucent)render.getModel().field_3782).ears$setTranslucent(true);
 		((SetTranslucent)render.getModel().field_3816).ears$setTranslucent(true);
 		((SetTranslucent)render.getModel().field_3814).ears$setTranslucent(true);
@@ -56,19 +56,19 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 	@Override
 	public void render(AbstractClientPlayerEntity entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		this.tickDelta = tickDelta;
 		delegate.render(entity, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayerEntity entity) {
-		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderLeftArm({})", entity);
 		this.tickDelta = 0;
 		delegate.render(entity, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({})", entity);
 		this.tickDelta = 0;
 		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
@@ -125,7 +125,7 @@ public class EarsFeatureRenderer implements FeatureRenderer<AbstractClientPlayer
 		protected EarsFeatures getEarsFeatures() {
 			Identifier skin = peer.getSkinTexture();
 			Texture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-			EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+			EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 			if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
 				return ((EarsFeaturesHolder)tex).getEarsFeatures();
 			}

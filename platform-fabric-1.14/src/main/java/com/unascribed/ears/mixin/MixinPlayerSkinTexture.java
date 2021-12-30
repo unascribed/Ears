@@ -28,7 +28,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 
 	@Inject(at=@At("HEAD"), method = "method_4534(Lnet/minecraft/client/texture/NativeImage;)V")
 	public void method_4534(NativeImage cur, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		if (cur == null) return;
 		EarsImage img = new NativeImageAdapter(cur);
 		earsFeatures = EarsFeatures.detect(img, EarsStorage.get(cur, EarsStorage.Key.ALFALFA),

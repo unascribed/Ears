@@ -22,7 +22,7 @@ public abstract class MixinSkinRemappingImageFilter implements ImageFilter {
 	
 	@Inject(at = @At("HEAD"), method = "method_3312(Lnet/minecraft/client/texture/NativeImage;IIII)V", cancellable = true)
 	private static void method_3312(NativeImage image, int x1, int y1, int x2, int y2, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering);
 		if (ears$reentering) return;
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {

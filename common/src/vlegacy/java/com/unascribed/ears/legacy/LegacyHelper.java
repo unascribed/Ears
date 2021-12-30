@@ -70,7 +70,7 @@ public class LegacyHelper {
 					getSkinUrl(username);
 					namesBeingLookedUp.remove(username);
 				} catch (Throwable t) {
-					EarsLog.debug("Common", "Error while looking up {}", username, t);
+					EarsLog.debug(EarsLog.Tag.COMMON, "Error while looking up {}", username, t);
 				}
 			}
 		};
@@ -91,7 +91,7 @@ public class LegacyHelper {
 					getSkinUrl(uuid, username);
 					beingLookedUp.remove(uuid);
 				} catch (Throwable t) {
-					EarsLog.debug("Common", "Error while looking up {}", uuid, t);
+					EarsLog.debug(EarsLog.Tag.COMMON, "Error while looking up {}", uuid, t);
 				}
 			}
 		};

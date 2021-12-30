@@ -33,7 +33,7 @@ public abstract class MixinHttpTexture extends SimpleTexture implements EarsFeat
 
 	@Inject(at=@At("RETURN"), method = "load(Ljava/io/InputStream;)Lcom/mojang/blaze3d/platform/NativeImage;")
 	private void load(InputStream stream, CallbackInfoReturnable<NativeImage> ci) {
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		NativeImage cur = ci.getReturnValue();
 		if (cur != null) {
 			earsFeatures = EarsFeatures.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
@@ -45,7 +45,7 @@ public abstract class MixinHttpTexture extends SimpleTexture implements EarsFeat
 	
 	@Inject(at = @At("HEAD"), method = "setNoAlpha(Lcom/mojang/blaze3d/platform/NativeImage;IIII)V", cancellable = true)
 	private static void setNoAlpha(NativeImage image, int x1, int y1, int x2, int y2, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering);
 		if (ears$reentering) return;
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {

@@ -15,128 +15,128 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 
 	@Override
 	public void push() {
-		EarsLog.debug("Platform:Renderer:Delegate", "push()");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "push()");
 		delegate.push();
 	}
 
 	@Override
 	public void pop() {
-		EarsLog.debug("Platform:Renderer:Delegate", "pop()");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "pop()");
 		delegate.pop();
 	}
 
 	@Override
 	public void anchorTo(BodyPart part) {
-		EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(BodyPart.{})", part);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "anchorTo(BodyPart.{})", part);
 		delegate.anchorTo(part);
 	}
 
 	@Override
 	public void translate(float x, float y, float z) {
-		EarsLog.debug("Platform:Renderer:Delegate", "translate({}, {}, {})", x, y, z);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "translate({}, {}, {})", x, y, z);
 		delegate.translate(x, y, z);
 	}
 
 	@Override
 	public void rotate(float ang, float x, float y, float z) {
-		EarsLog.debug("Platform:Renderer:Delegate", "rotate({}, {}, {}, {})", ang, x, y, z);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "rotate({}, {}, {}, {})", ang, x, y, z);
 		delegate.rotate(ang, x, y, z);
 	}
 
 	@Override
 	public void renderFront(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderFront({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "renderFront({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
 		delegate.renderFront(u, v, w, h, rot, flip, grow);
 	}
 
 	@Override
 	public void renderBack(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderBack({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "renderBack({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
 		delegate.renderBack(u, v, w, h, rot, flip, grow);
 	}
 	
 	@Override
 	public void renderDoubleSided(int u, int v, int w, int h, TexRotation rot, TexFlip flip, QuadGrow grow) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderDoubleSided({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "renderDoubleSided({}, {}, {}, {}, {}, {}, {})", u, v, w, h, rot, flip, grow);
 		delegate.renderDoubleSided(u, v, w, h, rot, flip, grow);
 	}
 
 	@Override
 	public void renderDebugDot(float r, float g, float b, float a) {
-		EarsLog.debug("Platform:Renderer:Delegate", "renderDebugDot({}, {}, {}, {})", r, g, b, a);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "renderDebugDot({}, {}, {}, {})", r, g, b, a);
 		delegate.renderDebugDot(r, g, b, a);
 	}
 
 	@Override
 	public void bind(TexSource tex) {
-		EarsLog.debug("Platform:Renderer:Delegate", "bind({})", tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "bind({})", tex);
 		delegate.bind(tex);
 	}
 
 	@Override
 	public void scale(float x, float y, float z) {
-		EarsLog.debug("Platform:Renderer:Delegate", "scale({}, {}, {})", x, y, z);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "scale({}, {}, {})", x, y, z);
 		delegate.scale(x, y, z);
 	}
 
 	@Override
 	public void setUp() {
-		EarsLog.debug("Platform:Renderer:Delegate", "setUp()");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "setUp()");
 		delegate.setUp();
 	}
 
 	@Override
 	public void tearDown() {
-		EarsLog.debug("Platform:Renderer:Delegate", "tearDown()");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "tearDown()");
 		delegate.tearDown();
 	}
 
 	@Override
 	public float getTime() {
 		float t = delegate.getTime();
-		EarsLog.debug("Platform:Renderer:Delegate", "getTime() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getTime() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public boolean isFlying() {
 		boolean b = delegate.isFlying();
-		EarsLog.debug("Platform:Renderer:Delegate", "isFlying() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isFlying() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public boolean isGliding() {
 		boolean b = delegate.isGliding();
-		EarsLog.debug("Platform:Renderer:Delegate", "isGliding() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isGliding() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public boolean isWearingElytra() {
 		boolean b = delegate.isWearingElytra();
-		EarsLog.debug("Platform:Renderer:Delegate", "isWearingElytra() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isWearingElytra() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public boolean isWearingChestplate() {
 		boolean b = delegate.isWearingChestplate();
-		EarsLog.debug("Platform:Renderer:Delegate", "isWearingChestplate() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isWearingChestplate() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public boolean isWearingBoots() {
 		boolean b = delegate.isWearingBoots();
-		EarsLog.debug("Platform:Renderer:Delegate", "isWearingBoots() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isWearingBoots() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public boolean isJacketEnabled() {
 		boolean b = delegate.isJacketEnabled();
-		EarsLog.debug("Platform:Renderer:Delegate", "isJacketEnabled() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isJacketEnabled() -> {}", b);
 		return b;
 	}
 
@@ -148,90 +148,90 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 	@Override
 	public boolean needsSecondaryLayersDrawn() {
 		boolean b = delegate.needsSecondaryLayersDrawn();
-		EarsLog.debug("Platform:Renderer:Delegate", "needsSecondaryLayersDrawn() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "needsSecondaryLayersDrawn() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public float getLimbSwing() {
 		float t = delegate.getLimbSwing();
-		EarsLog.debug("Platform:Renderer:Delegate", "getLimbSwing() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getLimbSwing() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public float getHorizontalSpeed() {
 		float t = delegate.getHorizontalSpeed();
-		EarsLog.debug("Platform:Renderer:Delegate", "getHorizontalSpeed() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getHorizontalSpeed() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public float getStride() {
 		float t = delegate.getStride();
-		EarsLog.debug("Platform:Renderer:Delegate", "getStride() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getStride() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public boolean isSlim() {
 		boolean b = delegate.isSlim();
-		EarsLog.debug("Platform:Renderer:Delegate", "isSlim() -> {}", b);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "isSlim() -> {}", b);
 		return b;
 	}
 
 	@Override
 	public float getBodyYaw() {
 		float t = delegate.getBodyYaw();
-		EarsLog.debug("Platform:Renderer:Delegate", "getBodyYaw() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getBodyYaw() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getX() {
 		double t = delegate.getX();
-		EarsLog.debug("Platform:Renderer:Delegate", "getX() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getX() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getY() {
 		double t = delegate.getY();
-		EarsLog.debug("Platform:Renderer:Delegate", "getY() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getY() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getZ() {
 		double t = delegate.getZ();
-		EarsLog.debug("Platform:Renderer:Delegate", "getZ() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getZ() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getCapeX() {
 		double t = delegate.getCapeX();
-		EarsLog.debug("Platform:Renderer:Delegate", "getCapeX() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getCapeX() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getCapeY() {
 		double t = delegate.getCapeY();
-		EarsLog.debug("Platform:Renderer:Delegate", "getCapeY() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getCapeY() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public double getCapeZ() {
 		double t = delegate.getCapeZ();
-		EarsLog.debug("Platform:Renderer:Delegate", "getCapeZ() -> {}", t);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "getCapeZ() -> {}", t);
 		return t;
 	}
 
 	@Override
 	public void setEmissive(boolean emissive) {
-		EarsLog.debug("Platform:Renderer:Delegate", "setEmissive({})", emissive);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "setEmissive({})", emissive);
 		delegate.setEmissive(emissive);
 	}
 	

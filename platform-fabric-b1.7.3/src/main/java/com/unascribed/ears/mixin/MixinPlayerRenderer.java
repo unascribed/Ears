@@ -31,7 +31,7 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void amendLayers(CallbackInfo info) {
-		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
+		EarsLog.debug(EarsLog.Tag.PLATFORM, "Hacking 64x64 skin support into player model");
 
 		BipedModel model = new BipedModel(0.0F);
 
@@ -113,7 +113,7 @@ public class MixinPlayerRenderer extends LivingEntityRenderer {
 	private void renderSpecials(Player player, float ticks, CallbackInfo info) {
 		fixSlimArm(player);
 
-		EarsLog.debug("Platform", "renderSpecials player={}, partialTicks={}", player, ticks);
+		EarsLog.debug(EarsLog.Tag.PLATFORM, "renderSpecials player={}, partialTicks={}", player, ticks);
 		EarsMod.layer.doRenderLayer((PlayerRenderer) (Object) this, player, player.field_505 + (player.field_504 - player.field_505) * ticks, ticks);
 	}
 

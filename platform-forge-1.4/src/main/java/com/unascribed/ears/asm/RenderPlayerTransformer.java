@@ -10,7 +10,7 @@ public class RenderPlayerTransformer extends MiniTransformer {
 	
 	@Patch.Method("<init>()V")
 	public void patchConstructor(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer constructor");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Patching player renderer constructor");
 		ctx.jumpToLastReturn();
 		ctx.add(
 			ALOAD(0),
@@ -20,7 +20,7 @@ public class RenderPlayerTransformer extends MiniTransformer {
 	
 	@Patch.Method("a(Lqx;DDDFF)V")
 	public void patchRenderPlayer(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer render");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Patching player renderer render");
 		ctx.jumpToStart();
 		ctx.add(
 			ALOAD(0),
@@ -31,7 +31,7 @@ public class RenderPlayerTransformer extends MiniTransformer {
 	
 	@Patch.Method("a(Lqx;)V")
 	public void patchRenderFirstPersonArm(PatchContext ctx) {
-		EarsLog.debug("Platform:Inject", "Patching player renderer arm");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Patching player renderer arm");
 		ctx.jumpToStart();
 		ctx.add(
 			ALOAD(0),

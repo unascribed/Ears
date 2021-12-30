@@ -37,7 +37,7 @@ public class Ears {
 	
 	public Ears() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - {} / Forge {}; Side={}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - {} / Forge {}; Side={}",
 					Loader.instance().getMCVersionString(), ForgeVersion.getVersion(), FMLCommonHandler.instance().getSide());
 		}
 	}
@@ -48,12 +48,12 @@ public class Ears {
 	private static boolean reentering;
 	
 	public static void preprocessSkin(ImageBufferDownload subject, BufferedImage rawImg, BufferedImage img) {
-		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "preprocessSkin({}, {}, {})", subject, rawImg, img);
 		EarsStorage.put(img, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(rawImg)));
 	}
 	
 	public static boolean interceptSetAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
-		EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {}, {}) reentering={}", subject, x1, y2, x2, y2, reentering);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}, {}) reentering={}", subject, x1, y2, x2, y2, reentering);
 		if (reentering) return true;
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {
@@ -72,26 +72,26 @@ public class Ears {
 	
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		if (img == null) return;
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		earsSkinFeatures.put(tdid, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public static void addLayer(RenderPlayer rp) {
-		EarsLog.debug("Platform:Inject", "Construct player renderer");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Construct player renderer");
 		LayerEars layer = new LayerEars(rp);
 		earsLayers.put(rp, layer);
 		rp.addLayer(layer);
 	}
 	
 	public static void renderLeftArm(RenderPlayer rp, AbstractClientPlayer player) {
-		EarsLog.debug("Platform:Renderer", "renderLeftArm({}, {})", rp, player);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderLeftArm({}, {})", rp, player);
 		LayerEars le = earsLayers.get(rp);
 		if (le != null) le.renderLeftArm(player);
 	}
 	
 	public static void renderRightArm(RenderPlayer rp, AbstractClientPlayer player) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", rp, player);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({}, {})", rp, player);
 		LayerEars le = earsLayers.get(rp);
 		if (le != null) le.renderRightArm(player);
 	}
@@ -146,7 +146,7 @@ public class Ears {
 	public static EarsFeatures getEarsFeatures(AbstractClientPlayer peer) {
 		ResourceLocation skin = peer.getLocationSkin();
 		ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (Ears.earsSkinFeatures.containsKey(tex) && !peer.isInvisible()) {
 			return Ears.earsSkinFeatures.get(tex);
 		}

@@ -40,25 +40,25 @@ public class LayerEars implements LayerRenderer<AbstractClientPlayer> {
 	
 	public LayerEars(RenderPlayer render) {
 		this.render = render;
-		EarsLog.debug("Platform:Renderer", "Constructed");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 	}
 	
 	@Override
 	public void doRenderLayer(AbstractClientPlayer entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		this.tickDelta = tickDelta;
 		delegate.render(entity, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayer entity) {
-		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderLeftArm({})", entity);
 		this.tickDelta = 0;
 		delegate.render(entity, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayer entity) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({})", entity);
 		this.tickDelta = 0;
 		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}

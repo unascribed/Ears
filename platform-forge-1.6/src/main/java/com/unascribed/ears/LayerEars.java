@@ -38,14 +38,14 @@ public class LayerEars {
 	private float tickDelta;
 	
 	public void doRenderLayer(RenderPlayer render, AbstractClientPlayer entity, float limbDistance, float partialTicks) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, limbDistance, partialTicks);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {})", entity, limbDistance, partialTicks);
 		this.render = render;
 		this.tickDelta = partialTicks;
 		delegate.render(entity);
 	}
 	
 	public void renderRightArm(RenderPlayer render, AbstractClientPlayer entity) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {})", render, entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({}, {})", render, entity);
 		this.render = render;
 		this.tickDelta = 0;
 		delegate.render(entity, BodyPart.RIGHT_ARM);

@@ -47,7 +47,7 @@ public class EarsDownloadThread {
 						EarsDownloadThread.this.image = imageProcessor.process(rawImage);
 					}
 
-					EarsLog.debug("Platform:Inject", "Process player skin");
+					EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
 							data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 

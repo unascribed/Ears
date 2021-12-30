@@ -25,7 +25,7 @@ public class EarsMod implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft b1.7.3 / Fabric {}; Env={}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft b1.7.3 / Fabric {}; Env={}",
 					FabricLoader.getInstance().getModContainer("fabricloader").get().getMetadata().getVersion().getFriendlyString(),
 					FabricLoader.getInstance().getEnvironmentType());
 		}

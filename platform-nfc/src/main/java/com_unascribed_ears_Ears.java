@@ -36,14 +36,14 @@ public class com_unascribed_ears_Ears {
 	}
 	
 	public static void preprocessSkin(rr subject, BufferedImage rawImg, BufferedImage img) {
-		EarsLog.debug("Platform:Inject", "preprocessSkin({}, {}, {})", subject, rawImg, img);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "preprocessSkin({}, {}, {})", subject, rawImg, img);
 		EarsStorage.put(img, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new AWTEarsImage(rawImg)));
 	}
 	
 	private static boolean reenteringOpaque = false;
 	
 	public static boolean interceptSetAreaOpaque(rr rr, int x1, int y1, int x2, int y2) {
-		EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {}) reentering={}", rr, x1, y2, x2, y2, reenteringOpaque);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}) reentering={}", rr, x1, y2, x2, y2, reenteringOpaque);
 		if (reenteringOpaque) return false;
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
 			try {
@@ -87,13 +87,13 @@ public class com_unascribed_ears_Ears {
 	}
 	
 	public static void checkSkin(String url, BufferedImage img) {
-		EarsLog.debug("Platform:Inject", "checkSkin({}, {})", url, img);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "checkSkin({}, {})", url, img);
 		earsSkinFeatures.put(url, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public void render(ds render, gs entity, float partialTicks) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {})", entity, 0, partialTicks);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {})", entity, 0, partialTicks);
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
 		this.tickDelta = partialTicks;
@@ -102,7 +102,7 @@ public class com_unascribed_ears_Ears {
 	}
 	
 	public void renderRightArm(ds render, gs entity, float partialTicks) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({}, {}, {})", render, entity, partialTicks);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({}, {}, {})", render, entity, partialTicks);
 		this.render = render;
 		this.brightness = entity.a(partialTicks);
 		this.tickDelta = partialTicks;

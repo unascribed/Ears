@@ -25,7 +25,7 @@ public abstract class MixinRenderPlayer extends RenderLivingBase<AbstractClientP
 
 	@Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/renderer/entity/RenderManager;Z)V")
 	private void init(RenderManager erd, boolean b, CallbackInfo ci) {
-		EarsLog.debug("Platform:Inject", "Construct player renderer");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Construct player renderer");
 		RenderPlayer self = (RenderPlayer)(Object)this;
 		this.addLayer(ears$layerRenderer = new EarsLayerRenderer(self));
 	}

@@ -24,7 +24,7 @@ public class EarsAgent {
 	public static boolean initialized = false;
 	
 	public static void premain(String arg, Instrumentation ins) {
-		EarsLog.debug("Common:Agent", "Agent initialized");
+		EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Agent initialized");
 		System.out.println("Hello from Ears v"+EarsVersion.PLATFORM+" for "+EarsVersion.PLATFORM_KIND+"!");
 		initialized = true;
 		ins.addTransformer(new ClassFileTransformer() {
@@ -72,7 +72,7 @@ public class EarsAgent {
 				fos.close();
 			}
 		} catch (IOException e) {
-			EarsLog.debug("Common:Agent", "Failed to write before class to {}", f, e);
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Failed to write before class to {}", f, e);
 		}
 	}
 
@@ -82,9 +82,9 @@ public class EarsAgent {
 			Class<?> clazz = Class.forName("com.unascribed.ears.asm.Patches");
 			Method m = clazz.getMethod("addTransformers", List.class);
 			m.invoke(null, li);
-			EarsLog.debug("Common:Agent", "Discovered {} patch{} in static binder", li.size(), li.size() == 1 ? "" : "es");
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Discovered {} patch{} in static binder", li.size(), li.size() == 1 ? "" : "es");
 		} catch (Exception e) {
-			EarsLog.debug("Common:Agent", "Failed to discover patches", e);
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Failed to discover patches", e);
 		}
 		TRANSFORMERS = Collections.unmodifiableList(li);
 	}

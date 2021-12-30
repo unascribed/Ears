@@ -26,14 +26,14 @@ class EarsRenderer {
 	 * Render all the features described in {@code features} using {@code delegate}.
 	 */
 	public static void render(EarsFeatures features, EarsRenderDelegate delegate) {
-		EarsLog.debug("Common:Renderer", "render({}, {})", features, delegate);
+		EarsLog.debug(EarsLog.Tag.COMMON_RENDERER, "render({}, {})", features, delegate);
 		boolean slim = delegate.isSlim();
 		
-		if (EarsLog.DEBUG && EarsLog.shouldLog("Platform:Renderer:Delegate")) {
+		if (EarsLog.DEBUG && EarsLog.shouldLog(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE)) {
 			delegate = new DebuggingDelegate(delegate);
 		}
 	
-		if (EarsLog.DEBUG && EarsLog.shouldLog("Common:Renderer:Dots")) {
+		if (EarsLog.DEBUG && EarsLog.shouldLog(EarsLog.Tag.COMMON_RENDERER_DOTS)) {
 			for (BodyPart part : BodyPart.values()) {
 				delegate.push();
 					delegate.anchorTo(part);
@@ -684,7 +684,7 @@ class EarsRenderer {
 	private static boolean isInhibited(EarsRenderDelegate delegate, EarsFeatureType feature) {
 		String namespace = EarsInhibitorRegistry.isInhibited(feature, delegate.getPeer());
 		if (namespace != null) {
-			EarsLog.debug("Common:API", "Rendering of feature {} is being inhibited by {}", feature, namespace);
+			EarsLog.debug(EarsLog.Tag.COMMON_API, "Rendering of feature {} is being inhibited by {}", feature, namespace);
 			return true;
 		}
 		return false;
@@ -719,7 +719,7 @@ class EarsRenderer {
 		}
 		Identified<Boolean> id = EarsStateOverriderRegistry.isActive(state, delegate.getPeer(), def);
 		if (id.getNamespace() != null) {
-			EarsLog.debug("Common:API", "State of {} is being overridden to {} from {} by {}", state, id.getValue(), def, id.getNamespace());
+			EarsLog.debug(EarsLog.Tag.COMMON_API, "State of {} is being overridden to {} from {} by {}", state, id.getValue(), def, id.getNamespace());
 		}
 		return id.getValue();
 	}

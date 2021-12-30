@@ -42,12 +42,12 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 	
 	public EarsLayerRenderer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> context) {
 		super(context);
-		EarsLog.debug("Platform:Renderer", "Constructed");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 	}
 	
 	@Override
 	public void render(PoseStack m, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
 		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
 	}
 	
@@ -62,7 +62,7 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 	public static EarsFeatures getEarsFeatures(AbstractClientPlayer peer) {
 		ResourceLocation skin = peer.getSkinTextureLocation();
 		AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
 			return ((EarsFeaturesHolder)tex).getEarsFeatures();
 		}

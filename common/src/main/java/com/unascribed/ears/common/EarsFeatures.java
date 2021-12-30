@@ -132,7 +132,7 @@ public class EarsFeatures {
 	 * the given Alfalfa with the resultant features object.
 	 */
 	public static EarsFeatures detect(EarsImage img, Alfalfa alfalfa, PNGLoader loader) {
-		EarsLog.debug("Common:Features", "detect({}, {})", img, alfalfa);
+		EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect({}, {})", img, alfalfa);
 		if (img.getHeight() == 64) {
 			int first = img.getARGB(0, 32)&0x00FFFFFF;
 			EarsFeatures.Builder bldr;
@@ -143,7 +143,7 @@ public class EarsFeatures {
 				// Ears Data v1.x (Binary)
 				bldr = EarsFeaturesParserV1.parse(img);
 			} else {
-				EarsLog.debug("Common:Features", "detect(...): Could not find v0 (Pixelwise, #3F23D8) or v1 (Binary, #EA2501) data indicator at 0, 32 - found #{} instead. Disabling",
+				EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Could not find v0 (Pixelwise, #3F23D8) or v1 (Binary, #EA2501) data indicator at 0, 32 - found #{} instead. Disabling",
 						EarsFeaturesParserV0.upperHex32Dbg(img.getARGB(0, 32)));
 				return DISABLED;
 			}
@@ -151,7 +151,7 @@ public class EarsFeatures {
 				return DISABLED;
 			}
 			if (bldr.wingMode != WingMode.NONE && !alfalfa.data.containsKey("wing")) {
-				EarsLog.debug("Common:Features", "detect(...): Wings are enabled, but there's no wing texture in the alfalfa. Disabling");
+				EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Wings are enabled, but there's no wing texture in the alfalfa. Disabling");
 				bldr.wingMode(WingMode.NONE);
 			}
 			if (bldr.emissive && img instanceof WritableEarsImage) {
@@ -162,12 +162,12 @@ public class EarsFeatures {
 					for (int y = 32; y < 36; y++) {
 						int color = img.getARGB(x, y);
 						if (((color >> 24)&0xFF) > 0) {
-							EarsLog.debug("Common:Features", "detect(...): Making #{} an emissive color", Integer.toHexString(color|0xFF000000).substring(2).toUpperCase(Locale.ROOT));
+							EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Making #{} an emissive color", Integer.toHexString(color|0xFF000000).substring(2).toUpperCase(Locale.ROOT));
 							palette.add(color&0x00FFFFFF);
 						}
 					}
 				}
-				EarsLog.debug("Common:Features", "detect(...): Found {} color{} in emissive palette", palette.size(), palette.size() == 1 ? "" : "s");
+				EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Found {} color{} in emissive palette", palette.size(), palette.size() == 1 ? "" : "s");
 				if (palette.isEmpty()) {
 					bldr.emissiveSkin(new byte[0]);
 					bldr.emissiveWing(new byte[0]);
@@ -185,7 +185,7 @@ public class EarsFeatures {
 							}
 						}
 					}
-					EarsLog.debug("Common:Features", "detect(...): Found {} emissive pixel{} in skin", found, found == 1 ? "" : "s");
+					EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Found {} emissive pixel{} in skin", found, found == 1 ? "" : "s");
 					if (alfalfa.data.containsKey("wing") && bldr.wingMode != WingMode.NONE) {
 						try {
 							EarsImage wing = loader.load(alfalfa.data.get("wing").toByteArray());
@@ -205,12 +205,12 @@ public class EarsFeatures {
 									}
 								}
 								bldr.emissiveWing(QDPNG.write(wout));
-								EarsLog.debug("Common:Features", "detect(...): Found {} emissive pixel{} in wing", found, found == 1 ? "" : "s");
+								EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Found {} emissive pixel{} in wing", found, found == 1 ? "" : "s");
 							} else {
 								bldr.emissiveWing(new byte[0]);
 							}
 						} catch (IOException e) {
-							EarsLog.debug("Common:Features", "detect(...): Exception while loading wing", e);
+							EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Exception while loading wing", e);
 							bldr.emissiveWing(new byte[0]);
 						}
 					} else {
@@ -227,7 +227,7 @@ public class EarsFeatures {
 					.alfalfa(alfalfa)
 					.build();
 		}
-		EarsLog.debug("Common:Features", "detect(...): Legacy skin, ignoring");
+		EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Legacy skin, ignoring");
 		return DISABLED;
 	}
 	

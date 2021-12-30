@@ -88,7 +88,7 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 	@Override
 	public void anchorTo(BodyPart part) {
 		if (permittedBodyPart != null && part != permittedBodyPart) {
-			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
+			EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "anchorTo(...): Part is not permissible in this pass, skip rendering until pop");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}
@@ -96,7 +96,7 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		}
 		TModelPart modelPart = decideModelPart(Decider.<BodyPart, TModelPart>begin(part)).orElse(null);
 		if (modelPart == null || !isVisible(modelPart)) {
-			EarsLog.debug("Platform:Renderer:Delegate", "anchorTo(...): Part is not {}, skip rendering until pop", modelPart == null ? "valid" : "visible");
+			EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "anchorTo(...): Part is not {}, skip rendering until pop", modelPart == null ? "valid" : "visible");
 			if (skipRendering == 0) {
 				skipRendering = 1;
 			}

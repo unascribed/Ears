@@ -48,20 +48,20 @@ public class Ears {
 	
 	public static void init() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft 1.2.5 / Forge {}; Side={}", MinecraftForge.getVersionString().replace("Minecraft Forge ", ""), FMLCommonHandler.instance().getSide());
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft 1.2.5 / Forge {}; Side={}", MinecraftForge.getVersionString().replace("Minecraft Forge ", ""), FMLCommonHandler.instance().getSide());
 		}
 		layer = new LayerEars();
 	}
 	
 	public static void modelPreconstruct(ModelBiped model) {
-		EarsLog.debug("Platform:Inject", "modelPreconstruct({})", model);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "modelPreconstruct({})", model);
 		if (forceBipedTextureHeight) {
 			model.textureHeight = 64;
 		}
 	}
 	
 	public static void amendPlayerRenderer(RenderPlayer rp) {
-		EarsLog.debug("Platform", "Hacking 64x64 skin support into player model");
+		EarsLog.debug(EarsLog.Tag.PLATFORM, "Hacking 64x64 skin support into player model");
 		forceBipedTextureHeight = true;
 		ModelBiped model = new ModelBiped(0, 0);
 		forceBipedTextureHeight = false;
@@ -96,16 +96,16 @@ public class Ears {
 	}
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
-		EarsLog.debug("Platform", "renderSpecials player={}, partialTicks={}", player, f);
+		EarsLog.debug(EarsLog.Tag.PLATFORM, "renderSpecials player={}, partialTicks={}", player, f);
 		layer.doRenderLayer(render, player,
 				player.field_705_Q + (player.field_704_R - player.field_705_Q) * f,
 				f);
 	}
 	
 	public static BufferedImage interceptParseUserSkin(final ImageBufferDownload subject, BufferedImage image) {
-		EarsLog.debug("Platform:Inject", "parseUserSkin({}, {})", subject, image);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin({}, {})", subject, image);
 		if (image == null) {
-			EarsLog.debug("Platform:Inject", "parseUserSkin(...): Image is null");
+			EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin(...): Image is null");
 			return null;
 		} else {
 			setImageWidth(subject, 64);
@@ -115,7 +115,7 @@ public class Ears {
 			g.drawImage(image, 0, 0, null);
 
 			if (image.getHeight() == 32) {
-				EarsLog.debug("Platform:Inject", "parseUserSkin(...): Upgrading legacy skin");
+				EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "parseUserSkin(...): Upgrading legacy skin");
 				g.drawImage(newImg, 24, 48, 20, 52, 4, 16, 8, 20, null);
 				g.drawImage(newImg, 28, 48, 24, 52, 8, 16, 12, 20, null);
 				g.drawImage(newImg, 20, 52, 16, 64, 8, 20, 12, 32, null);
@@ -153,7 +153,7 @@ public class Ears {
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		if (img == null) return;
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
 			@Override
@@ -164,7 +164,7 @@ public class Ears {
 	}
 	
 	public static String amendSkinUrl(String url) {
-		EarsLog.debug("Platform:Inject", "Amend skin URL {}", url);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Amend skin URL {}", url);
 		if (url.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && url.endsWith(".png")) {
 			final String username = url.substring(39, url.length()-4);
 			return LegacyHelper.getSkinUrl(username);
@@ -177,7 +177,7 @@ public class Ears {
 	}
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
-		EarsLog.debug("Platform:Inject", "Before render rp={} player={}", rp, player);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Before render rp={} player={}", rp, player);
 		boolean slim = LegacyHelper.isSlimArms(player.username);
 		ModelBiped modelBipedMain = getModelBipedMain(rp);
 		if (slim) {
@@ -293,7 +293,7 @@ public class Ears {
 	}
 	private static void setAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		try {
-			EarsLog.debug("Platform:Inject", "stripAlpha({}, {}, {}, {}, {})", subject, x1, y1, x2, y2);
+			EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {})", subject, x1, y1, x2, y2);
 			setAreaOpaque.invoke(subject, x1, y1, x2, y2);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;

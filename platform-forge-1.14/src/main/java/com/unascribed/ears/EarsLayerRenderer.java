@@ -39,30 +39,30 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 	
 	public EarsLayerRenderer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> context) {
 		super(context);
-		EarsLog.debug("Platform:Renderer", "Constructed");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 	}
 	
 	@Override
 	public void render(AbstractClientPlayerEntity entity, float limbAngle, float limbDistance,
 			float tickDelta, float age, float headYaw, float headPitch, float scale) {
-		EarsLog.debug("Platform:Renderer", "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {}, {}, {}, {}, {})", entity, limbAngle, limbDistance, tickDelta, age, headYaw, headPitch, scale);
 		delegate.render(entity, null);
 	}
 	
 	public void renderLeftArm(AbstractClientPlayerEntity entity) {
-		EarsLog.debug("Platform:Renderer", "renderLeftArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderLeftArm({})", entity);
 		delegate.render(entity, BodyPart.LEFT_ARM);
 	}
 	
 	public void renderRightArm(AbstractClientPlayerEntity entity) {
-		EarsLog.debug("Platform:Renderer", "renderRightArm({})", entity);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderRightArm({})", entity);
 		delegate.render(entity, BodyPart.RIGHT_ARM);
 	}
 
 	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
 		ResourceLocation skin = peer.getLocationSkin();
 		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
 			return ((EarsFeaturesHolder)tex).getEarsFeatures();
 		}

@@ -26,7 +26,7 @@ public class EarsMod implements InitializationListener {
 	@Override
 	public void onInitialization() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft 1.13.2 / Rift vWhoCares; Side={}", RiftLoader.instance.getSide());
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft 1.13.2 / Rift vWhoCares; Side={}", RiftLoader.instance.getSide());
 		}
 		MixinBootstrap.init();
 		Mixins.addConfiguration("ears.mixins.json");
@@ -55,7 +55,7 @@ public class EarsMod implements InitializationListener {
 	public static EarsFeatures getEarsFeatures(AbstractClientPlayer peer) {
 		ResourceLocation skin = peer.getLocationSkin();
 		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
 			return ((EarsFeaturesHolder)tex).getEarsFeatures();
 		}

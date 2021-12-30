@@ -32,7 +32,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 	@Inject(at=@At("HEAD"), method = "method_4198(Ljava/awt/image/BufferedImage;)V")
 	public void method_4198(BufferedImage cur, CallbackInfo ci) {
 		if (cur == null) return;
-		EarsLog.debug("Platform:Inject", "Process player skin");
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		earsFeatures = EarsFeatures.detect(new AWTEarsImage(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
 	}

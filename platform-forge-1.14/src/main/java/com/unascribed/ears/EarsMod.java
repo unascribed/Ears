@@ -27,7 +27,7 @@ public class EarsMod {
 
 	public EarsMod() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft {} / Forge {}; Env={}:{}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft {} / Forge {}; Env={}:{}",
 					SharedConstants.getVersion().getName(), ForgeVersion.getVersion(), FMLEnvironment.dist, FMLEnvironment.naming);
 		}
 		try {

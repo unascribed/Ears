@@ -30,9 +30,9 @@ public abstract class MixinImageProcessorImpl {
 
 	@Inject(method = "process", at = @At("HEAD"), cancellable = true)
 	public void process(BufferedImage image, CallbackInfoReturnable<BufferedImage> info) {
-		EarsLog.debug("Platform:Inject", "ImageProcessorImpl.process({})", image);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "ImageProcessorImpl.process({})", image);
 		if (image == null) {
-			EarsLog.debug("Platform:Inject", "ImageProcessorImpl.process(...): Image is null");
+			EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "ImageProcessorImpl.process(...): Image is null");
 			info.setReturnValue(null);
 		} else {
 			this.field_2446 = 64;
@@ -43,7 +43,7 @@ public abstract class MixinImageProcessorImpl {
 			g.drawImage(image, 0, 0, null);
 
 			if (image.getHeight() == 32) {
-				EarsLog.debug("Platform:Inject", "ImageProcessorImpl.process(...): Upgrading legacy skin");
+				EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "ImageProcessorImpl.process(...): Upgrading legacy skin");
 				g.drawImage(newImg, 24, 48, 20, 52, 4, 16, 8, 20, null);
 				g.drawImage(newImg, 28, 48, 24, 52, 8, 16, 12, 20, null);
 				g.drawImage(newImg, 20, 52, 16, 64, 8, 20, 12, 32, null);

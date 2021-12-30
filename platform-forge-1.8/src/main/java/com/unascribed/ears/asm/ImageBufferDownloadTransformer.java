@@ -2,6 +2,9 @@ package com.unascribed.ears.asm;
 
 import com.unascribed.ears.common.agent.mini.annotation.Patch;
 import com.unascribed.ears.common.agent.mini.asm.tree.LabelNode;
+
+import net.minecraftforge.fml.client.FMLClientHandler;
+
 import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.agent.mini.PatchContext;
 
@@ -10,16 +13,17 @@ public class ImageBufferDownloadTransformer extends MiniTransformer {
 	
 	@Patch.Method("func_78432_a(Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage;")
 	public void patchParseUserSkin(PatchContext ctx) {
+		int local = FMLClientHandler.instance().hasOptifine() ? 6 : 2;
 		// return bufferedimage;
 		ctx.search(
-			ALOAD(2),
+			ALOAD(local),
 			ARETURN()
 		).jumpBefore();
 		// EarsMod.preprocessSkin(this, image, bufferedimage);
 		ctx.add(
 			ALOAD(0),
 			ALOAD(1),
-			ALOAD(2),
+			ALOAD(local),
 			INVOKESTATIC("com/unascribed/ears/Ears", "preprocessSkin","(Lnet/minecraft/client/renderer/ImageBufferDownload;Ljava/awt/image/BufferedImage;Ljava/awt/image/BufferedImage;)V")
 		);
 	}

@@ -20,16 +20,16 @@ public class EarsMixinConfigPlugin implements IMixinConfigPlugin {
 		for (Config config : Mixins.getConfigs()) {
 			IMixinConfig imc = config.getConfig();
 			if (imc.getMixinPackage().startsWith("dev.tr7zw.firstperson.") || imc.getMixinPackage().startsWith("de.tr7zw.firstperson.")) {
-				EarsLog.debug("Common:Mixin", "Found FirstPersonModel. Scanning...");
+				EarsLog.debug(EarsLog.Tag.COMMON_MIXIN, "Found FirstPersonModel. Scanning...");
 				// Broken conflict-y mixins that do the same thing as Ears' own mixins for reducing
 				// skin opacity overspill.
 				List<String> mixinClassesClient = pluck(imc.getClass(), imc, "mixinClassesClient");
 				if (mixinClassesClient.remove("DownloadingTextureMixin")) {
-					EarsLog.debug("Common:Mixin", "Suppressing MCP-named skin transparency mixin.");
+					EarsLog.debug(EarsLog.Tag.COMMON_MIXIN, "Suppressing MCP-named skin transparency mixin.");
 				} else if (mixinClassesClient.remove("PlayerSkinTextureMixin")) {
-					EarsLog.debug("Common:Mixin", "Suppressing Yarn-named skin transparency mixin.");
+					EarsLog.debug(EarsLog.Tag.COMMON_MIXIN, "Suppressing Yarn-named skin transparency mixin.");
 				} else {
-					EarsLog.debug("Common:Mixin", "Didn't find any mixins to suppress.");
+					EarsLog.debug(EarsLog.Tag.COMMON_MIXIN, "Didn't find any mixins to suppress.");
 				}
 			}
 		}

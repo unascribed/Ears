@@ -26,8 +26,15 @@
 
 package com.unascribed.ears.common.agent.mini;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +54,42 @@ import static org.objectweb.asm.Opcodes.*;
 
 public abstract class MiniTransformer {
 
+	private static final boolean DUMP = Boolean.getBoolean("ears.debug.dump");
+	static {
+		Path p = new File(".ears.out").toPath();
+		if (Files.exists(p)) {
+			try {
+				Files.walkFileTree(p, new FileVisitor<Path>() {
+
+					@Override
+					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+						Files.delete(file);
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+						EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "IO error cleaning output directory", exc);
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+						Files.delete(dir);
+						return FileVisitResult.CONTINUE;
+					}
+				});
+			} catch (IOException e) {
+				EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "IO error cleaning output directory", e);
+			}
+		}
+	}
+	
 	private interface PatchMethod {
 		boolean patch(PatchContext ctx) throws Throwable;
 	}
@@ -93,6 +136,10 @@ public abstract class MiniTransformer {
 		className = className.replace('.', '/');
 		if (!classes.contains(className)) return basicClass;
 		
+		if (DUMP) {
+			dump(className, basicClass, "before");
+		}
+		
 		ClassReader reader = new ClassReader(basicClass);
 		ClassNode clazz = new ClassNode();
 		reader.accept(clazz, 0);
@@ -116,7 +163,7 @@ public abstract class MiniTransformer {
 					} catch (Throwable t) {
 						throw new Error("Failed to patch "+className+"."+mn.name+mn.desc+" via "+pm, t);
 					}
-					EarsLog.debug("Common:Agent", "[{}] Successfully transformed {}.{}{} via {}", getClass().getName(), className, mn.name, mn.desc, pm);
+					EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "[{}] Successfully transformed {}.{}{} via {}", getClass().getName(), className, mn.name, mn.desc, pm);
 				}
 			}
 			requiredsNotSeen.remove(name);
@@ -144,7 +191,7 @@ public abstract class MiniTransformer {
 			}
 			msg.deleteCharAt(msg.length()-1);
 			String msgS = msg.toString();
-			EarsLog.debug("Common:Agent", "[{}] {}", getClass().getName(), msgS);
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "[{}] {}", getClass().getName(), msgS);
 			throw new Error(msgS);
 		}
 		
@@ -154,9 +201,28 @@ public abstract class MiniTransformer {
 		}
 		ClassWriter writer = new ClassWriter(flags);
 		clazz.accept(writer);
-		return writer.toByteArray();
+		byte[] bys = writer.toByteArray();
+		if (DUMP) {
+			dump(className, bys, "after");
+		}
+		return bys;
 	}
 	
+	private static void dump(String className, byte[] bys, String phase) {
+		Path root = new File(".ears.out").toPath();
+		Path f = root.resolve(phase).resolve(className.replace('.', '/')+".class");
+		if (!f.startsWith(root)) {
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Cowardly refusing to dump {} ({}) as it would escape the output directory", className, phase);
+			return;
+		}
+		try {
+			Files.createDirectories(f.getParent());
+			Files.write(f, bys);
+		} catch (IOException e) {
+			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "IO error while dumping {} ({})", className, phase, e);
+		}
+	}
+
 	protected static InsnNode NOP() { return new InsnNode(NOP); }
 	protected static InsnNode ACONST_NULL() { return new InsnNode(ACONST_NULL); }
 	protected static InsnNode ICONST_M1() { return new InsnNode(ICONST_M1); }

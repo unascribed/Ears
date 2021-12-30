@@ -16,7 +16,7 @@ public class EarsMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		if (EarsLog.DEBUG) {
-			EarsLog.debugva("Platform", "Initialized - Minecraft {} / Fabric {}; Env={}",
+			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft {} / Fabric {}; Env={}",
 					SharedConstants.getGameVersion().getName(),
 					FabricLoader.getInstance().getModContainer("fabricloader").get().getMetadata().getVersion().getFriendlyString(),
 					FabricLoader.getInstance().getEnvironmentType());
@@ -26,7 +26,7 @@ public class EarsMod implements ModInitializer {
 	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
 		Identifier skin = peer.getSkinTexture();
 		AbstractTexture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug("Platform:Renderer", "getEarsFeatures(): skin={}, tex={}", skin, tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
 			return ((EarsFeaturesHolder)tex).getEarsFeatures();
 		}
