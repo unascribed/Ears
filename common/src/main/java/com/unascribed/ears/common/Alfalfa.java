@@ -185,6 +185,7 @@ public class Alfalfa {
 	}
 
 	public static Alfalfa read(EarsImage img) {
+		if (img.getWidth() != 64 || img.getHeight() != 64) return NONE;
 		BigInteger bi = BigInteger.ZERO;
 		int read = 0;
 		for (Rectangle rect : ENCODE_REGIONS) {

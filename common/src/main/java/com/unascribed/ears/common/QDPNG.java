@@ -2,8 +2,6 @@ package com.unascribed.ears.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.zip.CRC32;
@@ -71,8 +69,6 @@ public class QDPNG {
 			endChunk();
 			// we could use the normal chunk machinery, but IEND is always the same
 			out.write(IEND_COMPLETE);
-			
-			new FileOutputStream(new File("blah.png")).write(root.toByteArray());
 			
 			return root.toByteArray();
 		} catch (IOException e) {
