@@ -211,7 +211,7 @@ public abstract class MiniTransformer {
 	private static void dump(String className, byte[] bys, String phase) {
 		Path root = new File(".ears.out").toPath();
 		Path f = root.resolve(phase).resolve(className.replace('.', '/')+".class");
-		if (!f.startsWith(root)) {
+		if (!f.toAbsolutePath().startsWith(root.toAbsolutePath())) {
 			EarsLog.debug(EarsLog.Tag.COMMON_AGENT, "Cowardly refusing to dump {} ({}) as it would escape the output directory", className, phase);
 			return;
 		}
