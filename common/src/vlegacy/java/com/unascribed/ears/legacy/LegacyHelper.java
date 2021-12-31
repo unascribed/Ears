@@ -129,14 +129,18 @@ public class LegacyHelper {
 	public static String getSkinUrl(UUID id, String username) {
 		if (!skinUrls.containsKey(id)) {
 			try {
+				EarsLog.debug(EarsLog.Tag.COMMON, "Resolving profile data for {} ({})", id, username);
 				GameProfile profile = new GameProfile(id, username);
 				sessionService.fillProfileProperties(profile);
-				if (profile.getTexture(GameProfile.TextureType.SKIN).getModel() == GameProfile.TextureModel.SLIM) {
+				boolean slim = profile.getTexture(GameProfile.TextureType.SKIN).getModel() == GameProfile.TextureModel.SLIM;
+				if (slim) {
 					slimUsers.add(id);
 				} else {
 					slimUsers.remove(id);
 				}
-				skinUrls.put(id, profile.getTexture(GameProfile.TextureType.SKIN, false).getURL());
+				String url = profile.getTexture(GameProfile.TextureType.SKIN, false).getURL();
+				skinUrls.put(id, url);
+				EarsLog.debug(EarsLog.Tag.COMMON, "{} resolution successful; url={} slim={}", id, url, slim);
 			} catch (Throwable t) {
 				t.printStackTrace();
 				System.err.println("[Ears] Profile lookup failed");
@@ -148,9 +152,11 @@ public class LegacyHelper {
 	public static UUID getUuid(final String username) {
 		if (!loaded) load();
 		if (!cache.containsKey(username)) {
+			EarsLog.debug(EarsLog.Tag.COMMON, "Resolving UUID for {}", username);
 			profileService.findProfilesByName(new String[]{username}, new ProfileService.ProfileLookupCallback() {
 				@Override
 				public void onProfileLookupSucceeded(GameProfile profile) {
+					EarsLog.debug(EarsLog.Tag.COMMON, "{} = {}", username, profile.getId());
 					cache.put(username, new CacheEntry(System.currentTimeMillis()+TimeUnit.DAYS.toMillis(7), profile.getId()));
 				}
 
