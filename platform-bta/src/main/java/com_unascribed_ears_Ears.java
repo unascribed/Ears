@@ -353,7 +353,11 @@ public class com_unascribed_ears_Ears {
 		
 		@Override
 		protected void doBindSkin() {
-			render.a(getSkinUrl(), peer.q_());
+			try {
+				render.a(getSkinUrl(), peer.q_());
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		@Override

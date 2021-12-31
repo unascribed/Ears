@@ -1,7 +1,9 @@
 package com.unascribed.ears.common.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 
 /**
  * An immutable view into a byte array.
@@ -87,19 +89,61 @@ public final class Slice {
 
 	@Override
 	public String toString() {
-		int a = 0;
-		int b = 0;
-		for (int i = 0; i < size(); i++) {
-	        a = (a + (get(i)&0xFF)) % 65521;
-	        b = (b + a) % 65521;
+		StringBuilder val = new StringBuilder();
+		StringBuilder asc = new StringBuilder();
+		for (int i = 0; i < len; i++) {
+			int v = (get(i)&0xFF);
+			val.append(Integer.toHexString(v|0xF00).substring(1).toUpperCase(Locale.ROOT));
+			val.append(" ");
+			asc.append(v < 0x20 || v > 0x7F ? '.' : (char)v);
 		}
-		return "["+len+" bytes; a32("+Integer.toHexString(b<<16|a)+")]";
+		val.setLength(val.length()-1);
+		return "Slice["+len+" bytes; "+val+" | "+asc+"]";
 	}
 
 	public static byte[] of(byte[] arr, int ofs, int len) {
 		byte[] dst = new byte[len];
 		System.arraycopy(arr, ofs, dst, 0, len);
 		return dst;
+	}
+
+	/**
+	 * Convenience method to construct a Slice from a readable literal. Not intended for data
+	 * parsing - no validation is performed and various errors can be thrown by this method for
+	 * malformed data.
+	 * <p>
+	 * The format is simple; every pair of characters is interpreted as a hex byte, and any chars
+	 * between square brackets ([ and ]) have their lower 8 bits passed through as-is.
+	 * For example:<br/>
+	 * <code>89[PNG\r\n]1A[\n]</code><br/>
+	 * will become<br/>
+	 * <code>89 50 4E 47 0D 0A 1A 0A | .PNG....</code>
+	 */
+	public static Slice parse(String str) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		boolean inGroup = false;
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (inGroup) {
+				if (c == ']') {
+					inGroup = false;
+				} else {
+					baos.write(c&0xFF);
+				}
+			} else {
+				if (c == '[') {
+					inGroup = true;
+				} else {
+					char other = str.charAt(i+1);
+					int lhs = Character.digit(c, 16);
+					int rhs = Character.digit(other, 16);
+					int value = (lhs << 4) | rhs;
+					baos.write(value);
+					i++;
+				}
+			}
+		}
+		return new Slice(baos.toByteArray());
 	}
 
 }

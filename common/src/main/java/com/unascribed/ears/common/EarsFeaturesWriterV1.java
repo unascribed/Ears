@@ -47,6 +47,7 @@ public class EarsFeaturesWriterV1 {
 			bos.write(feat.animateWings);
 		}
 		bos.write(feat.capeEnabled);
+		bos.write(feat.emissive);
 		bos.flush();
 	}
 	

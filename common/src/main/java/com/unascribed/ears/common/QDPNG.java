@@ -3,22 +3,23 @@ package com.unascribed.ears.common;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
+
+import com.unascribed.ears.common.util.Slice;
 
 /**
  * An extremely minimal PNG writer that puts zero effort into making small files.
  */
 public class QDPNG {
 
-	private static final byte[] HEADER = b("\u0089PNG\r\n\u001A\n");
-	private static final byte[] IHDR = b("IHDR");
-	private static final byte[] IDAT = b("IDAT");
-	private static final byte[] IEND_COMPLETE = b("\0\0\0\0IEND\u00AE\u0042\u0060\u0082");
-
+	private static final Slice HEADER = Slice.parse("89[PNG\r\n]1A[\n]");
+	private static final Slice IHDR = Slice.parse("[IHDR]");
+	private static final Slice IDAT = Slice.parse("[IDAT]");
+	private static final Slice IEND_COMPLETE = Slice.parse("00000000[IEND]AE426082");
+	
 	public static byte[] write(WritableEarsImage out) {
 		return new QDPNG(out).write();
 	}
@@ -43,7 +44,7 @@ public class QDPNG {
 			root.reset();
 			out = dosRoot;
 			
-			out.write(HEADER);
+			HEADER.writeTo(out);
 			beginChunk(IHDR);
 				out.writeInt(img.getWidth());
 				out.writeInt(img.getHeight());
@@ -68,7 +69,7 @@ public class QDPNG {
 				zout.finish();
 			endChunk();
 			// we could use the normal chunk machinery, but IEND is always the same
-			out.write(IEND_COMPLETE);
+			IEND_COMPLETE.writeTo(out);
 			
 			return root.toByteArray();
 		} catch (IOException e) {
@@ -76,11 +77,11 @@ public class QDPNG {
 		}
 	}
 
-	private void beginChunk(byte[] name) throws IOException {
+	private void beginChunk(Slice name) throws IOException {
 		tmp.reset();
 		crcTmp.getChecksum().reset();
 		out = dosTmp;
-		out.write(name);
+		name.writeTo(out);
 	}
 	
 	private void endChunk() throws IOException {
@@ -89,10 +90,6 @@ public class QDPNG {
 		out.writeInt(tmp.size()-4);
 		tmp.writeTo(out);
 		out.writeInt((int)crcTmp.getChecksum().getValue());
-	}
-
-	private static byte[] b(String str) {
-		return str.getBytes(Charset.forName("ISO-8859-1"));
 	}
 
 }
