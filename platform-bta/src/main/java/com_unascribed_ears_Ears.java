@@ -234,6 +234,9 @@ public class com_unascribed_ears_Ears {
 		if (url.startsWith("https://betacraft.pl/skin/") && url.endsWith(".png")) {
 			final String username = url.substring(26, url.length()-4);
 			return LegacyHelper.getSkinUrl(username);
+		} else if (url.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && url.endsWith(".png")) {
+			final String username = url.substring(39, url.length()-4);
+			return LegacyHelper.getSkinUrl(username);
 		}
 		return url;
 	}
