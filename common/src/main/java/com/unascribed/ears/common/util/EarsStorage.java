@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.unascribed.ears.common.Alfalfa;
+import com.unascribed.ears.api.features.AlfalfaData;
 
 /**
  * General purpose thread-local type-safe storage for providing "inside-out" fields where needed.
@@ -12,7 +12,7 @@ import com.unascribed.ears.common.Alfalfa;
 public final class EarsStorage {
 
 	public static final class Key<T> {
-		public static final Key<Alfalfa> ALFALFA = new Key<Alfalfa>(Alfalfa.NONE);
+		public static final Key<AlfalfaData> ALFALFA = new Key<AlfalfaData>(AlfalfaData.NONE);
 		
 		public final T def;
 

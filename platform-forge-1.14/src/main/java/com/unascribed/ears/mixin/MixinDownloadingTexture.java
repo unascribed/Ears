@@ -1,17 +1,14 @@
 package com.unascribed.ears.mixin;
 
-import java.io.ByteArrayInputStream;
-
-import javax.imageio.ImageIO;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.NativeImageAdapter;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.AbstractEarsRenderDelegate;
 import com.unascribed.ears.common.util.EarsStorage;
@@ -34,7 +31,7 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 	public void setImage(NativeImage cur, CallbackInfo ci) {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		if (cur == null) return;
-		earsFeatures = EarsFeatures.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
+		earsFeatures = EarsFeaturesParser.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 				data -> new NativeImageAdapter(NativeImage.read(AbstractEarsRenderDelegate.toNativeBuffer(data))));
 	}
 	

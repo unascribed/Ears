@@ -6,8 +6,9 @@ import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import me.shedaniel.api.ConfigRegistry;
@@ -56,8 +57,12 @@ public class EarsMod implements InitializationListener {
 		ResourceLocation skin = peer.getLocationSkin();
 		ITextureObject tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
 		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
-		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		if (tex instanceof EarsFeaturesHolder) {
+			EarsFeatures feat = ((EarsFeaturesHolder)tex).getEarsFeatures();
+			EarsFeaturesStorage.INSTANCE.put(peer.getGameProfile().getName(), peer.getGameProfile().getId(), feat);
+			if (!peer.isInvisible()) {
+				return feat;
+			}
 		}
 		return EarsFeatures.DISABLED;
 	}

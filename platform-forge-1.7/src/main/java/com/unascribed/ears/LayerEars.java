@@ -10,11 +10,13 @@ import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesStorage;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.PartiallyUnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.util.Decider;
+import com.unascribed.ears.legacy.LegacyHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -66,11 +68,14 @@ public class LayerEars {
 		protected EarsFeatures getEarsFeatures() {
 			ResourceLocation skin = peer.getLocationSkin();
 			ITextureObject tex = Minecraft.getMinecraft().getTextureManager().getTexture(skin);
-			if (Ears.earsSkinFeatures.containsKey(tex) && !peer.isInvisible()) {
-				return Ears.earsSkinFeatures.get(tex);
-			} else {
-				return EarsFeatures.DISABLED;
+			if (Ears.earsSkinFeatures.containsKey(tex)) {
+				EarsFeatures feat = Ears.earsSkinFeatures.get(tex);
+				EarsFeaturesStorage.INSTANCE.put(peer.getGameProfile().getName(), peer.getGameProfile().getId(), feat);
+				if (!peer.isInvisible()) {
+					return feat;
+				}
 			}
+			return EarsFeatures.DISABLED;
 		}
 		
 		@Override

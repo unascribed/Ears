@@ -9,8 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.NativeImageAdapter;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.AbstractEarsRenderDelegate;
@@ -35,7 +36,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		NativeImage cur = ci.getReturnValue();
 		if (cur != null) {
-			earsFeatures = EarsFeatures.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
+			earsFeatures = EarsFeaturesParser.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 					data -> new NativeImageAdapter(NativeImage.read(AbstractEarsRenderDelegate.toNativeBuffer(data))));
 		}
 	}

@@ -8,8 +8,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -69,8 +70,12 @@ public class EarsLayerRenderer extends LayerRenderer<AbstractClientPlayerEntity,
 		ResourceLocation skin = peer.getLocationSkin();
 		Texture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
 		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
-		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		if (tex instanceof EarsFeaturesHolder) {
+			EarsFeatures feat = ((EarsFeaturesHolder)tex).getEarsFeatures();
+			EarsFeaturesStorage.INSTANCE.put(peer.getGameProfile().getName(), peer.getGameProfile().getId(), feat);
+			if (!peer.isInvisible()) {
+				return feat;
+			}
 		}
 		return EarsFeatures.DISABLED;
 	}

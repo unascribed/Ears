@@ -15,11 +15,12 @@ import javax.imageio.ImageIO;
 import com.unascribed.ears.common.util.EarsStorage;
 import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
-import com.unascribed.ears.common.EarsFeatures.PNGLoader;
+import com.unascribed.ears.common.EarsFeaturesParser.PNGLoader;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsImage;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -154,7 +155,7 @@ public class Ears {
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		if (img == null) return;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		earsSkinFeatures.put(getLocation(tdi), EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+		earsSkinFeatures.put(getLocation(tdi), EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
 			@Override
 			public EarsImage load(byte[] data) throws IOException {

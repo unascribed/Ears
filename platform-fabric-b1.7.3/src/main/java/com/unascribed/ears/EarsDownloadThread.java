@@ -8,9 +8,9 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import com.unascribed.ears.legacy.LegacyHelper;
-import com.unascribed.ears.common.EarsFeatures;
-import com.unascribed.ears.common.Alfalfa;
+import com.unascribed.ears.api.features.AlfalfaData;
 import com.unascribed.ears.common.EarsCommon;
+import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 
@@ -40,7 +40,7 @@ public class EarsDownloadThread {
 				imageConnection.connect();
 				if (imageConnection.getResponseCode() / 100 != 4) {
 					BufferedImage rawImage = ImageIO.read(imageConnection.getInputStream());
-					Alfalfa alfalfa = EarsCommon.preprocessSkin(new AWTEarsImage(rawImage));
+					AlfalfaData alfalfa = EarsCommon.preprocessSkin(new AWTEarsImage(rawImage));
 					if (imageProcessor == null) {
 						EarsDownloadThread.this.image = rawImage;
 					} else {
@@ -48,7 +48,7 @@ public class EarsDownloadThread {
 					}
 
 					EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-					EarsMod.earsSkinFeatures.put(string, EarsFeatures.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
+					EarsMod.earsSkinFeatures.put(string, EarsFeaturesParser.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
 							data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 
 					return;

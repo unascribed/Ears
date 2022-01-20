@@ -11,8 +11,10 @@ import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesStorage;
+import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;
@@ -225,7 +227,7 @@ public class com_unascribed_ears_Ears {
 	
 	public static void checkSkin(String url, BufferedImage img) {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "checkSkin({}, {})", url, img);
-		earsSkinFeatures.put(url, EarsFeatures.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+		earsSkinFeatures.put(url, EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
@@ -233,6 +235,9 @@ public class com_unascribed_ears_Ears {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Amend skin URL {}", url);
 		if (url.startsWith("https://betacraft.pl/skin/") && url.endsWith(".png")) {
 			final String username = url.substring(26, url.length()-4);
+			return LegacyHelper.getSkinUrl(username);
+		} else if (url.startsWith("https://betacraft.uk/MinecraftSkins/") && url.endsWith(".png")) {
+			final String username = url.substring(36, url.length()-4);
 			return LegacyHelper.getSkinUrl(username);
 		} else if (url.startsWith("http://s3.amazonaws.com/MinecraftSkins/") && url.endsWith(".png")) {
 			final String username = url.substring(39, url.length()-4);
@@ -351,7 +356,12 @@ public class com_unascribed_ears_Ears {
 		
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return earsSkinFeatures.containsKey(getSkinUrl()) ? earsSkinFeatures.get(getSkinUrl()) : EarsFeatures.DISABLED;
+			if (earsSkinFeatures.containsKey(getSkinUrl())) {
+				EarsFeatures feat = earsSkinFeatures.get(getSkinUrl());
+				EarsFeaturesStorage.INSTANCE.put(peer.l, LegacyHelper.getUuid(peer.l), feat);
+				return feat;
+			}
+			return EarsFeatures.DISABLED;
 		}
 		
 		@Override

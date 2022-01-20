@@ -7,14 +7,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.unascribed.ears.common.EarsFeatures.WingMode;
+import com.unascribed.ears.api.Slice;
+import com.unascribed.ears.api.features.AlfalfaData;
+import com.unascribed.ears.api.features.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexFlip;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexRotation;
 import com.unascribed.ears.common.render.EarsRenderDelegate.TexSource;
 import com.unascribed.ears.common.util.BitInputStream;
-import com.unascribed.ears.common.util.Slice;
 
 /**
  * Entrypoint to methods that are common to all ports of Ears.
@@ -103,8 +105,8 @@ public class EarsCommon {
 		return "https://unascribed.com/ears/#v="+EarsVersion.COMMON+(uuid == null ? ",username="+username : ",id="+uuid);
 	}
 	
-	public static Alfalfa preprocessSkin(WritableEarsImage img) {
-		Alfalfa a = Alfalfa.read(img);
+	public static AlfalfaData preprocessSkin(WritableEarsImage img) {
+		AlfalfaData a = Alfalfa.read(img);
 		Slice erase = a.data.get("erase");
 		if (erase != null) {
 			BitInputStream bis = new BitInputStream(new ByteArrayInputStream(erase.toByteArray()));
@@ -120,6 +122,7 @@ public class EarsCommon {
 							img.setARGB(xi, yi, 0);
 						}
 					}
+					count++;
 				}
 			} catch (EOFException e) {
 			} catch (IOException e) {

@@ -2,7 +2,7 @@ package com.unascribed.ears;
 
 import java.util.Map;
 import java.util.WeakHashMap;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import net.fabricmc.api.ClientModInitializer;

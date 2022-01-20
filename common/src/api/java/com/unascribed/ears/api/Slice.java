@@ -1,4 +1,4 @@
-package com.unascribed.ears.common.util;
+package com.unascribed.ears.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,6 +10,8 @@ import java.util.Locale;
  */
 public final class Slice {
 
+	public static final Slice EMPTY = new Slice(new byte[0]);
+	
 	private final byte[] arr;
 	private final int ofs;
 	private final int len;

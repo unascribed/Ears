@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.unascribed.ears.common.EarsFeatures.EarAnchor;
-import com.unascribed.ears.common.EarsFeatures.EarMode;
-import com.unascribed.ears.common.EarsFeatures.TailMode;
-import com.unascribed.ears.common.EarsFeatures.WingMode;
+import com.unascribed.ears.api.features.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures.EarAnchor;
+import com.unascribed.ears.api.features.EarsFeatures.EarMode;
+import com.unascribed.ears.api.features.EarsFeatures.TailMode;
+import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.EarsLog;
 
 class EarsFeaturesParserV0 {

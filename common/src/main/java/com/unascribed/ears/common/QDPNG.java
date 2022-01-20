@@ -8,7 +8,7 @@ import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import com.unascribed.ears.common.util.Slice;
+import com.unascribed.ears.api.Slice;
 
 /**
  * An extremely minimal PNG writer that puts zero effort into making small files.

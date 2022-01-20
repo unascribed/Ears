@@ -4,10 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.unascribed.ears.common.EarsFeatures.EarAnchor;
-import com.unascribed.ears.common.EarsFeatures.EarMode;
-import com.unascribed.ears.common.EarsFeatures.TailMode;
-import com.unascribed.ears.common.EarsFeatures.WingMode;
+import com.unascribed.ears.api.features.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures.EarAnchor;
+import com.unascribed.ears.api.features.EarsFeatures.EarMode;
+import com.unascribed.ears.api.features.EarsFeatures.TailMode;
+import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.util.BitInputStream;
 

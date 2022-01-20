@@ -2,7 +2,7 @@ package com.unascribed.ears.common.render;
 
 import java.util.Locale;
 
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 
 /**
  * Entrypoint to the Ears abstract rendering platform. Every platform provides a concrete
@@ -72,10 +72,10 @@ public interface EarsRenderDelegate {
 				return feat.alfalfa.data.get("cape").toByteArray();
 			}
 			if (this == EMISSIVE_SKIN && feat.emissive) {
-				return feat.emissiveSkin;
+				return feat.emissiveSkin.toByteArray();
 			}
 			if (this == EMISSIVE_WING && feat.emissive) {
-				return feat.emissiveWing;
+				return feat.emissiveWing.toByteArray();
 			}
 			return null;
 		}

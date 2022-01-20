@@ -5,9 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import com.unascribed.ears.common.EarsFeatures.EarMode;
-import com.unascribed.ears.common.EarsFeatures.TailMode;
-import com.unascribed.ears.common.EarsFeatures.WingMode;
+
+import com.unascribed.ears.api.features.AlfalfaData;
+import com.unascribed.ears.api.features.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures.EarMode;
+import com.unascribed.ears.api.features.EarsFeatures.TailMode;
+import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.util.BitOutputStream;
 
 public class EarsFeaturesWriterV1 {
@@ -71,9 +74,9 @@ public class EarsFeaturesWriterV1 {
 			}
 		}
 		if (feat.alfalfa != null) {
-			feat.alfalfa.write(img);
+			Alfalfa.write(feat.alfalfa, img);
 		} else {
-			Alfalfa.NONE.write(img);
+			Alfalfa.write(AlfalfaData.NONE, img);
 		}
 	}
 	

@@ -25,6 +25,12 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://libraries.minecraft.net"
+		content {
+			includeGroup "com.mojang"
+		}
+	}
 }
 
 dependencies {
@@ -34,6 +40,7 @@ dependencies {
 	compile files('NFC.jar')
 	
 	compile 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+	compile 'com.mojang:authlib:1.5.24'
 }
 
 jar {

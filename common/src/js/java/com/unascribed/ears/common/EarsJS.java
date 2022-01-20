@@ -21,8 +21,10 @@ import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.typedarrays.DataView;
 
+import com.unascribed.ears.api.Slice;
+import com.unascribed.ears.api.features.AlfalfaData;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.render.AbstractDetachedEarsRenderDelegate;
-import com.unascribed.ears.common.util.Slice;
 
 /**
  * Entry point for the Manipulator to build quads.
@@ -92,7 +94,7 @@ public class EarsJS {
 				return argb;
 			}
 		};
-		EarsFeatures feat = EarsFeatures.detect(img, Alfalfa.read(img), null); // TODO
+		EarsFeatures feat = EarsFeaturesParser.detect(img, Alfalfa.read(img), null); // TODO
 		final JSArray<JSObject> objects = JSArray.create();
 		EarsRenderer.render(feat, new AbstractDetachedEarsRenderDelegate() {
 			
@@ -259,7 +261,7 @@ public class EarsJS {
 		}
 		JSMapLike<JSObject> alfalfaDataM = alfalfaData.cast();
 		JSNumber version = alfalfaDataM.get("version").cast();
-		Alfalfa a = new Alfalfa(version.intValue(), data);
+		AlfalfaData a = new AlfalfaData(version.intValue(), data);
 		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
 		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
 		final DataView dv = DataView.create(skin.getData().getBuffer());
@@ -295,7 +297,7 @@ public class EarsJS {
 				throw new UnsupportedOperationException();
 			}
 		};
-		a.write(img);
+		Alfalfa.write(a, img);
 		((CanvasRenderingContext2D)canvas.getContext("2d")).putImageData(skin, 0, 0, 0, 0, 64, 64);
 	}
 	

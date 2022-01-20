@@ -5,7 +5,8 @@ import static org.lwjgl.opengl.GL11.*;
 import java.awt.image.BufferedImage;
 
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesStorage;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.ImmediateEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -74,7 +75,12 @@ public class LayerEars {
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return EarsMod.earsSkinFeatures.get(peer.skinUrl);
+			EarsFeatures feat = EarsMod.earsSkinFeatures.get(peer.skinUrl);
+			if (feat != null) {
+				EarsFeaturesStorage.INSTANCE.put(peer.name, LegacyHelper.getUuid(peer.name), feat);
+				return feat;
+			}
+			return EarsFeatures.DISABLED;
 		}
 
 		@Override

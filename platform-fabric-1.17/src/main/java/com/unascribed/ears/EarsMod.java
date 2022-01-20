@@ -1,7 +1,8 @@
 package com.unascribed.ears;
 
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 
 import net.fabricmc.api.ModInitializer;
@@ -16,8 +17,18 @@ public class EarsMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		if (EarsLog.DEBUG) {
+			String ver;
+			try {
+				ver = SharedConstants.getGameVersion().getName();
+			} catch (NoSuchMethodError e) {
+				try {
+					ver = (String)SharedConstants.class.getDeclaredFields()[3].get(null);
+				} catch (Throwable t) {
+					ver = "1.19?";
+				}
+			}
 			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft {} / Fabric {}; Env={}",
-					SharedConstants.getGameVersion().getName(),
+					ver,
 					FabricLoader.getInstance().getModContainer("fabricloader").get().getMetadata().getVersion().getFriendlyString(),
 					FabricLoader.getInstance().getEnvironmentType());
 		}
@@ -27,8 +38,12 @@ public class EarsMod implements ModInitializer {
 		Identifier skin = peer.getSkinTexture();
 		AbstractTexture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
 		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
-		if (tex instanceof EarsFeaturesHolder && !peer.isInvisible()) {
-			return ((EarsFeaturesHolder)tex).getEarsFeatures();
+		if (tex instanceof EarsFeaturesHolder) {
+			EarsFeatures feat = ((EarsFeaturesHolder)tex).getEarsFeatures();
+			EarsFeaturesStorage.INSTANCE.put(peer.getGameProfile().getName(), peer.getGameProfile().getId(), feat);
+			if (!peer.isInvisible()) {
+				return feat;
+			}
 		}
 		return EarsFeatures.DISABLED;
 	}

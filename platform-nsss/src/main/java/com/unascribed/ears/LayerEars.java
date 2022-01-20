@@ -14,7 +14,8 @@ import com.mojang.minecraft.render.PositionTexureVertex;
 import com.mojang.minecraft.render.RenderEngine;
 import com.mojang.minecraft.render.Tessellator;
 import com.unascribed.ears.common.EarsCommon;
-import com.unascribed.ears.common.EarsFeatures;
+import com.unascribed.ears.common.EarsFeaturesStorage;
+import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -58,7 +59,12 @@ public class LayerEars {
 		
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return Ears.earsSkinFeatures.containsKey(peer.skinURL) ? Ears.earsSkinFeatures.get(peer.skinURL) : EarsFeatures.DISABLED;
+			if (Ears.earsSkinFeatures.containsKey(peer.skinURL)) {
+				EarsFeatures feat = Ears.earsSkinFeatures.get(peer.skinURL);
+				EarsFeaturesStorage.INSTANCE.put(peer.playerName, LegacyHelper.getUuid(peer.playerName), feat);
+				return feat;
+			}
+			return EarsFeatures.DISABLED;
 		}
 		
 		@Override
