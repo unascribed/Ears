@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-	modImplementation "com.unascribed:ears-api:1.4.1"
+	modImplementation "com.unascribed:ears-api:1.4.5"
 }
 ```
 
