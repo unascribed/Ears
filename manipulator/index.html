@@ -110,8 +110,8 @@ SOFTWARE.
 			height: 128px;
 		}
 		#wings {
-			width: 24px;
-			height: 24px;
+			width: 40px;
+			height: 32px;
 		}
 		#cape {
 			width: 40px;
@@ -165,6 +165,11 @@ SOFTWARE.
 		}
 		ul {
 			margin: 0;
+		}
+		#load-container {
+			position: fixed;
+			right: -400px;
+			bottom: -400px;
 		}
 		@media(prefers-color-scheme: light) {
 			body {
@@ -394,7 +399,7 @@ SOFTWARE.
 				</td>
 			</tr>
 		</table>
-		<canvas id="wings" class="tex" width="12" height="12"></canvas>
+		<canvas id="wings" class="tex" width="20" height="16"></canvas>
 		<table>
 			<tr>
 				<td></td>
@@ -404,11 +409,11 @@ SOFTWARE.
 			</tr>
 			<tr>
 			<td></td>
-				<td style="text-align: left; vertical-align: top"><small>Must be 12x12</small></td>
+				<td style="text-align: left; vertical-align: top"><small>Must be 20x16 or 12x12</small></td>
 			</tr>
 		</table>
 		<br/>
-		<div style="display: none">
+		<div id="cape-outer" style="display: none">
 		<table>
 			<tr>
 				<td><input id="cape-enabled" disabled type="checkbox"><label for="cape-enabled"> Cape</label></td>
@@ -471,9 +476,9 @@ SOFTWARE.
 			<li id="wing-anim-off">Wing animations cannot be disabled</li>
 			</ul>
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-143-notice">
-			<b><i>Selected options require new features added in v1.4.3.</i></b><br/>
-			Before v1.4.3, capes will not render.
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-145-notice">
+			<b><i>Selected options require new features added in v1.4.5.</i></b><br/>
+			Before v1.4.5, capes will not render.
 		</div>
 		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
@@ -505,10 +510,12 @@ SOFTWARE.
 			Powered by <a href="https://threejs.org">three.js</a> and <a href="https://teavm.org">TeaVM</a><br/>
 			Sample skins are licensed under the <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
 		</small>
+		
+		<div id="load-container"></div>
 	</div>
 	<script src="WebGL.js"></script>
 	<script src="three.min.js"></script>
-	<script src="ears-common.js?v=1.4.1"></script>
+	<script src="ears-common.js?v=1.4.5"></script>
 	<script>
 	if (location.hash === "#debug") {
 		window.EarsDebug = true;
@@ -600,11 +607,11 @@ SOFTWARE.
 		let req121 = $("#req-121-notice");
 		let req122 = $("#req-122-notice");
 		let req123 = $("#req-123-notice");
+		let req124 = $("#req-124-notice");
 		let req130 = $("#req-130-notice");
 		let req140 = $("#req-140-notice");
 		let req141 = $("#req-141-notice");
-		let req143 = $("#req-143-notice");
-		let req124 = $("#req-124-notice");
+		let req145 = $("#req-145-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
 		let bug140 = $("#bug-140-notice");
@@ -615,7 +622,7 @@ SOFTWARE.
 		req130.style.display = "none";
 		req140.style.display = "none";
 		req141.style.display = "none";
-		req143.style.display = "none";
+		req145.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		bug140.style.display = "none";
@@ -700,7 +707,7 @@ SOFTWARE.
 			$("#alfalfa-notice-unneeded").style.display = "block";
 		}
 		if (capeEnabled) {
-			req143.style.display = "block";
+			req145.style.display = "block";
 		}
 	}
 	
@@ -919,7 +926,7 @@ SOFTWARE.
 					let canvas = $(sel);
 					let ctx = canvas.getContext("2d");
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
-					ctx.drawImage(img, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+					ctx.drawImage(img, 0, -(canvas.height-img.height)/2, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 					resolve();
 				};
 				img.onerror = reject;
@@ -948,6 +955,13 @@ SOFTWARE.
 		document.body.style.transform = "scaleY(-0.5) translateY(-100%)";
 		return "Twice as much happens.";
 	});
+	defineCheat('aWRrZmE=', () => {
+		if ($("#cape-outer").style.display === "block") {
+			return '???';
+		}
+		$("#cape-outer").style.display = "block";
+		return "Very Happy Cape Added";
+	});
 	async function updateWing() {
 		usingSampleWing = false;
 		let files = $("#wing-upload").files;
@@ -956,19 +970,19 @@ SOFTWARE.
 		document.body.classList.add("loading");
 		try {
 			let bitmap = await createImageBitmap(file);
-			if (bitmap.width != 12) {
-				alert("This doesn't look like an Ears wing; the width is wrong. Needs to be 12px.");
+			if (bitmap.width != 12 && bitmap.width != 20) {
+				alert("This doesn't look like an Ears wing; the width is wrong. Needs to be 12px or 20px.");
 				$("#wing-upload").value = null;
 				return;
 			}
-			if (bitmap.height != 12) {
-				alert("This doesn't look like an Ears wing; the height is wrong. Needs to be 12px.");
+			if (bitmap.height != 12 && bitmap.height != 16) {
+				alert("This doesn't look like an Ears wing; the height is wrong. Needs to be 12px or 16px.");
 				$("#wing-upload").value = null;
 				return;
 			}
 			let ctx = $("#wings").getContext("2d");
-			ctx.clearRect(0, 0, 12, 12);
-			ctx.drawImage(bitmap, 0, 0);
+			ctx.clearRect(0, 0, 20, 16);
+			ctx.drawImage(bitmap, 0, bitmap.height == 12 ? 2 : 0);
 			encodeToAlfalfa("wing", "#wings");
 			await rebuild();
 		} finally {
@@ -1103,10 +1117,10 @@ SOFTWARE.
 				}
 				if (usingSampleWing) {
 					let wingsCtx = $("#wings").getContext("2d");
-					wingsCtx.clearRect(0, 0, 12, 12);
+					wingsCtx.clearRect(0, 0, 20, 16);
 					let wingsMode = $("#wings-mode").value;
 					if (wingsMode !== "red" && wingsMode !== "blue") {
-						wingsCtx.drawImage(img, 0, 192, 12, 12, 0, 0, 12, 12);
+						wingsCtx.drawImage(img, 32, 192, 20, 16, 0, 0, 20, 16);
 						encodeToAlfalfa("wing", "#wings");
 					} else {
 						delete window.alfalfaData.wing;
@@ -1120,7 +1134,7 @@ SOFTWARE.
 				}
 				if (usingSampleCape) {
 					let capeCtx = $("#cape").getContext("2d");
-					capeCtx.clearRect(0, 0, 12, 12);
+					capeCtx.clearRect(0, 0, 20, 16);
 					let capeEnabled = $("#cape-enabled").checked;
 					if (capeEnabled) {
 						capeCtx.drawImage(img, 12, 192, 20, 16, 0, 0, 20, 16);
@@ -1297,7 +1311,8 @@ SOFTWARE.
 		if (usingSample && !usingSampleCape) {
 			usingSampleCape = true;
 		}
-		$("#wings").getContext('2d').clearRect(0, 0, 12, 12);
+		$("#wings").getContext('2d').clearRect(0, 0, 20, 16);
+		$("#cape").getContext('2d').clearRect(0, 0, 20, 16);
 		window.alfalfaData = {version:0};
 		encodeAlfalfa();
 		rebuild();
@@ -1484,52 +1499,52 @@ SOFTWARE.
 		function addArms() {
 			if ($("#slim-enabled").checked) {
 				addToScene(bodyPart("right_arm",
-						-5.5, 0, 0,
+						-5.5, 0, 1,
 						3, 12, 4,
 						40, 16,
 						false,
 						-10, 0, 0));
 				addToScene(bodyPart("right_arm2",
-						-5.5, 0, 0,
+						-5.5, 0, 1,
 						3, 12, 4,
 						40, 32,
 						true,
 						-10, 0, 0));
 				
 				addToScene(bodyPart("left_arm",
-						5.5, 0, 0,
+						5.5, 0, -1,
 						3, 12, 4,
 						32, 48,
 						false,
 						10, 0, 0));
 				addToScene(bodyPart("left_arm2",
-						5.5, 0, 0,
+						5.5, 0, -1,
 						3, 12, 4,
 						48, 48,
 						true,
 						10, 0, 0));
 			} else {
 				addToScene(bodyPart("right_arm",
-						-6, 0, 0,
+						-6, 0, 1,
 						4, 12, 4,
 						40, 16,
 						false,
 						-10, 0, 0));
 				addToScene(bodyPart("right_arm2",
-						-6, 0, 0,
+						-6, 0, 1,
 						4, 12, 4,
 						40, 32,
 						true,
 						-10, 0, 0));
 				
 				addToScene(bodyPart("left_arm",
-						6, 0, 0,
+						6, 0, -1,
 						4, 12, 4,
 						32, 48,
 						false,
 						10, 0, 0));
 				addToScene(bodyPart("left_arm2",
-						6, 0, 0,
+						6, 0, -1,
 						4, 12, 4,
 						48, 48,
 						true,

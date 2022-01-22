@@ -1,5 +1,6 @@
 package com.unascribed.ears.common.render;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -206,8 +207,12 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 		if (src == this.bound) return;
 		if (src == TexSource.SKIN) {
 			doBindSkin();
-		} else {
+		} else if (!src.isBuiltIn()) {
 			doBindAux(src, src.getPNGData(feat));
+		} else if (canBind(src)) {
+			doBindBuiltin(src);
+		} else {
+			EarsLog.debug(EarsLog.Tag.COMMON_RENDERER, "Attempt to bind unsupported texture {}", src);
 		}
 		this.bound = src;
 	}
@@ -215,9 +220,18 @@ public abstract class AbstractEarsRenderDelegate<TPeer, TModelPart> implements E
 	protected abstract void doBindSkin();
 	protected abstract void doBindAux(TexSource src, byte[] pngData);
 	
+	protected void doBindBuiltin(TexSource src) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public boolean canBind(TexSource tex) {
+		return tex == TexSource.SKIN || !tex.isBuiltIn();
+	}
+	
 	public static ByteBuffer toNativeBuffer(byte[] arr) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(arr.length).order(ByteOrder.nativeOrder());
-		buf.put(arr).flip();
+		((Buffer)buf.put(arr)).flip();
 		return buf;
 	}
 	

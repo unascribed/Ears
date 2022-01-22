@@ -1,13 +1,16 @@
 package com.unascribed.ears.common;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import com.unascribed.ears.api.Slice;
 import com.unascribed.ears.api.features.AlfalfaData;
 import com.unascribed.ears.api.features.EarsFeatures;
+import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.EarsLog;
 
 public class EarsFeaturesParser {
@@ -41,7 +44,31 @@ public class EarsFeaturesParser {
 			}
 			if (bldr.getWingMode() != EarsFeatures.WingMode.NONE && !alfalfa.data.containsKey("wing")) {
 				EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Wings are enabled, but there's no wing texture in the alfalfa. Disabling");
-				bldr.wingMode(EarsFeatures.WingMode.NONE);
+				bldr.wingMode(WingMode.NONE);
+			}
+			// loader will only be null in the Manipulator, which won't give us 12x12 wings
+			if (alfalfa.data.containsKey("wing") && loader != null) {
+				try {
+					EarsImage wing = loader.load(alfalfa.data.get("wing").toByteArray());
+					if (wing.getWidth() == 12 && wing.getHeight() == 12) {
+						EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Upgrading legacy 12x12 wing to 20x16");
+						WritableEarsImage wingOut = new RawEarsImage(new int[20*16], 20, 16, false);
+						for (int x = 0; x < 12; x++) {
+							for (int y = 0; y < 12; y++) {
+								wingOut.setARGB(x, y+2, wing.getARGB(x, y));
+							}
+						}
+						Map<String, Slice> newData = new HashMap<String, Slice>(alfalfa.data);
+						newData.put("wing", new Slice(QDPNG.write(wingOut)));
+						alfalfa = new AlfalfaData(alfalfa.version, newData);
+					} else if (wing.getWidth() != 20 || wing.getHeight() != 16) {
+						EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Unknown wing size {}x{}. Disabling", wing.getWidth(), wing.getHeight());
+						bldr.wingMode(WingMode.NONE);
+					}
+				} catch (Throwable t) {
+					EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Exception while attempting to load wing. Disabling", t);
+					bldr.wingMode(WingMode.NONE);
+				}
 			}
 			if (bldr.isEmissive() && img instanceof WritableEarsImage) {
 				WritableEarsImage wimg = (WritableEarsImage)img;
@@ -112,7 +139,6 @@ public class EarsFeaturesParser {
 				bldr.emissiveWing(Slice.EMPTY);
 			}
 			return bldr
-					.capeEnabled(false)
 					.alfalfa(alfalfa)
 					.build();
 		}

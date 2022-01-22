@@ -2,6 +2,8 @@ package com.unascribed.ears.api.features;
 
 import java.util.UUID;
 
+import org.teavm.jso.JSBody;
+
 import com.unascribed.ears.EarsFeaturesLookup;
 import com.unascribed.ears.api.Slice;
 
@@ -12,12 +14,17 @@ public class EarsFeatures {
 
 	private static final EarsFeaturesLookup lookup;
 	static {
-		EarsFeaturesLookup lookupTmp;
-		try {
-			lookupTmp = (EarsFeaturesLookup)Class.forName("com.unascribed.ears.common.EarsFeaturesStorage").getField("INSTANCE").get(null);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			System.err.println("[Ears] Failed to load static feature lookup binder");
+		EarsFeaturesLookup lookupTmp = null;
+		if (!isJs()) {
+			try {
+				lookupTmp = (EarsFeaturesLookup)getLookupImpl();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				System.err.println("[Ears] Failed to load static feature lookup binder");
+				lookupTmp = null;
+			}
+		}
+		if (lookupTmp == null) {
 			lookupTmp = new EarsFeaturesLookup() {
 				
 				@Override
@@ -32,6 +39,15 @@ public class EarsFeatures {
 			};
 		}
 		lookup = lookupTmp;
+	}
+
+	@JSBody(script="return true")
+	private static boolean isJs() {
+		return false;
+	}
+	
+	private static Object getLookupImpl() throws Throwable {
+		return Class.forName("com.unascribed.ears.common.EarsFeaturesStorage").getField("INSTANCE").get(null);
 	}
 	
 	public enum EarMode {

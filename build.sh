@@ -94,8 +94,10 @@ needsJ17="forge-1.18"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
 special="nfc nsss bta forge-1.2 forge-1.4 forge-1.5"
 
+buildAll=1
 toBuild=" $normal $needsJ8 $needsJ16 $needsJ17 $special "
 if [ -n "$1" ]; then
+	buildAll=0
 	toBuild=" $@ "
 fi
 
@@ -105,7 +107,10 @@ done
 (
 	echo 'Building common...'
 	cd common
-	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build closure --stacktrace
+	if [ "$buildAll" == "1" ]; then
+		addn=closure
+	fi
+	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build $addn --stacktrace
 )
 build() {
 	for proj in $@; do
@@ -135,11 +140,13 @@ JAVA_HOME=$JAVA16_HOME build $needsJ16
 JAVA_HOME=$JAVA17_HOME build $needsJ17
 wait
 for proj in $special; do
-	(
-		cd platform-$proj
-		rm -f build-ok
-		TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok
-	)
+	if echo "$toBuild" | grep -qF "$proj"; then
+		(
+			cd platform-$proj
+			rm -f build-ok
+			TERM=dumb chronic ./gradlew clean build --stacktrace && touch build-ok && echo "Built $proj successfully"
+		)
+	fi
 done
 exit=
 for proj in $toBuild; do

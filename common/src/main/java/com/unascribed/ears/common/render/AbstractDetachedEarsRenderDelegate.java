@@ -51,7 +51,12 @@ public abstract class AbstractDetachedEarsRenderDelegate implements EarsRenderDe
 	public boolean needsSecondaryLayersDrawn() {
 		return false;
 	}
-
+	
+	@Override
+	public boolean canBind(TexSource tex) {
+		return tex == TexSource.SKIN || !tex.isBuiltIn();
+	}
+	
 	@Override
 	public float getLimbSwing() {
 		return 0;

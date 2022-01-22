@@ -235,4 +235,11 @@ public class DebuggingDelegate implements EarsRenderDelegate {
 		delegate.setEmissive(emissive);
 	}
 	
+	@Override
+	public boolean canBind(TexSource tex) {
+		boolean b = delegate.canBind(tex);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER_DELEGATE, "canBind({}) -> {}", tex, b);
+		return b;
+	}
+	
 }

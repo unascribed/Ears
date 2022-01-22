@@ -43,24 +43,70 @@ public interface EarsRenderDelegate {
 	}
 	
 	public enum TexSource {
-		SKIN(64, 64),
-		WING(12, 12),
-		CAPE(20, 16),
-		EMISSIVE_SKIN(64, 64),
-		EMISSIVE_WING(12, 12),
+		SKIN(64, 64, true),
+		
+		WING(20, 16, false),
+		CAPE(20, 16, false),
+		EMISSIVE_SKIN(64, 64, false),
+		EMISSIVE_WING(20, 16, false),
+		
+		HELMET(64, 32, true),
+		CHESTPLATE(64, 32, true),
+		LEGGINGS(64, 32, true),
+		BOOTS(64, 32, true),
+		
+		GLINT_HELMET(64, 32, true, true, HELMET),
+		GLINT_CHESTPLATE(64, 32, true, true, CHESTPLATE),
+		GLINT_LEGGINGS(64, 32, true, true, LEGGINGS),
+		GLINT_BOOTS(64, 32, true, true, BOOTS),
 		;
-		public final int width, height;
-		public final String lowerName;
+		private final int width;
+		private final int height;
+		private final String lowerName;
+		private final boolean builtin;
+		private final boolean glint;
+		private final TexSource parent;
 
-		TexSource(int width, int height) {
+		TexSource(int width, int height, boolean builtin) {
+			this(width, height, builtin, false, null);
+		}
+
+		TexSource(int width, int height, boolean builtin, boolean glint, TexSource parent) {
 			this.width = width;
 			this.height = height;
 			this.lowerName = name().toLowerCase(Locale.ROOT);
+			this.builtin = builtin;
+			this.glint = glint;
+			this.parent = parent;
 		}
 		
 		public String addSuffix(String path) {
 			if (this == SKIN) return path;
-			return path+"/ears/"+lowerName;
+			return path+"/ears/"+lowerName();
+		}
+
+		public String lowerName() {
+			return lowerName;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+		
+		public boolean isBuiltIn() {
+			return builtin;
+		}
+		
+		public boolean isGlint() {
+			return glint;
+		}
+		
+		public TexSource getParent() {
+			return parent;
 		}
 		
 		public byte[] getPNGData(EarsFeatures feat) {
@@ -145,13 +191,17 @@ public interface EarsRenderDelegate {
 	public enum QuadGrow {
 		NONE(0),
 		/**
-		 * Matches secondary head layer.
+		 * Matches secondary head layer and "leggings" armor layer.
 		 */
 		HALFPIXEL(0.5f),
 		/**
 		 * Matches secondary layers.
 		 */
 		QUARTERPIXEL(0.25f),
+		/**
+		 * Matches "body" armor layers.
+		 */
+		FULLPIXEL(1),
 		;
 		public final float grow;
 		QuadGrow(float grow) {
@@ -167,6 +217,7 @@ public interface EarsRenderDelegate {
 	
 	void anchorTo(BodyPart part);
 	void bind(TexSource tex);
+	boolean canBind(TexSource tex);
 	
 	void translate(float x, float y, float z);
 	void rotate(float ang, float x, float y, float z);

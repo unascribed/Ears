@@ -57,11 +57,11 @@ class EarsRenderer {
 		
 		if ((features != null && features.enabled) || delegate.needsSecondaryLayersDrawn()) {
 			// the 1.15+ rendering pipeline introduces nasty transparency sort bugs due to the buffering it does
-			// render in two passes to avoid it
+			// render in multiple passes to avoid it (third is for armor, fourth is for armor glint)
 			delegate.setUp();
-			for (int p = 0; p < 2; p++) {
+			for (int p = 0; p < 4; p++) {
 				renderInner(features, delegate, p, false);
-				if (features != null && features.emissive) {
+				if (features != null && features.emissive && p < 2) {
 					delegate.setEmissive(true);
 					renderInner(features, delegate, p, true);
 					delegate.setEmissive(false);
@@ -491,11 +491,21 @@ class EarsRenderer {
 			
 			float chestSize = features.chestSize;
 			
-			if (chestSize > 0 && !isActive(delegate, EarsStateType.WEARING_CHESTPLATE) && (p == 0 || delegate.isJacketEnabled()) && !isInhibited(delegate, EarsFeatureType.OTHER_TORSO)) {
+			if (chestSize > 0 &&
+					(!isActive(delegate, EarsStateType.WEARING_CHESTPLATE) || delegate.canBind(TexSource.CHESTPLATE)) &&
+					(p == 0 || (p == 1 && delegate.isJacketEnabled()) || ((p == 2 || (p == 3 && delegate.canBind(TexSource.GLINT_CHESTPLATE))) && !drawingEmissive && delegate.canBind(TexSource.CHESTPLATE)))
+					&& !isInhibited(delegate, EarsFeatureType.CHEST)) {
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);
 					delegate.translate(0, -10, 0);
 					delegate.rotate(-chestSize*45, 1, 0, 0);
+					
+					if (p == 2) {
+						delegate.bind(TexSource.CHESTPLATE);
+					} else if (p == 3) {
+						delegate.bind(TexSource.GLINT_CHESTPLATE);
+					}
+					
 					if (p == 0) {
 						delegate.renderDoubleSided(20, 22, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 					} else if (p == 1) {
@@ -509,6 +519,11 @@ class EarsRenderer {
 							delegate.translate(4, 0, 0);
 							delegate.renderDoubleSided(12, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 						delegate.pop();
+					} else if (p == 2 || p == 3) {
+						delegate.push();
+							delegate.translate(0, 1, -1f);
+							delegate.renderFront(20, 24, 8, 3, TexRotation.NONE, TexFlip.NONE, QuadGrow.FULLPIXEL);
+						delegate.pop();
 					}
 					delegate.push();
 						delegate.translate(0, 4, 0);
@@ -519,6 +534,11 @@ class EarsRenderer {
 							delegate.push();
 								delegate.translate(0, 0, -0.25f);
 								delegate.renderDoubleSided(28, 48, 8, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.QUARTERPIXEL);
+							delegate.pop();
+						} else if (p == 2 || p == 3) {
+							delegate.push();
+								delegate.translate(0, 0, -1f);
+								delegate.renderFront(20, 25, 8, 3, TexRotation.NONE, TexFlip.NONE, QuadGrow.FULLPIXEL);
 							delegate.pop();
 						}
 					delegate.pop();
@@ -532,6 +552,11 @@ class EarsRenderer {
 								delegate.translate(0, 0, -0.25f);
 								delegate.renderDoubleSided(48, 48, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.QUARTERPIXEL);
 							delegate.pop();
+						} else if (p == 2 || p == 3) {
+							delegate.push();
+								delegate.translate(0, 0, -1f);
+								delegate.renderFront(16, 20, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.FULLPIXEL);
+							delegate.pop();
 						}
 						delegate.translate(0, 0, 7.98f);
 						delegate.rotate(180, 0, 1, 0);
@@ -542,6 +567,11 @@ class EarsRenderer {
 							delegate.push();
 								delegate.translate(0, 0, -0.25f);
 								delegate.renderDoubleSided(48, 48, 4, 4, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.QUARTERPIXEL);
+							delegate.pop();
+						} else if (p == 2 || p == 3) {
+							delegate.push();
+								delegate.translate(0, 0, -1f);
+								delegate.renderFront(16, 20, 4, 4, TexRotation.NONE, TexFlip.NONE, QuadGrow.FULLPIXEL);
 							delegate.pop();
 						}
 					delegate.pop();
@@ -563,25 +593,25 @@ class EarsRenderer {
 						}
 						delegate.anchorTo(BodyPart.TORSO);
 						delegate.bind(drawingEmissive ? TexSource.EMISSIVE_WING : TexSource.WING);
-						delegate.translate(2, -12, 4);
+						delegate.translate(2, -14, 4);
 						if (wingMode == WingMode.SYMMETRIC_DUAL || wingMode == WingMode.ASYMMETRIC_R) {
 							delegate.push();
 								delegate.rotate(-120+wiggle, 0, 1, 0);
-								delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderDoubleSided(0, 0, 20, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							delegate.pop();
 						}
 						if (wingMode == WingMode.SYMMETRIC_DUAL || wingMode == WingMode.ASYMMETRIC_L) {
 							delegate.translate(4, 0, 0);
 							delegate.push();
 								delegate.rotate(-60-wiggle, 0, 1, 0);
-								delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderDoubleSided(0, 0, 20, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							delegate.pop();
 						}
 						if (wingMode == WingMode.SYMMETRIC_SINGLE) {
 							delegate.translate(2, 0, 0);
 							delegate.push();
 								delegate.rotate(-90+wiggle, 0, 1, 0);
-								delegate.renderDoubleSided(0, 0, 12, 12, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+								delegate.renderDoubleSided(0, 0, 20, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							delegate.pop();
 						}
 					delegate.pop();

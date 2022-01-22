@@ -29,7 +29,9 @@ configurations {
 	vlegacyShade
 }
 sourceSets {
-	api {}
+	api {
+		compileClasspath += sourceSets.main.compileClasspath
+	}
 	normal {
 		compileClasspath += sourceSets.api.output
 		compileClasspath += sourceSets.api.compileClasspath
@@ -291,7 +293,7 @@ task closure(type: Exec) {
 	dependsOn teavm
 	inputs.file file('build/teavm/classes.js')
 	outputs.file file('build/teavm/classes.min.js')
-	commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js'
+	commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js', '--source_map_include_content', '--create_source_map', 'build/teavm/classes.min.js.map'
 }
 
 compileJava.doFirst {

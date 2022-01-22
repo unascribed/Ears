@@ -156,8 +156,8 @@ public class EarsCommon {
 	 */
 	public static float[][] calculateUVs(int u, int v, int w, int h, TexRotation rot, TexFlip flip, TexSource src, float pinch) {
 		EarsLog.debug(EarsLog.Tag.COMMON_RENDERER, "calculateUVs(u={}, v={}, w={}, h={}, rot={}, flip={}, src={})", u, v, w, h, rot, flip, src);
-		float tw = src.width;
-		float th = src.height;
+		float tw = src.getWidth();
+		float th = src.getHeight();
 		
 		float minU = (u/tw)+pinch;
 		float minV = (v/th)+pinch;

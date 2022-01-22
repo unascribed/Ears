@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.unascribed.ears.EarsFeaturesLookup;
 import com.unascribed.ears.api.features.EarsFeatures;
-import com.unascribed.ears.common.debug.EarsLog;
 
 public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 
@@ -17,11 +16,9 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 		// not atomic, but it is faster; avoids synchronizing
 		// this should be OK for our purposes as only one thread will be calling put
 		if (id != null && byId.get(id) != features) {
-			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "API-visible features registered for UUID {}", id);
 			byId.put(id, features);
 		}
 		if (username != null && byName.get(username) != features) {
-			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "API-visible features registered for username {}", username);
 			byName.put(username, features);
 		}
 	}

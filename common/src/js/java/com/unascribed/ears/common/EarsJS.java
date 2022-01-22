@@ -31,6 +31,46 @@ import com.unascribed.ears.common.render.AbstractDetachedEarsRenderDelegate;
  */
 public class EarsJS {
 
+	public static class EarsImageJS implements WritableEarsImage {
+		private final ImageData img;
+		private final DataView dv;
+
+		public EarsImageJS(ImageData img) {
+			this.img = img;
+			this.dv = DataView.create(img.getData().getBuffer());
+		}
+
+		@Override
+		public int getWidth() {
+			return img.getWidth();
+		}
+
+		@Override
+		public int getHeight() {
+			return img.getHeight();
+		}
+
+		@Override
+		public int getARGB(int x, int y) {
+			int rgba = dv.getUint32(((y*64)+x)*4);
+			int a = rgba & 0xFF;
+			int argb = ((rgba >> 8)&0x00FFFFFF) | (a << 24);
+			return argb;
+		}
+
+		@Override
+		public void setARGB(int x, int y, int argb) {
+			int rgba = argb<<8;
+			rgba |= (argb>>24)&0xFF;
+			dv.setUint32(((y*64)+x)*4, rgba);
+		}
+
+		@Override
+		public WritableEarsImage copy() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
 	@JSFunctor
 	private interface NullFunctor extends JSObject {
 		void invoke() throws Exception;
@@ -73,28 +113,8 @@ public class EarsJS {
 		assignToWindow("magicPixelValues", magicPixelValues);
 		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
 		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
-		final DataView dv = DataView.create(skin.getData().getBuffer());
-		EarsImage img = new EarsImage() {
-			
-			@Override
-			public int getWidth() {
-				return skin.getWidth();
-			}
-			
-			@Override
-			public int getHeight() {
-				return skin.getHeight();
-			}
-			
-			@Override
-			public int getARGB(int x, int y) {
-				int rgba = dv.getUint32(((y*64)+x)*4);
-				int a = rgba & 0xFF;
-				int argb = ((rgba >> 8)&0x00FFFFFF) | (a << 24);
-				return argb;
-			}
-		};
-		EarsFeatures feat = EarsFeaturesParser.detect(img, Alfalfa.read(img), null); // TODO
+		EarsImage img = new EarsImageJS(skin);
+		EarsFeatures feat = EarsFeaturesParser.detect(img, Alfalfa.read(img), null);
 		final JSArray<JSObject> objects = JSArray.create();
 		EarsRenderer.render(feat, new AbstractDetachedEarsRenderDelegate() {
 			
@@ -183,7 +203,7 @@ public class EarsJS {
 				q.set("width", JSNumber.valueOf(w));
 				q.set("height", JSNumber.valueOf(h));
 				q.set("back", JSBoolean.valueOf(back));
-				q.set("texture", JSString.valueOf(texture.lowerName));
+				q.set("texture", JSString.valueOf(texture.lowerName()));
 				q.set("emissive", JSBoolean.valueOf(emissive));
 				if (grow.grow > 0) {
 					pop();
@@ -236,11 +256,7 @@ public class EarsJS {
 		JSMapLike<JSObject> alfalfaData = JSObjects.create();
 		alfalfaData.set("version", JSNumber.valueOf(feat.alfalfa.version));
 		for (Map.Entry<String, Slice> en : feat.alfalfa.data.entrySet()) {
-			StringBuilder sb = new StringBuilder(en.getValue().size());
-			for (int i = 0; i < en.getValue().size(); i++) {
-				sb.append((char)(en.getValue().get(i)&0xFF));
-			}
-			alfalfaData.set(en.getKey(), JSString.valueOf(sb.toString()));
+			alfalfaData.set(en.getKey(), JSString.valueOf(toBinString(en.getValue().toByteArray())));
 		}
 		assignToWindow("alfalfaData", alfalfaData);
 	}
@@ -252,55 +268,35 @@ public class EarsJS {
 		for (int i = 0; i < entries.getLength(); i++) {
 			String key = ((JSString)entries.get(i).get(0)).stringValue();
 			if (key.equals("version")) continue;
-			JSString val = entries.get(i).get(1).cast();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			for (int j = 0; j < val.getLength(); j++) {
-				baos.write(val.charCodeAt(j));
-			}
-			data.put(key, new Slice(baos.toByteArray()));
+			JSString s = entries.get(i).get(1).cast();
+			data.put(key, new Slice(fromBinString(s)));
 		}
 		JSMapLike<JSObject> alfalfaDataM = alfalfaData.cast();
 		JSNumber version = alfalfaDataM.get("version").cast();
 		AlfalfaData a = new AlfalfaData(version.intValue(), data);
 		HTMLCanvasElement canvas = (HTMLCanvasElement)Window.current().getDocument().getElementById("skin");
 		final ImageData skin = ((CanvasRenderingContext2D)canvas.getContext("2d")).getImageData(0, 0, 64, 64);
-		final DataView dv = DataView.create(skin.getData().getBuffer());
-		WritableEarsImage img = new WritableEarsImage() {
-			
-			@Override
-			public int getWidth() {
-				return skin.getWidth();
-			}
-			
-			@Override
-			public int getHeight() {
-				return skin.getHeight();
-			}
-			
-			@Override
-			public int getARGB(int x, int y) {
-				int rgba = dv.getUint32(((y*64)+x)*4);
-				int a = rgba & 0xFF;
-				int argb = ((rgba >> 8)&0x00FFFFFF) | (a << 24);
-				return argb;
-			}
-
-			@Override
-			public void setARGB(int x, int y, int argb) {
-				int rgba = argb<<8;
-				rgba |= (argb>>24)&0xFF;
-				dv.setUint32(((y*64)+x)*4, rgba);
-			}
-
-			@Override
-			public WritableEarsImage copy() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		WritableEarsImage img = new EarsImageJS(skin);
 		Alfalfa.write(a, img);
 		((CanvasRenderingContext2D)canvas.getContext("2d")).putImageData(skin, 0, 0, 0, 0, 64, 64);
 	}
 	
+	private static byte[] fromBinString(JSString val) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		for (int j = 0; j < val.getLength(); j++) {
+			baos.write(val.charCodeAt(j));
+		}
+		return baos.toByteArray();
+	}
+	
+	private static String toBinString(byte[] bys) {
+		StringBuilder sb = new StringBuilder(bys.length);
+		for (int i = 0; i < bys.length; i++) {
+			sb.append((char)(bys[i]&0xFF));
+		}
+		return sb.toString();
+	}
+
 	@JSBody(params={"name", "obj"}, script="window[name] = obj;")
 	private static native void assignToWindow(String name, JSObject obj);
 	@JSBody(params={"name", "obj"}, script="window[name] = obj;")

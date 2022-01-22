@@ -1,6 +1,11 @@
 package com.unascribed.ears;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -12,7 +17,11 @@ import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.common.util.NotRandom;
+import com.unascribed.ears.mixin.AccessorArmorFeatureRenderer;
+import com.unascribed.ears.mixin.AccessorLivingEntityRenderer;
 import com.unascribed.ears.mixin.AccessorPlayerEntityModel;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
@@ -26,9 +35,11 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.PlayerModelPart;
+import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
@@ -36,16 +47,23 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.DyeableArmorItem;
 import net.minecraft.item.ElytraItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
 
 public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	
-	public EarsFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
-		super(context);
+	private final PlayerEntityRenderer per;
+	
+	public EarsFeatureRenderer(PlayerEntityRenderer per) {
+		super(per);
+		this.per = per;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 	}
 	
@@ -64,6 +82,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 	}
 
 	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, AbstractClientPlayerEntity, ModelPart>() {
+		
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -137,6 +156,125 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 				}
 			}
 		}
+		
+		private float armorR = 1;
+		private float armorG = 1;
+		private float armorB = 1;
+		private float armorA = 1;
+		
+		private ArmorFeatureRenderer<?, ?, ?> afr;
+		private final BipedEntityModel<?> dummyModel = new BipedEntityModel<PlayerEntity>(0) {
+			@Override
+			public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+				// used to capture the VertexConsumer that has the correct RenderLayer
+				vc = vertices;
+			}
+		};
+		// Fabric API compat
+		private final List<MethodHandle> entityCaptures = Lists.newArrayList();
+		private final List<MethodHandle> slotCaptures = Lists.newArrayList();
+		
+		@Override
+		protected void doBindBuiltin(TexSource src) {
+			commitQuads();
+			if (src.isGlint()) {
+				armorR = armorG = armorB = armorA = 1;
+				vc = vcp.getBuffer(RenderLayer.getArmorEntityGlint());
+			} else if (canBind(src)) {
+				EquipmentSlot slot = getSlot(src);
+				ItemStack equipment = peer.getEquippedStack(slot);
+				ArmorItem ai = (ArmorItem)equipment.getItem();
+				AccessorArmorFeatureRenderer aafr = (AccessorArmorFeatureRenderer)afr;
+				if (ai instanceof DyeableArmorItem) {
+					int c = ((DyeableArmorItem)ai).getColor(equipment);
+					armorR = (c >> 16 & 255) / 255.0F;
+					armorG = (c >> 8 & 255) / 255.0F;
+					armorB = (c & 255) / 255.0F;
+					armorA = 1;
+				}
+				try {
+					setCaptures(peer, slot);
+					aafr.ears$renderArmorParts(matrices, vcp, 0, ai, aafr.ears$usesSecondLayer(slot), dummyModel, false, 1, 1, 1, null);
+					setCaptures(null, null);
+				} catch (Throwable t) {
+					if (skipRendering == 0) skipRendering = 1;
+					EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Exception while attempting to retrieve armor texture", t);
+				}
+			}
+		}
+		
+		@Override
+		public boolean canBind(TexSource tex) {
+			boolean glint = tex.isGlint();
+			if (glint) tex = tex.getParent();
+			EquipmentSlot slot = getSlot(tex);
+			if (slot == null) return super.canBind(tex);
+			ItemStack equipment = peer.getEquippedStack(slot);
+			if (equipment.isEmpty() || !(equipment.getItem() instanceof ArmorItem)) return false;
+			if (afr == null) {
+				for (FeatureRenderer<?, ?> fr : ((AccessorLivingEntityRenderer)per).ears$getFeatures()) {
+					if (fr instanceof ArmorFeatureRenderer) {
+						afr = (ArmorFeatureRenderer<?, ?, ?>)fr;
+						for (Field f : ArmorFeatureRenderer.class.getDeclaredFields()) {
+							try {
+								f.setAccessible(true);
+								if (Modifier.isStatic(f.getModifiers())) continue;
+								if (EquipmentSlot.class == f.getType()) {
+									slotCaptures.add(MethodHandles.lookup().unreflectSetter(f));
+								} else if (LivingEntity.class.isAssignableFrom(f.getType())) {
+									entityCaptures.add(MethodHandles.lookup().unreflectSetter(f));
+								}
+							} catch (Throwable t) {
+								EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Exception while attempting to scan for captures", t);
+							}
+						}
+						break;
+					}
+				}
+			}
+			if (afr != null) {
+				AccessorArmorFeatureRenderer aafr = (AccessorArmorFeatureRenderer)afr;
+				BipedEntityModel<?> bmodel = aafr.ears$getBodyModel();
+				BipedEntityModel<?> lmodel = aafr.ears$getLeggingsModel();
+
+				try {
+					setCaptures(peer, slot);
+					BipedEntityModel<?> model = aafr.ears$getArmor(slot);
+					setCaptures(null, null);
+					if (model != bmodel && model != lmodel) {
+						// custom armor model
+						return false;
+					}
+					return glint ? equipment.hasGlint() : true;
+				} catch (Throwable t) {
+					EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Exception while attempting to retrieve armor model", t);
+					return false;
+				}
+			}
+			return false;
+		}
+
+		private void setCaptures(LivingEntity entity, EquipmentSlot slot) {
+			for (MethodHandle mh : entityCaptures) {
+				try {
+					mh.invoke(afr, entity);
+				} catch (Throwable t) {}
+			}
+			for (MethodHandle mh : slotCaptures) {
+				try {
+					mh.invoke(afr, slot);
+				} catch (Throwable t) {}
+			}
+		}
+
+		private EquipmentSlot getSlot(TexSource tex) {
+			return Decider.<TexSource, EquipmentSlot>begin(tex)
+					.map(TexSource.HELMET, EquipmentSlot.HEAD)
+					.map(TexSource.CHESTPLATE, EquipmentSlot.CHEST)
+					.map(TexSource.LEGGINGS, EquipmentSlot.LEGS)
+					.map(TexSource.BOOTS, EquipmentSlot.FEET)
+					.orElse(null);
+		}
 
 		private final Matrix3f IDENTITY3 = new Matrix3f(); {
 			IDENTITY3.loadIdentity();
@@ -144,6 +282,10 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 		
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
+			r *= armorR;
+			g *= armorG;
+			b *= armorB;
+			a *= armorA;
 			Matrix4f mm = matrices.peek().getModel();
 			Matrix3f mn = emissive ? IDENTITY3 : matrices.peek().getNormal();
 			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(emissive ? LightmapTextureManager.pack(15, 15) : light).normal(mn, nX, nY, nZ).next();
@@ -171,6 +313,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 
 		@Override
 		protected VertexConsumer getVertexConsumer(TexSource src) {
+			armorR = armorG = armorB = armorA = 1;
 			Identifier id = peer.getSkinTexture();
 			if (src != TexSource.SKIN) {
 				id = new Identifier(id.getNamespace(), src.addSuffix(id.getPath()));

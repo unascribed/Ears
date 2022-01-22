@@ -13,10 +13,11 @@ public enum EarsFeatureType {
 	TAIL(TORSO),
 	WINGS(TORSO),
 	CAPE(TORSO),
-	
-	OTHER_HEAD(HEAD),
-	OTHER_TORSO(TORSO),
+	CHEST(TORSO),
 	;
+	
+	@Deprecated
+	public static final EarsFeatureType OTHER_TORSO = CHEST;
 	
 	private final EarsAnchorPart anchor;
 	

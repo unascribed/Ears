@@ -10,7 +10,9 @@
     "MixinPlayerEntityRenderer",
     "MixinPlayerSkinTexture",
     "AccessorPlayerEntityModel",
-    "MixinElytraFeatureRenderer"
+    "MixinElytraFeatureRenderer",
+    "AccessorArmorFeatureRenderer",
+    "AccessorLivingEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
