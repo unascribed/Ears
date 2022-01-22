@@ -493,7 +493,11 @@ class EarsRenderer {
 			
 			if (chestSize > 0 &&
 					(!isActive(delegate, EarsStateType.WEARING_CHESTPLATE) || delegate.canBind(TexSource.CHESTPLATE)) &&
-					(p == 0 || (p == 1 && delegate.isJacketEnabled()) || ((p == 2 || (p == 3 && delegate.canBind(TexSource.GLINT_CHESTPLATE))) && !drawingEmissive && delegate.canBind(TexSource.CHESTPLATE)))
+					(
+							p == 0 ||
+							(p == 1 && delegate.isJacketEnabled()) ||
+							((p == 2 || (p == 3 && delegate.canBind(TexSource.GLINT_CHESTPLATE))) &&
+									isActive(delegate, EarsStateType.WEARING_CHESTPLATE) && !drawingEmissive && delegate.canBind(TexSource.CHESTPLATE)))
 					&& !isInhibited(delegate, EarsFeatureType.CHEST)) {
 				delegate.push();
 					delegate.anchorTo(BodyPart.TORSO);

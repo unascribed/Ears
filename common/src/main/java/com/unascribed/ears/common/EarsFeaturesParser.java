@@ -70,7 +70,7 @@ public class EarsFeaturesParser {
 					bldr.wingMode(WingMode.NONE);
 				}
 			}
-			if (bldr.isEmissive() && img instanceof WritableEarsImage) {
+			if (bldr.isEmissive() && img instanceof WritableEarsImage && loader != null) {
 				WritableEarsImage wimg = (WritableEarsImage)img;
 				WritableEarsImage out = wimg.copy();
 				Set<Integer> palette = new HashSet<Integer>();
@@ -135,6 +135,7 @@ public class EarsFeaturesParser {
 					bldr.emissiveSkin(new Slice(QDPNG.write(out)));
 				}
 			} else {
+				bldr.emissive(false);
 				bldr.emissiveSkin(Slice.EMPTY);
 				bldr.emissiveWing(Slice.EMPTY);
 			}
