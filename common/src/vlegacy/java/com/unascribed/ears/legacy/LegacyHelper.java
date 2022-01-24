@@ -61,6 +61,7 @@ public class LegacyHelper {
 	 * Does not block. May start a new thread to perform a lookup.
 	 */
 	public static void ensureLookedUpAsynchronously(final String username) {
+		if (username == null) return;
 		if (cache.containsKey(username) || namesBeingLookedUp.contains(username)) return;
 		namesBeingLookedUp.add(username);
 		Thread t = new Thread("Ears lookup thread ("+username+")") {
@@ -82,6 +83,7 @@ public class LegacyHelper {
 	 * Does not block. May start a new thread to perform a lookup.
 	 */
 	public static void ensureLookedUpAsynchronously(final UUID uuid, final String username) {
+		if (uuid == null || username == null) return;
 		if (skinUrls.containsKey(uuid) || beingLookedUp.contains(uuid)) return;
 		beingLookedUp.add(uuid);
 		Thread t = new Thread("Ears lookup thread ("+uuid+")") {
@@ -104,6 +106,7 @@ public class LegacyHelper {
 	 * be called.
 	 */
 	public static boolean isSlimArms(String username) {
+		if (username == null) return false;
 		if (!cache.containsKey(username)) return false;
 		return isSlimArms(getUuid(username));
 	}
@@ -113,6 +116,7 @@ public class LegacyHelper {
 	 * be called.
 	 */
 	public static boolean isSlimArms(UUID uuid) {
+		if (uuid == null) return false;
 		return slimUsers.contains(uuid);
 	}
 	
@@ -120,6 +124,7 @@ public class LegacyHelper {
 	 * May block.
 	 */
 	public static String getSkinUrl(String username) {
+		if (username == null) return "";
 		return getSkinUrl(getUuid(username), username);
 	}
 	
@@ -127,6 +132,7 @@ public class LegacyHelper {
 	 * May block.
 	 */
 	public static String getSkinUrl(UUID id, String username) {
+		if (id == null || username == null) return "";
 		if (!skinUrls.containsKey(id)) {
 			try {
 				EarsLog.debug(EarsLog.Tag.COMMON, "Resolving profile data for {} ({})", id, username);
@@ -150,6 +156,7 @@ public class LegacyHelper {
 	}
 	
 	public static UUID getUuid(final String username) {
+		if (username == null) return new UUID(0L, 0L);
 		if (!loaded) load();
 		if (!cache.containsKey(username)) {
 			EarsLog.debug(EarsLog.Tag.COMMON, "Resolving UUID for {}", username);
