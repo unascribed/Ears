@@ -12,16 +12,18 @@ or [Glass Repo](https://glass-repo.net/repo/mod/ears).
 
 Check out the [Manipulator](https://unascribed.com/ears)!
 
-**Mappings Notice**: Ears platform ports use a variety of mappings, including Plasma, Yarn, MCP, and Mojmap.
-References to these mappings are made even in common code. *Viewer discretion is advised.*
+**Mappings Notice**: Ears platform ports use a variety of mappings, including Plasma, Yarn, MCP, and
+Mojmap. References to these mappings are made even in common code. *Viewer discretion is advised.*
 
 ## Using the API
 
 ![Current API version](https://img.shields.io/maven-metadata/v?color=%23FB0&label=current%20api%20version&metadataUrl=https%3A%2F%2Frepo.unascribed.com%2Fcom%2Funascribed%2Fears-api%2Fmaven-metadata.xml)
 
-Ears provides an API (identical for all ports) that allows forcing Ears features to not render, or to change whether or not Ears thinks the player is wearing some kinds of equipment or has elytra equipped, etc.
+Ears provides an API (identical for all ports) that allows forcing Ears features to not render, or
+to change whether or not Ears thinks the player is wearing some kinds of equipment or has elytra
+equipped, what Ears features a player has set, etc.
 
-You can add it to your mod like so (this example is for Fabric, but it's similar for Forge):
+You can add it to your mod like so (it's the same for Fabric or Forge):
 
 ```gradle
 repositories {
@@ -34,8 +36,11 @@ repositories {
 }
 
 dependencies {
-	modImplementation "com.unascribed:ears-api:1.4.5"
+	implementation "com.unascribed:ears-api:1.4.5"
 }
 ```
 
-You can see examples of usage of both current APIs in real code in [Fabrication](https://github.com/unascribed/Fabrication/blob/1.17/src/main/java/com/unascribed/fabrication/features/FeatureHideArmor.java#L62) and [Yttr](https://github.com/unascribed/Yttr/blob/trunk/src/main/java/com/unascribed/yttr/compat/EarsCompat.java). Fabrication uses a state overrider to add support for its /hidearmor system, and Yttr uses the inhibitor system to force things not to render when the diving suit is worn.
+You can see examples of usage of both current APIs in real code in [Fabrication](https://github.com/unascribed/Fabrication/blob/2.0/1.17/src/main/java/com/unascribed/fabrication/features/FeatureHideArmor.java#L62)
+and [Yttr](https://github.com/unascribed/Yttr/blob/trunk/src/main/java/com/unascribed/yttr/compat/EarsCompat.java).
+Fabrication uses a state overrider to add support for its /hidearmor system, and Yttr uses the
+inhibitor system to force things not to render when the diving suit is worn.

@@ -6,7 +6,6 @@ def target = project.getProperty("target")
 def baseVersion = file('../version.txt').text.trim()
 def versionSuffix = file("../platform-${target}/version-suffix.txt").text.trim()
 def version = baseVersion+versionSuffix
-def versionSuffixDot = versionSuffix.replace('_', '.')
 
 def prefix = ""
 def artifact = "../platform-${target}/build/libs/ears-${target}-${version}.jar"
@@ -144,5 +143,5 @@ task modrinth(type: com.modrinth.minotaur.TaskModrinthUpload) {
 	uploadFile = file(artifact)
 	
 	versionName = "[${prefix}] v${version}"
-	versionNumber = "${version}+${target}${versionSuffixDot}"
+	versionNumber = "${version}+${target}"
 }
