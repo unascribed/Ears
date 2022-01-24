@@ -91,6 +91,7 @@ public final class Slice {
 
 	@Override
 	public String toString() {
+		if (len == 0) return "Slice[0 bytes]";
 		StringBuilder val = new StringBuilder();
 		StringBuilder asc = new StringBuilder();
 		for (int i = 0; i < len; i++) {
