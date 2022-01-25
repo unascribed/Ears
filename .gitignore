@@ -2,3 +2,4 @@ artifacts
 *.log
 build-ok
 /.java
+/gallery
