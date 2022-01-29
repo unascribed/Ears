@@ -109,8 +109,8 @@ public class EarsFeaturesParser {
 								found = 0;
 								WritableEarsImage wwing = (WritableEarsImage)wing;
 								WritableEarsImage wout = wwing.copy();
-								for (int x = 0; x < 12; x++) {
-									for (int y = 0; y < 12; y++) {
+								for (int x = 0; x < wing.getWidth(); x++) {
+									for (int y = 0; y < wing.getHeight(); y++) {
 										int c = wwing.getARGB(x, y);
 										if (palette.contains(c&0x00FFFFFF)) {
 											wwing.setARGB(x, y, 0);
