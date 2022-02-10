@@ -79,10 +79,10 @@ public class EarsFeatures {
 	 * players that the client has loaded a skin for already. Unlike {@link #getById}, this will
 	 * work for skins only known through the tab list that have not entered render distance yet.
 	 * <p>
-	 * What the "texture ID" is varies between versions. In legacy versions, it's the URL to the
-	 * legacy Mojang skin server. In modern versions, it's an Identifier (Yarn) / ResourceLocation
-	 * (Mojmap/MCP) starting with "assets/skins/". Ears Common does not have access to Identifier,
-	 * so the string representation must be used.
+	 * What the "texture ID" is varies between versions. Before 1.6, it's the URL to the
+	 * legacy Mojang skin server as seen in EntityPlayer#skinURL. In 1.6 and later, it's an
+	 * Identifier (Yarn) / ResourceLocation (Mojmap/MCP) starting with "assets/skins/". Ears Common
+	 * does not have access to Identifier, so the string representation must be used.
 	 */
 	public static EarsFeatures getByTextureId(String texId) {
 		return lookup.getByTextureId(texId);
