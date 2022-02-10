@@ -16,6 +16,7 @@ import com.unascribed.ears.common.util.EarsStorage;
 import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesParser;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.EarsFeaturesParser.PNGLoader;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -41,7 +42,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.5"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.6"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
@@ -168,13 +169,15 @@ public class Ears {
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		if (img == null) return;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		earsSkinFeatures.put(getLocation(tdi), EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
 			@Override
 			public EarsImage load(byte[] data) throws IOException {
 				return new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)));
 			}
-		}));
+		});
+		earsSkinFeatures.put(getLocation(tdi), feat);
+		EarsFeaturesStorage.INSTANCE.put(getLocation(tdi), feat);
 	}
 	
 	public static String amendSkinUrl(String url) {

@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
@@ -75,8 +76,10 @@ public class Ears {
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		if (img == null) return;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		earsSkinFeatures.put(tdid, EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
-				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
+		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
+		earsSkinFeatures.put(tdid, feat);
+		EarsFeaturesStorage.INSTANCE.put(getTextureLocation(tdid).toString(), feat);
 	}
 	
 	public static void addLayer(RenderPlayer rp) {
@@ -101,6 +104,7 @@ public class Ears {
 	private static final MethodHandle setAreaOpaque;
 	private static final MethodHandle imageHeight;
 	private static final MethodHandle smallArms;
+	private static final MethodHandle gTextureLocation;
 	static {
 		try {
 			Method jlr = ReflectionHelper.findMethod(ImageBufferDownload.class, null, new String[] {"func_78433_b", "setAreaOpaque"}, int.class, int.class, int.class, int.class);
@@ -114,6 +118,10 @@ public class Ears {
 			Field sa = ReflectionHelper.findField(ModelPlayer.class, "field_178735_y");
 			sa.setAccessible(true);
 			smallArms = MethodHandles.lookup().unreflectGetter(sa);
+
+			Field tl = ReflectionHelper.findField(SimpleTexture.class, "field_110568_b", "textureLocation");
+			tl.setAccessible(true);
+			gTextureLocation = MethodHandles.lookup().unreflectGetter(tl);
 		} catch (Throwable t) {
 			throw new Error(t);
 		}
@@ -130,6 +138,14 @@ public class Ears {
 	private static void setAreaOpaque(ImageBufferDownload subject, int x1, int y1, int x2, int y2) {
 		try {
 			setAreaOpaque.invokeExact(subject, x1, y1, x2, y2);
+		} catch (Throwable e) {
+			if (e instanceof RuntimeException) throw (RuntimeException)e;
+			throw new RuntimeException(e);
+		}
+	}
+	private static ResourceLocation getTextureLocation(SimpleTexture subject) {
+		try {
+			return (ResourceLocation)gTextureLocation.invokeExact(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);

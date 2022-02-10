@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsFeaturesParser;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 import com.unascribed.ears.common.util.EarsStorage;
@@ -36,6 +37,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
 		earsFeatures = EarsFeaturesParser.detect(new AWTEarsImage(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
+		EarsFeaturesStorage.INSTANCE.put(field_5090.toString(), earsFeatures);
 	}
 	
 	@Override

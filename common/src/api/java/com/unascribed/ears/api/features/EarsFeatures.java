@@ -36,6 +36,12 @@ public class EarsFeatures {
 				public EarsFeatures getById(UUID id) {
 					throw new AbstractMethodError();
 				}
+				
+				@Override
+				public EarsFeatures getByTextureId(String texId) {
+					throw new AbstractMethodError();
+				}
+				
 			};
 		}
 		lookup = lookupTmp;
@@ -48,6 +54,38 @@ public class EarsFeatures {
 	
 	private static Object getLookupImpl() throws Throwable {
 		return Class.forName("com.unascribed.ears.common.EarsFeaturesStorage").getField("INSTANCE").get(null);
+	}
+	
+	/**
+	 * Look up known Ears features for the player with the given UUID. This will only work for
+	 * players that the client can see and has loaded a skin for already.
+	 */
+	public static EarsFeatures getById(UUID id) {
+		return lookup.getById(id);
+	}
+	
+	/**
+	 * Look up known Ears features for the player with the given username. This will only work for
+	 * players that the client can see and has loaded a skin for already.
+	 * <p>
+	 * Should only be used in legacy versions where you don't have easy access to UUIDs.
+	 */
+	public static EarsFeatures getByUsername(String username) {
+		return lookup.getByUsername(username);
+	}
+	
+	/**
+	 * Look up known Ears features for the skin with the given texture ID. This will only work for
+	 * players that the client has loaded a skin for already. Unlike {@link #getById}, this will
+	 * work for skins only known through the tab list that have not entered render distance yet.
+	 * <p>
+	 * What the "texture ID" is varies between versions. In legacy versions, it's the URL to the
+	 * legacy Mojang skin server. In modern versions, it's an Identifier (Yarn) / ResourceLocation
+	 * (Mojmap/MCP) starting with "assets/skins/". Ears Common does not have access to Identifier,
+	 * so the string representation must be used.
+	 */
+	public static EarsFeatures getByTextureId(String texId) {
+		return lookup.getByTextureId(texId);
 	}
 	
 	public enum EarMode {
@@ -189,24 +227,6 @@ public class EarsFeatures {
 					"emissiveWing="+emissiveWing+", "+
 					"alfalfa="+alfalfa+
 				"]";
-	}
-	
-	/**
-	 * Look up known Ears features for the player with the given UUID. This will only work for
-	 * players that the client can see and has loaded a skin for already.
-	 */
-	public static EarsFeatures getById(UUID id) {
-		return lookup.getById(id);
-	}
-	
-	/**
-	 * Look up known Ears features for the player with the given username. This will only work for
-	 * players that the client can see and has loaded a skin for already.
-	 * <p>
-	 * Should only be used in legacy versions where you don't have easy access to UUIDs.
-	 */
-	public static EarsFeatures getByUsername(String username) {
-		return lookup.getByUsername(username);
 	}
 	
 	/**

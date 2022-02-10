@@ -90,8 +90,10 @@ public class com_unascribed_ears_Ears {
 	
 	public static void checkSkin(String url, BufferedImage img) {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "checkSkin({}, {})", url, img);
-		earsSkinFeatures.put(url, EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
-				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
+		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
+		earsSkinFeatures.put(url, feat);
+		EarsFeaturesStorage.INSTANCE.put(url, feat);
 	}
 	
 	public void render(ds render, gs entity, float partialTicks) {

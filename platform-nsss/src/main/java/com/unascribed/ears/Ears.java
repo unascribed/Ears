@@ -24,6 +24,7 @@ import com.mojang.minecraft.render.PositionTexureVertex;
 import com.mojang.minecraft.render.TexturedQuad;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesParser;
+import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
@@ -231,8 +232,10 @@ public class Ears {
 	
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		earsSkinFeatures.put(getLocation(tdi), EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
-				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
+		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
+		earsSkinFeatures.put(getLocation(tdi), feat);
+		EarsFeaturesStorage.INSTANCE.put(getLocation(tdi), feat);
 	}
 	
 	public static String amendSkinUrl(String username) {

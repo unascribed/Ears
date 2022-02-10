@@ -11,9 +11,10 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 
 	private final Map<UUID, EarsFeatures> byId = new ConcurrentHashMap<UUID, EarsFeatures>();
 	private final Map<String, EarsFeatures> byName = new ConcurrentHashMap<String, EarsFeatures>();
+	private final Map<String, EarsFeatures> byTexId = new ConcurrentHashMap<String, EarsFeatures>();
 	
 	public void put(String username, UUID id, EarsFeatures features) {
-		// not atomic, but it is faster; avoids synchronizing
+		// not atomic, but it is faster; avoids synchronizing (this is called every frame!)
 		// this should be OK for our purposes as only one thread will be calling put
 		if (id != null && byId.get(id) != features) {
 			byId.put(id, features);
@@ -21,6 +22,11 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 		if (username != null && byName.get(username) != features) {
 			byName.put(username, features);
 		}
+	}
+	
+	public void put(String textureId, EarsFeatures features) {
+		// this is called on worker threads, and is only called once upon skin load
+		byTexId.put(textureId, features);
 	}
 	
 	@Override
@@ -33,6 +39,13 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 	@Override
 	public EarsFeatures getByUsername(String username) {
 		EarsFeatures feat = byName.get(username);
+		if (feat == null) return EarsFeatures.DISABLED;
+		return feat;
+	}
+	
+	@Override
+	public EarsFeatures getByTextureId(String texId) {
+		EarsFeatures feat = byTexId.get(texId);
 		if (feat == null) return EarsFeatures.DISABLED;
 		return feat;
 	}

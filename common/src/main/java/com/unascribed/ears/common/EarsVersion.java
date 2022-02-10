@@ -2,7 +2,7 @@ package com.unascribed.ears.common;
 
 public class EarsVersion {
 
-	public static final String COMMON = /*VERSION*/"1.4.5"/*/VERSION*/;
+	public static final String COMMON = /*VERSION*/"1.4.6"/*/VERSION*/;
 	public static final String PLATFORM;
 	public static final String PLATFORM_KIND;
 	
