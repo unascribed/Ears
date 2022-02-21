@@ -36,12 +36,6 @@ public class EarsFeatures {
 				public EarsFeatures getById(UUID id) {
 					throw new AbstractMethodError();
 				}
-				
-				@Override
-				public EarsFeatures getByTextureId(String texId) {
-					throw new AbstractMethodError();
-				}
-				
 			};
 		}
 		lookup = lookupTmp;
@@ -72,20 +66,6 @@ public class EarsFeatures {
 	 */
 	public static EarsFeatures getByUsername(String username) {
 		return lookup.getByUsername(username);
-	}
-	
-	/**
-	 * Look up known Ears features for the skin with the given texture ID. This will only work for
-	 * players that the client has loaded a skin for already. Unlike {@link #getById}, this will
-	 * work for skins only known through the tab list that have not entered render distance yet.
-	 * <p>
-	 * What the "texture ID" is varies between versions. Before 1.6, it's the URL to the
-	 * legacy Mojang skin server as seen in EntityPlayer#skinURL. In 1.6 and later, it's an
-	 * Identifier (Yarn) / ResourceLocation (Mojmap/MCP) starting with "assets/skins/". Ears Common
-	 * does not have access to Identifier, so the string representation must be used.
-	 */
-	public static EarsFeatures getByTextureId(String texId) {
-		return lookup.getByTextureId(texId);
 	}
 	
 	public enum EarMode {

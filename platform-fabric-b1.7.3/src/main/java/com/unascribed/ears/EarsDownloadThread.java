@@ -9,10 +9,8 @@ import javax.imageio.ImageIO;
 
 import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.api.features.AlfalfaData;
-import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesParser;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.legacy.AWTEarsImage;
 
@@ -50,10 +48,8 @@ public class EarsDownloadThread {
 					}
 
 					EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-					EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
-							data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
-					EarsMod.earsSkinFeatures.put(string, feat);
-					EarsFeaturesStorage.INSTANCE.put(string, feat);
+					EarsMod.earsSkinFeatures.put(string, EarsFeaturesParser.detect(new AWTEarsImage(EarsDownloadThread.this.image), alfalfa,
+							data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 
 					return;
 				}

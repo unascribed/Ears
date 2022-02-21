@@ -18,7 +18,6 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.EarsFeaturesParser;
 import com.unascribed.ears.common.EarsFeaturesParser.PNGLoader;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsImage;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -37,10 +36,8 @@ import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureObject;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
@@ -170,15 +167,13 @@ public class Ears {
 	public static void checkSkin(ThreadDownloadImageData tdid, BufferedImage img) {
 		if (img == null) return;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+		earsSkinFeatures.put(tdid, EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
 			@Override
 			public EarsImage load(byte[] data) throws IOException {
 				return new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)));
 			}
-		});
-		earsSkinFeatures.put(tdid, feat);
-		EarsFeaturesStorage.INSTANCE.put(getTextureLocation(getImageLocation(tdid)).toString(), feat);
+		}));
 	}
 	
 	public static void beforeRender(RenderPlayer rp, EntityPlayer player) {
@@ -209,8 +204,6 @@ public class Ears {
 	private static final Field imageWidth;
 	private static final Field imageData;
 	private static final Field modelBipedMain;
-	private static final Field imageLocation;
-	private static final Field textureLocation;
 	static {
 		try {
 			Method saom = ReflectionHelper.findMethod(ImageBufferDownload.class, null, new String[] {"func_78433_b", "setAreaOpaque"}, int.class, int.class, int.class, int.class);
@@ -236,14 +229,6 @@ public class Ears {
 			Field mpm = ReflectionHelper.findField(RenderPlayer.class, "field_77109_a", "modelBipedMain");
 			mpm.setAccessible(true);
 			modelBipedMain = mpm;
-			
-			Field il = ReflectionHelper.findField(ThreadDownloadImageData.class, "field_110558_f", "imageLocation");
-			il.setAccessible(true);
-			imageLocation = il;
-			
-			Field tl = ReflectionHelper.findField(SimpleTexture.class, "field_110568_b", "textureLocation");
-			tl.setAccessible(true);
-			textureLocation = tl;
 		} catch (Throwable t) {
 			throw new Error(t);
 		}
@@ -260,22 +245,6 @@ public class Ears {
 	private static int getImageHeight(ImageBufferDownload subject) {
 		try {
 			return (Integer)imageHeight.get(subject);
-		} catch (Throwable e) {
-			if (e instanceof RuntimeException) throw (RuntimeException)e;
-			throw new RuntimeException(e);
-		}
-	}
-	private static SimpleTexture getImageLocation(ThreadDownloadImageData subject) {
-		try {
-			return (SimpleTexture)imageLocation.get(subject);
-		} catch (Throwable e) {
-			if (e instanceof RuntimeException) throw (RuntimeException)e;
-			throw new RuntimeException(e);
-		}
-	}
-	private static ResourceLocation getTextureLocation(SimpleTexture subject) {
-		try {
-			return (ResourceLocation)textureLocation.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);

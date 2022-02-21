@@ -12,7 +12,6 @@ import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsFeaturesParser;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.NativeImageAdapter;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.AbstractEarsRenderDelegate;
@@ -39,7 +38,6 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 		if (cur != null) {
 			earsFeatures = EarsFeaturesParser.detect(new NativeImageAdapter(cur), EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 					data -> new NativeImageAdapter(NativeImage.read(AbstractEarsRenderDelegate.toNativeBuffer(data))));
-			EarsFeaturesStorage.INSTANCE.put(textureLocation.toString(), earsFeatures);
 		}
 	}
 	

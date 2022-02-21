@@ -16,7 +16,6 @@ import com.unascribed.ears.common.util.EarsStorage;
 import com.unascribed.ears.legacy.LegacyHelper;
 import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.common.EarsFeaturesParser;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.EarsFeaturesParser.PNGLoader;
 import com.unascribed.ears.common.EarsCommon.StripAlphaMethod;
 import com.unascribed.ears.common.debug.EarsLog;
@@ -154,15 +153,13 @@ public class Ears {
 	public static void checkSkin(Object tdi, BufferedImage img) {
 		if (img == null) return;
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "Process player skin");
-		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+		earsSkinFeatures.put(getLocation(tdi), EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
 				new PNGLoader() {
-			@Override
-			public EarsImage load(byte[] data) throws IOException {
-				return new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)));
-			}
-		});
-		earsSkinFeatures.put(getLocation(tdi), feat);
-		EarsFeaturesStorage.INSTANCE.put(getLocation(tdi), feat);
+					@Override
+					public EarsImage load(byte[] data) throws IOException {
+						return new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)));
+					}
+				}));
 	}
 	
 	public static String amendSkinUrl(String url) {

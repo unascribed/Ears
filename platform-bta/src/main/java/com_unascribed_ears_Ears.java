@@ -227,10 +227,8 @@ public class com_unascribed_ears_Ears {
 	
 	public static void checkSkin(String url, BufferedImage img) {
 		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "checkSkin({}, {})", url, img);
-		EarsFeatures feat = EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
-				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data))));
-		EarsFeaturesStorage.INSTANCE.put(url, feat);
-		earsSkinFeatures.put(url, feat);
+		earsSkinFeatures.put(url, EarsFeaturesParser.detect(new AWTEarsImage(img), EarsStorage.get(img, EarsStorage.Key.ALFALFA),
+				data -> new AWTEarsImage(ImageIO.read(new ByteArrayInputStream(data)))));
 	}
 	
 	public static String amendSkinUrl(String url) {

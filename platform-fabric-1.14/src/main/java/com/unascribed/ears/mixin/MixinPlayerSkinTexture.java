@@ -9,7 +9,6 @@ import com.unascribed.ears.NativeImageAdapter;
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsFeaturesParser;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.EarsImage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.AbstractEarsRenderDelegate;
@@ -35,7 +34,6 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 		EarsImage img = new NativeImageAdapter(cur);
 		earsFeatures = EarsFeaturesParser.detect(img, EarsStorage.get(cur, EarsStorage.Key.ALFALFA),
 				data -> new NativeImageAdapter(NativeImage.read(AbstractEarsRenderDelegate.toNativeBuffer(data))));
-		EarsFeaturesStorage.INSTANCE.put(location.toString(), earsFeatures);
 	}
 	
 	@Override

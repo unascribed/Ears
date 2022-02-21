@@ -11,7 +11,6 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 
 	private final Map<UUID, EarsFeatures> byId = new ConcurrentHashMap<UUID, EarsFeatures>();
 	private final Map<String, EarsFeatures> byName = new ConcurrentHashMap<String, EarsFeatures>();
-	private final Map<String, EarsFeatures> byTexId = new ConcurrentHashMap<String, EarsFeatures>();
 	
 	public void put(String username, UUID id, EarsFeatures features) {
 		if (features == null) {
@@ -27,11 +26,6 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 		}
 	}
 	
-	public void put(String textureId, EarsFeatures features) {
-		// this is called on worker threads, and is only called once upon skin load
-		byTexId.put(textureId, features);
-	}
-	
 	@Override
 	public EarsFeatures getById(UUID id) {
 		EarsFeatures feat = byId.get(id);
@@ -42,13 +36,6 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 	@Override
 	public EarsFeatures getByUsername(String username) {
 		EarsFeatures feat = byName.get(username);
-		if (feat == null) return EarsFeatures.DISABLED;
-		return feat;
-	}
-	
-	@Override
-	public EarsFeatures getByTextureId(String texId) {
-		EarsFeatures feat = byTexId.get(texId);
 		if (feat == null) return EarsFeatures.DISABLED;
 		return feat;
 	}
