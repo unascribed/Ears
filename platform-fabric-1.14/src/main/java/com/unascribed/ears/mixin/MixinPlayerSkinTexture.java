@@ -40,7 +40,7 @@ public abstract class MixinPlayerSkinTexture extends ResourceTexture implements 
 	
 	@Override
 	public EarsFeatures getEarsFeatures() {
-		return earsFeatures;
+		return earsFeatures == null ? EarsFeatures.DISABLED : earsFeatures;
 	}
 	
 }

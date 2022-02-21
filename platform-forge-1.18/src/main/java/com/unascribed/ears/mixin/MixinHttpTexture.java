@@ -67,7 +67,7 @@ public abstract class MixinHttpTexture extends SimpleTexture implements EarsFeat
 	
 	@Override
 	public EarsFeatures getEarsFeatures() {
-		return earsFeatures;
+		return earsFeatures == null ? EarsFeatures.DISABLED : earsFeatures;
 	}
 	
 	

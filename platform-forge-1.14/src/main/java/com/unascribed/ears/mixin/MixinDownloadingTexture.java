@@ -39,7 +39,7 @@ public abstract class MixinDownloadingTexture extends SimpleTexture implements E
 	
 	@Override
 	public EarsFeatures getEarsFeatures() {
-		return earsFeatures;
+		return earsFeatures == null ? EarsFeatures.DISABLED : earsFeatures;
 	}
 	
 }

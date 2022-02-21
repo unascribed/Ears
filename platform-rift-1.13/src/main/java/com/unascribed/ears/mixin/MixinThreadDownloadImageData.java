@@ -39,7 +39,7 @@ public abstract class MixinThreadDownloadImageData extends SimpleTexture impleme
 	
 	@Override
 	public EarsFeatures getEarsFeatures() {
-		return earsFeatures;
+		return earsFeatures == null ? EarsFeatures.DISABLED : earsFeatures;
 	}
 	
 }

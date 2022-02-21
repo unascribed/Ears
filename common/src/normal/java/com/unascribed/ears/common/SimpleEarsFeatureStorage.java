@@ -14,6 +14,9 @@ public class SimpleEarsFeatureStorage implements EarsFeaturesLookup {
 	private final Map<String, EarsFeatures> byTexId = new ConcurrentHashMap<String, EarsFeatures>();
 	
 	public void put(String username, UUID id, EarsFeatures features) {
+		if (features == null) {
+			return;
+		}
 		// not atomic, but it is faster; avoids synchronizing (this is called every frame!)
 		// this should be OK for our purposes as only one thread will be calling put
 		if (id != null && byId.get(id) != features) {
