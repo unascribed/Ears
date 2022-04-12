@@ -42,16 +42,16 @@ jar {
 repositories {
 	mavenLocal()
 	maven { url 'https://jitpack.io' }
-	ivy {
-		artifactPattern 'https://version99.qos.ch/commons-logging/commons-logging/[revision]/commons-logging-[revision].[ext]'
-	}
+	//ivy {
+	//	artifactPattern 'https://version99.qos.ch/commons-logging/commons-logging/[revision]/commons-logging-[revision].[ext]'
+	//}
 }
 
 dependencies {
 	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
 	
-	compile 'net.sourceforge.argo:argo:99-empty'
-	minecraft 'net.sourceforge.argo:argo:99-empty'
+	//compile 'net.sourceforge.argo:argo:99-empty'
+	//minecraft 'net.sourceforge.argo:argo:99-empty'
 }
 
 jar {

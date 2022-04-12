@@ -11,7 +11,7 @@ public class kg extends Thread {
 		if (!EarsAgent.initialized) {
 			System.err.println();
 			System.err.println("ERROR: Ears for NFC is not a jar mod, it is a Java agent, and requires special installation.");
-			System.err.println("Please read this: https://github.com/unascribed/Ears/wiki/New-Frontier-Craft-Installation");
+			System.err.println("Please read this: https://git.sleeping.town/unascribed/Ears/wiki/New-Frontier-Craft-Installation");
 			System.err.println();
 			System.exit(2);
 		}

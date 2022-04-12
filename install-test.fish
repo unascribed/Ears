@@ -1,7 +1,7 @@
 #!/usr/bin/fish
 set coremod ears-forge-1.4 ears-forge-1.5
-set agent ears-nfc ears-nsss ears-bta ears-forge-1.2
-set compat ears-fabric-1.16=ears-fabric-1.15 ears-fabric-1.17=ears-fabric-1.18 ears-forge-1.9=ears-forge-1.10,ears-forge-1.11
+set agent ears-nfc ears-nsss ears-bta ears-b1.7.3 ears-forge-1.2
+set compat ears-fabric-1.16=ears-fabric-1.15 ears-fabric-1.17=ears-fabric-1.18 ears-forge-1.9=ears-forge-1.10,ears-forge-1.11 ears-bta=ears-b1.7.3
 set hasCompat (echo $compat |tr ' ' '\n' |cut -d'=' -f1)
 function doCopy
 	set src $argv[1]

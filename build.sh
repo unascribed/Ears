@@ -87,7 +87,7 @@ JAVA_HOME=$JAVA17_HOME check_java 17 17
 echo "Looks good."
 echo
 
-normal="fabric-1.8 fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3 rift-1.13"
+normal="fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3 rift-1.13"
 needsJ8="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
 needsJ17="forge-1.18"
@@ -107,9 +107,9 @@ done
 (
 	echo 'Building common...'
 	cd common
-	if [ "$buildAll" == "1" ]; then
-		addn=closure
-	fi
+	#if [ "$buildAll" == "1" ]; then
+	#	addn=closure
+	#fi
 	JAVA_HOME=$JAVA8_HOME TERM=dumb chronic ./gradlew clean build $addn --stacktrace
 )
 build() {

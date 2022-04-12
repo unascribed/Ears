@@ -14,12 +14,6 @@ def loaders = []
 def gameVersions = []
 
 switch (target) {
-	case "fabric-1.8":
-		prefix = "FABRIC 1.8"
-		stability = 'beta'
-		loaders = ['fabric']
-		gameVersions = ['1.8.9']
-		break
 	case "fabric-1.14":
 		prefix = "FABRIC 1.14"
 		stability = 'release'
