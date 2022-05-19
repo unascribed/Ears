@@ -15,7 +15,7 @@ apply plugin: 'java'
 sourceCompatibility = 8
 targetCompatibility = 8
 
-archivesBaseName = "ears-bta"
+archivesBaseName = "ears-vanilla-b1.7.3"
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group = "com.unascribed.ears"
 
