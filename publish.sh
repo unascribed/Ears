@@ -8,8 +8,8 @@ if [ ! -s "changelog.html" ]; then
 	exit 1
 fi
 
-common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19"
-curse="rift-1.13 $common"
+common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 rift-1.13"
+curse="$common"
 modrinth="$common fabric-b1.7.3"
 
 cd publish-curseforge

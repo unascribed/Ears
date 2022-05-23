@@ -111,7 +111,7 @@ switch (target) {
 		gameVersions = ['Forge', '1.18', '1.18.1']
 		break
 	case "rift-1.13":
-		prefix = "RIFT 1.13"
+		prefix = "RIFT 1.13.2"
 		stability = 'alpha'
 		gameVersions = ['Rift', '1.13.2']
 		break

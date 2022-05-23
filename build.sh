@@ -92,7 +92,7 @@ needsJ8="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
 needsJ17="forge-1.18 fabric-1.19"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
-special="nfc nsss bta forge-1.2 forge-1.4 forge-1.5"
+special="nfc nsss vanilla-b1.7.3 forge-1.2 forge-1.4 forge-1.5"
 
 buildAll=1
 toBuild=" $normal $needsJ8 $needsJ16 $needsJ17 $special "

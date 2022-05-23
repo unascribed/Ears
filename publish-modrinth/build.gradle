@@ -29,13 +29,13 @@ switch (target) {
 	case "fabric-1.17":
 		prefix = "FABRIC 1.17/18"
 		stability = 'release'
-		loaders = ['fabric']
+		loaders = ['fabric', 'quilt']
 		gameVersions = ['1.17', '1.17.1', '1.18', '1.18.1']
 		break
 	case "fabric-1.19":
 		prefix = "FABRIC 1.19"
 		stability = 'release'
-		loaders = ['fabric']
+		loaders = ['fabric', 'quilt']
 		gameVersions = ['1.19-pre1']
 		break
 	case "forge-1.2":
@@ -121,6 +121,12 @@ switch (target) {
 		stability = 'alpha'
 		loaders = ['fabric']
 		gameVersions = ['b1.7.3']
+		break
+	case "rift-1.13":
+		prefix = "RIFT 1.13.2"
+		stability = 'alpha'
+		loaders = ['rift']
+		gameVersions = ['1.13.2']
 		break
 	default:
 		throw new Exception("Unknown target ${target}")
