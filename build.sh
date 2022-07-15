@@ -90,7 +90,7 @@ echo
 normal="fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3 rift-1.13"
 needsJ8="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
-needsJ17="forge-1.18 fabric-1.19"
+needsJ17="forge-1.18 fabric-1.19 forge-1.19"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
 special="nfc nsss vanilla-b1.7.3 forge-1.2 forge-1.4 forge-1.5"
 
