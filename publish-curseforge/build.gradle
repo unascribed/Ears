@@ -36,7 +36,12 @@ switch (target) {
 	case "fabric-1.19":
 		prefix = "FABRIC 1.19"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.19-Snapshot']
+		gameVersions = ['Fabric', '1.19', '1.19.1', '1.19.2']
+		break
+	case "fabric-1.19.3":
+		prefix = "FABRIC 1.19.3"
+		stability = 'release'
+		gameVersions = ['Fabric', '1.19.3']
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"

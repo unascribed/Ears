@@ -8,7 +8,7 @@ if [ ! -s "changelog.html" ]; then
 	exit 1
 fi
 
-common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19"
+common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3"
 curse="$common"
 modrinth="$common fabric-b1.7.3"
 
@@ -55,4 +55,5 @@ if [ "$3" != "-" ]; then
 	./mcmodcn-upload.sh $classID "1.18" $forge 'client' artifacts/ears-forge-1.18-*.jar
 	./mcmodcn-upload.sh $classID "1.19" $fabric,$quilt 'client' artifacts/ears-fabric-1.19-*.jar
 	./mcmodcn-upload.sh $classID "1.19" $forge 'client' artifacts/ears-forge-1.19-*.jar
+	./mcmodcn-upload.sh $classID "1.19.3" $fabric,$quilt 'client' artifacts/ears-fabric-1.19.3-*.jar
 fi
