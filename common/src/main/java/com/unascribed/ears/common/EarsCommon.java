@@ -102,7 +102,7 @@ public class EarsCommon {
 	}
 	
 	public static String getConfigUrl(String username, String uuid) {
-		return "https://ears.unascribed.com/manipulator/?v="+EarsVersion.COMMON+(uuid == null ? "&username="+username : "&id="+uuid);
+		return "https://ears.unascribed.com/manipulator/#v="+EarsVersion.COMMON+(uuid == null ? ",username="+username : ",id="+uuid);
 	}
 	
 	public static AlfalfaData preprocessSkin(WritableEarsImage img) {
