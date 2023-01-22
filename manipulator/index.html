@@ -919,6 +919,42 @@ SOFTWARE.
 			document.body.classList.remove("loading");
 		}
 	}
+	async function getSkinFromParams() {
+		let input = $("#skin-upload");
+		let params = new URLSearchParams(window.location.search);
+		if (input.files.length > 0 || !params.has("username") && !params.has("id")) return;
+		let id = (params.has("id") ? params.get("id") : null);
+		if (!id && params.has("username")) {
+			try { 
+				await fetch("https://mc-heads.net/minecraft/profile/" + params.get("username"))
+					.then(res => res.json())
+					.then(json => {
+						id = json.id;
+					});
+			} catch (e) {
+				console.error(e);
+				return;
+			}
+		}
+		let skinUrl = "https://crafatar.com/skins/" + id;
+		try {
+			let res = await fetch(skinUrl);
+			if (!res.ok) {
+				console.error("Failed to fetch skin from " + skinUrl);
+				return
+			}
+			let blob = await res.blob();
+			let file = new File([blob], "skin.png");
+			let dataTransfer = new DataTransfer();
+			dataTransfer.items.add(file);
+			input.files = dataTransfer.files;
+			updateSkin();
+		}
+		catch (e) {
+			console.error(e);
+			return;
+		}
+	}
 	function copyFromAlfalfa(id, sel) {
 		return new Promise((resolve, reject) => {
 				let img = new Image();
@@ -1320,6 +1356,7 @@ SOFTWARE.
 	window.addEventListener("resize", () => updateDpr());
 	updateDpr();
 	updateSkin();
+	getSkinFromParams();
 
 	if (WEBGL.isWebGLAvailable()) {
 		let scene = new THREE.Scene();
