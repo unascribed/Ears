@@ -919,30 +919,32 @@ SOFTWARE.
 			document.body.classList.remove("loading");
 		}
 	}
-	async function getSkinFromParams() {
+	async function getSkinFromHash() {
 		let input = $("#skin-upload");
-		let params = new URLSearchParams(window.location.search);
-		if (input.files.length > 0 || !params.has("username") && !params.has("id")) return;
-		let id = (params.has("id") ? params.get("id") : null);
-		if (!id && params.has("username")) {
-			try { 
-				await fetch("https://mc-heads.net/minecraft/profile/" + params.get("username"))
+		let hash = window.location.hash.slice(1);
+		let params = hash.split(',').reduce((params, param) => {
+				let [key, value] = param.split('=');
+				return Object.assign(params, { [key]: value });
+			}, {});
+		if (input.files.length > 0 || !params["username"] && !params["id"]) return;
+		let id = (params["id"] || null);
+		if (!id && params["username"]) {
+			try {
+				await fetch("https://playerdb.co/api/player/minecraft/" + params["username"])
 					.then(res => res.json())
 					.then(json => {
-						id = json.id;
+						if (json.success === false) throw new Error("Failed to fetch player data from playerdb.co");
+						id = json.data.player.id;
 					});
 			} catch (e) {
 				console.error(e);
 				return;
 			}
 		}
-		let skinUrl = "https://crafatar.com/skins/" + id;
+		let skinUrl = "https://visage.surgeplay.com/skin/" + id;
 		try {
 			let res = await fetch(skinUrl);
-			if (!res.ok) {
-				console.error("Failed to fetch skin from " + skinUrl);
-				return
-			}
+			if (!res.ok) throw new Error("Failed to fetch skin from " + skinUrl);
 			let blob = await res.blob();
 			let file = new File([blob], "skin.png");
 			let dataTransfer = new DataTransfer();
@@ -1356,7 +1358,7 @@ SOFTWARE.
 	window.addEventListener("resize", () => updateDpr());
 	updateDpr();
 	updateSkin();
-	getSkinFromParams();
+	getSkinFromHash();
 
 	if (WEBGL.isWebGLAvailable()) {
 		let scene = new THREE.Scene();
