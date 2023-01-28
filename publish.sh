@@ -8,52 +8,150 @@ if [ ! -s "changelog.html" ]; then
 	exit 1
 fi
 
-common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3"
-curse="$common"
-modrinth="$common fabric-b1.7.3"
+CURSE_TOKEN=$1
+shift
+MODRINTH_TOKEN=$1
+shift
+MCMODCN_COOKIE=$1
+shift
+
+if [ -n "$JAVA11_HOME" ]; then
+	export JAVA_HOME=$JAVA11_HOME
+fi
+
+if [ -n "$@" ]; then
+	common="$@"
+	curse="$common"
+	modrinth="$common"
+	mcmodcn="$common"
+else
+	common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3"
+	curse="$common"
+	modrinth="fabric-b1.7.3 $common"
+	mcmodcn="fabric-b1.7.3 $common"
+fi
 
 cd publish-curseforge
-if [ "$1" != "-" ]; then
+if [ "$CURSE_TOKEN" != "-" ]; then
 	for proj in $curse; do
 		echo Publishing $proj to CurseForge...
-		TERM=dumb chronic ./gradlew -PcurseApiKey=$1 -Ptarget=$proj curseforge
+		TERM=dumb chronic ./gradlew -PcurseApiKey=$CURSE_TOKEN -Ptarget=$proj curseforge
 	done
 fi
 cd ../publish-modrinth
-if [ "$2" != "-" ]; then
+if [ "$MODRINTH_TOKEN" != "-" ]; then
 	for proj in $modrinth; do
 		echo Publishing $proj to Modrinth...
-		TERM=dumb chronic ./gradlew -PmodrinthApiKey=$2 -Ptarget=$proj modrinth
+		TERM=dumb chronic ./gradlew -PmodrinthApiKey=$MODRINTH_TOKEN -Ptarget=$proj modrinth
 	done
 fi
 cd ..
-if [ "$3" != "-" ]; then
-	export MCMODCN_COOKIE="$3"
+if [ "$MCMODCN_COOKIE" != "-" ]; then
+	export MCMODCN_COOKIE
 	classID=3996
 	forge=1
 	fabric=2
 	quilt=11
 	rift=3
 	other=10
-	./mcmodcn-upload.sh $classID "Beta 1.7.3" $fabric 'client' artifacts/ears-fabric-b1.7.3-*.jar
-	./mcmodcn-upload.sh $classID "1.2.5" $other 'client' artifacts/ears-forge-1.2-*.jar
-	./mcmodcn-upload.sh $classID "1.4.7" $forge 'client' artifacts/ears-forge-1.4-*.jar
-	./mcmodcn-upload.sh $classID "1.5.2" $forge 'client' artifacts/ears-forge-1.5-*.jar
-	./mcmodcn-upload.sh $classID "1.6.4" $forge 'client' artifacts/ears-forge-1.6-*.jar
-	./mcmodcn-upload.sh $classID "1.7.10" $forge 'client' artifacts/ears-forge-1.7-*.jar
-	./mcmodcn-upload.sh $classID "1.8" $forge 'client' artifacts/ears-forge-1.8-*.jar
-	./mcmodcn-upload.sh $classID "1.9/10/11" $forge 'client' artifacts/ears-forge-1.9-*.jar
-	./mcmodcn-upload.sh $classID "1.12" $forge 'client' artifacts/ears-forge-1.12-*.jar
-	./mcmodcn-upload.sh $classID "1.13.2" $rift 'client' artifacts/ears-rift-1.13-*.jar
-	./mcmodcn-upload.sh $classID "1.14" $fabric 'client' artifacts/ears-fabric-1.14-*.jar
-	./mcmodcn-upload.sh $classID "1.14" $forge 'client' artifacts/ears-forge-1.14-*.jar
-	./mcmodcn-upload.sh $classID "1.15" $forge 'client' artifacts/ears-forge-1.15-*.jar
-	./mcmodcn-upload.sh $classID "1.15/16" $fabric 'client' artifacts/ears-fabric-1.16-*.jar
-	./mcmodcn-upload.sh $classID "1.16" $forge 'client' artifacts/ears-forge-1.16-*.jar
-	./mcmodcn-upload.sh $classID "1.17/18" $fabric,$quilt 'client' artifacts/ears-fabric-1.17-*.jar
-	./mcmodcn-upload.sh $classID "1.17" $forge 'client' artifacts/ears-forge-1.17-*.jar
-	./mcmodcn-upload.sh $classID "1.18" $forge 'client' artifacts/ears-forge-1.18-*.jar
-	./mcmodcn-upload.sh $classID "1.19" $fabric,$quilt 'client' artifacts/ears-fabric-1.19-*.jar
-	./mcmodcn-upload.sh $classID "1.19" $forge 'client' artifacts/ears-forge-1.19-*.jar
-	./mcmodcn-upload.sh $classID "1.19.3" $fabric,$quilt 'client' artifacts/ears-fabric-1.19.3-*.jar
+	for proj in $mcmodcn; do
+		title=""
+		loaders=""
+		case $proj in
+			fabric-b1.7.3)
+				title="Beta 1.7.3"
+				loaders="$fabric"
+			;;
+			forge-1.2)
+				title="1.2.5"
+				loaders="$other"
+			;;
+			forge-1.4)
+				title="1.4.7"
+				loaders="$forge"
+			;;
+			forge-1.5)
+				title="1.5.2"
+				loaders="$forge"
+			;;
+			forge-1.6)
+				title="1.6.4"
+				loaders="$forge"
+			;;
+			forge-1.7)
+				title="1.7.10"
+				loaders="$forge"
+			;;
+			forge-1.8)
+				title="1.8"
+				loaders="$forge"
+			;;
+			forge-1.9)
+				title="1.9/10/11"
+				loaders="$forge"
+			;;
+			forge-1.12)
+				title="1.12"
+				loaders="$forge"
+			;;
+			rift-1.13)
+				title="1.13.2"
+				loaders="$rift"
+			;;
+			fabric-1.14)
+				title="1.14"
+				loaders="$fabric"
+			;;
+			forge-1.14)
+				title="1.14"
+				loaders="$forge"
+			;;
+			forge-1.15)
+				title="1.15"
+				loaders="$forge"
+			;;
+			fabric-1.16)
+				title="1.15/16"
+				loaders="$fabric"
+			;;
+			forge-1.16)
+				title="1.16"
+				loaders="$forge"
+			;;
+			fabric-1.17)
+				title="1.17/18"
+				loaders="$fabric,$quilt"
+			;;
+			forge-1.17)
+				title="1.17"
+				loaders="$forge"
+			;;
+			forge-1.18)
+				title="1.18"
+				loaders="$forge"
+			;;
+			fabric-1.19)
+				title="1.19"
+				loaders="$fabric,$quilt"
+			;;
+			forge-1.19)
+				title="1.19"
+				loaders="$forge"
+			;;
+			fabric-1.19.3)
+				title="1.19.3"
+				loaders="$fabric,$quilt"
+			;;
+			forge-1.19.3)
+				title="1.19.3"
+				loaders="$forge"
+			;;
+			*)
+				echo "Unknown project $proj for mcmod.cn publish"
+				exit 2
+			;;
+		esac
+		./mcmodcn-upload.sh $classID "$title" "$loaders" 'client' artifacts/ears-$proj-*.jar
+	done
+	export -n MCMODCN_COOKIE
 fi

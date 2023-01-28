@@ -128,6 +128,12 @@ switch (target) {
 		loaders = ['forge']
 		gameVersions = ['1.19']
 		break
+	case "forge-1.19.3":
+		prefix = "FORGE 1.19.3"
+		stability = 'beta'
+		loaders = ['forge']
+		gameVersions = ['1.19.3']
+		break
 	case "fabric-b1.7.3":
 		prefix = "FABRIC b1.7.3"
 		stability = 'alpha'

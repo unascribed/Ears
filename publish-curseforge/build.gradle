@@ -120,6 +120,11 @@ switch (target) {
 		stability = 'beta'
 		gameVersions = ['Forge', '1.19']
 		break
+	case "forge-1.19.3":
+		prefix = "FORGE 1.19.3"
+		stability = 'beta'
+		gameVersions = ['Forge', '1.19.3']
+		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13.2"
 		stability = 'alpha'
