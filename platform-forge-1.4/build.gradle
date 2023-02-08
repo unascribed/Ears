@@ -3,65 +3,53 @@ buildscript {
 		mavenCentral()
 		gradlePluginPortal()
 		maven { url 'https://maven.fabricmc.net' }
-		maven { url 'https://jitpack.io' }
+		maven { url 'https://repo.sleeping.town' }
 		maven { url 'https://maven.minecraftforge.net/' }
 	}
 	dependencies {
-		classpath 'com.github.unascribed.voldeloom:fabric-loom:1.4.7-SNAPSHOT'
-		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+		classpath 'agency.highlysuspect:voldeloom:2.0-SNAPSHOT'
+		classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
 		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
+	}
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 120, 'seconds'
 	}
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
-apply plugin: 'fabric-loom'
+apply plugin: 'agency.highlysuspect.voldeloom'
 
 sourceCompatibility = 7
 targetCompatibility = 7
-
-def mcp = "mcp726a.zip";
-
-if (!file(mcp).exists()) {
-	println "Downloading ${mcp} from archive.org..."
-	file(mcp).withOutputStream {
-		it << new URL("https://archive.org/download/minecraftcoderpack/minecraftcoderpack.zip/minecraftcoderpack%2F${project.minecraft_version}%2F${mcp}").openStream()
-	}
-}
 
 archivesBaseName = project.archives_base_name
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group = project.maven_group
 
 repositories {
-	maven {
-		name = 'jitpack'
-		url = 'https://jitpack.io/'
-	}
-	maven {
-		name = 'Fabric'
-		url = 'https://maven.fabricmc.net/'
-	}
-//	maven { url = 'https://files.minecraftforge.net/maven' }
-	maven { url = 'https://repo.spongepowered.org/maven' }
+	maven { url 'https://jitpack.io/' }
+	maven { url 'https://maven.fabricmc.net/' }
+	maven { url 'https://repo.sleeping.town' }
+//	maven { url 'https://files.minecraftforge.net/maven' }
+	maven { url 'https://repo.spongepowered.org/maven' }
 }
 
 configurations {
 	shade
 }
 
+minecraft {
+	srgsAsFallback = true
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	forge "net.minecraftforge:forge:1.4.7-6.6.2.534:universal@zip"
-	mappings files(mcp)
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	mappings files("mcp726a.zip") // TODO don't do this
 	
-	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
+	implementation files('../common/build/libs/ears-common-agent-vlegacy.jar')
 	shade files('../common/build/libs/ears-common-agent-vlegacy.jar')
-}
-
-subprojects {
-	apply plugin: 'me.tatarka.retrolambda'
 }
 
 shadowJar {
@@ -75,6 +63,8 @@ shadowJar {
 
 processResources {
 	inputs.property "version", project.version
+	
+	duplicatesStrategy 'include'
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"

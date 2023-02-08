@@ -16,7 +16,6 @@ import com.unascribed.ears.common.legacy.UnmanagedEarsRenderDelegate;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.legacy.LegacyHelper;
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EnumArmorMaterial;
@@ -83,7 +82,7 @@ public class LayerEars {
 		@Override
 		protected void doBindSkin() {
 			if (glint) teardownGlint();
-			RenderEngine engine = FMLClientHandler.instance().getClient().o;
+			RenderEngine engine = Minecraft.getMinecraft().renderEngine;
 			int id = engine.getTextureForDownloadableImage(peer.skinUrl, peer.getTexture());
 			if (id < 0) return;
 			engine.bindTexture(id);
@@ -137,7 +136,7 @@ public class LayerEars {
 		protected void doBindBuiltin(TexSource src) {
 			if (src.isGlint()) {
 				glint = true;
-				Minecraft.x().o.bindTexture(Minecraft.x().o.getTexture("%blur%/misc/glint.png"));
+				Minecraft.getMinecraft().renderEngine.bindTexture(Minecraft.getMinecraft().renderEngine.getTexture("%blur%/misc/glint.png"));
 				glEnable(GL_BLEND);
 				float half = 0.5f;
 				glColor4f(half, half, half, 1);
@@ -156,7 +155,7 @@ public class LayerEars {
 					armorA = 1;
 				}
 				String s = ForgeHooksClient.getArmorTexture(equipment, "/armor/" + RenderPlayer.armorFilenamePrefix[ai.renderIndex] + "_" + (src == TexSource.LEGGINGS ? 2 : 1) + ".png");
-				Minecraft.x().o.bindTexture(Minecraft.x().o.getTexture(s));
+				Minecraft.getMinecraft().renderEngine.bindTexture(Minecraft.getMinecraft().renderEngine.getTexture(s));
 			}
 		}
 		
@@ -261,7 +260,7 @@ public class LayerEars {
 
 		@Override
 		protected int uploadImage(BufferedImage img) {
-			return FMLClientHandler.instance().getClient().o.allocateAndSetupTexture(img);
+			return Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(img);
 		}
 
 		@Override

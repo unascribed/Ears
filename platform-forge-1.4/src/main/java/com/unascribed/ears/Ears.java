@@ -95,7 +95,7 @@ public class Ears {
 	}
 	
 	public static void renderSpecials(RenderPlayer render, EntityPlayer player, float f) {
-		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "renderSpecials player={}, partialTicks={}", player, f);
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "renderSpecials player={}, partialTicks={}", player, f);
 		layer.doRenderLayer(render, player,
 				player.prevLegYaw + (player.legYaw - player.prevLegYaw) * f,
 				f);
@@ -210,7 +210,28 @@ public class Ears {
 			imageData = ReflectionHelper.findField(ImageBufferDownload.class, "a", "imageData");
 			imageData.setAccessible(true);
 			
-			location = ReflectionHelper.findField(Class.forName("bas"), "a", "location");
+			Class<?> threadDownloadImage;
+			try {
+				threadDownloadImage = Class.forName("bas");
+			} catch (ClassNotFoundException e) {
+				System.out.println("WOW you have a 1.4.7 dev env you are awesome");
+				System.out.println("Sure hope your mappings haven't renamed ThreadDownloadImage");
+				try {
+					threadDownloadImage = Class.forName("net/minecraft/client/renderer/ThreadDownloadImage");
+				} catch (ClassNotFoundException e2) {
+					try {
+						threadDownloadImage = Class.forName("net/minecraft/src/ThreadDownloadImage");
+					} catch (ClassNotFoundException e3) {
+						NoClassDefFoundError err = new NoClassDefFoundError("Cannot resolve ThreadDownloadImage");
+						err.addSuppressed(e3);
+						err.addSuppressed(e2);
+						err.addSuppressed(e);
+						throw err;
+					}
+				}
+			}
+			
+			location = ReflectionHelper.findField(threadDownloadImage, "a", "location");
 			location.setAccessible(true);
 			
 			modelBipedMain = ReflectionHelper.findField(RenderPlayer.class, "a", "modelBipedMain");

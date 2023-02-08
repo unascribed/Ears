@@ -9,5 +9,5 @@ As I have a soft spot for 1.4 and play it regularly, this is the only legacy por
 1 support.
 
 The old MCP-based tools for Forge 1.4 no longer work without a ton of work, so this is based on a
-fork of Fabric Loom originally created by TwilightFlower called
-[Voldeloom](https://github.com/unascribed/voldeloom/tree/1.4.7).
+fork of Fabric Loom with a complex history called
+[Voldeloom](https://github.com/CrackedPolishedBlackstoneBricksMC/voldeloom).
