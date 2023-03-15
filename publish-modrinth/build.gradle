@@ -1,5 +1,5 @@
 plugins {
-	id 'com.modrinth.minotaur' version '1.2.1'
+	id 'com.modrinth.minotaur' version '2.7.5'
 }
 
 def target = project.getProperty("target")
@@ -43,6 +43,12 @@ switch (target) {
 		stability = 'release'
 		loaders = ['fabric', 'quilt']
 		gameVersions = ['1.19.3']
+		break
+	case "fabric-1.19.4":
+		prefix = "FABRIC 1.19.4"
+		stability = 'release'
+		loaders = ['fabric', 'quilt']
+		gameVersions = ['1.19.4']
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
@@ -153,16 +159,16 @@ switch (target) {
 task build {}
 task assemble {}
 
-task modrinth(type: com.modrinth.minotaur.TaskModrinthUpload) {
+modrinth {
 	token = project.getProperty("modrinthApiKey")
 	projectId = 'mfzaZK3Z'
 	changelog = file('../changelog.html').text
 
-	versionType = stability.toUpperCase()
+	versionType = stability
 	detectLoaders = false
 	
-	loaders.each { addLoader(it) }
-	gameVersions.each { addGameVersion(it) }
+	it.loaders = loaders
+	it.gameVersions = gameVersions
 	
 	uploadFile = file(artifact)
 	
