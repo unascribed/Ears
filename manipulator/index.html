@@ -916,6 +916,7 @@ SOFTWARE.
 			}
 			await rebuild();
 		} finally {
+			$("#skin-upload").value = null;
 			document.body.classList.remove("loading");
 		}
 	}
@@ -1024,6 +1025,7 @@ SOFTWARE.
 			encodeToAlfalfa("wing", "#wings");
 			await rebuild();
 		} finally {
+			$("#wing-upload").value = null;
 			document.body.classList.remove("loading");
 		}
 	}
@@ -1052,6 +1054,7 @@ SOFTWARE.
 			encodeToAlfalfa("cape", "#cape");
 			await rebuild();
 		} finally {
+			$("#cape-upload").value = null;
 			document.body.classList.remove("loading");
 		}
 	}
