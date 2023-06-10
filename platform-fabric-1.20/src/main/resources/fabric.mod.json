@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "ears",
+  "version": "${version}",
+
+  "name": "Ears",
+  "description": "Faithful fancy fashion features for fuzzy folk.",
+  "authors": [
+    "unascribed"
+  ],
+  "contact": {
+    "homepage": "https://ears.unascribed.com/",
+    "source": "https://git.sleeping.town/unascribed/Ears",
+    "issues": "https://git.sleeping.town/unascribed/Ears/issues"
+  },
+
+  "license": "MIT",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [ "com.unascribed.ears.EarsMod" ],
+    "modmenu": [ "com.unascribed.ears.EarsModMenu" ]
+  },
+  "mixins": [
+    "ears.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "minecraft": ">1.16.99"
+  },
+  "suggests": {
+  }
+}
