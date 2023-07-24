@@ -724,7 +724,7 @@ SOFTWARE.
 		earsElements.push({ele, pixel});
 		if (ele.nodeName === "SELECT") {
 			ele.addEventListener("input", () => {
-				let ctx = $("#skin").getContext("2d");
+				let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 				ctx.fillStyle = magicPixelValues[ele.value];
 				ctx.fillRect(0+Math.floor(pixel%4), 32+Math.floor(pixel/4), 1, 1);
 				rebuild();
@@ -765,7 +765,7 @@ SOFTWARE.
 				$("#skin-upload").value = null;
 				return;
 			}
-			let ctx = $("#skin").getContext("2d");
+			let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 			ctx.clearRect(0, 0, 64, 64);
 			ctx.drawImage(bitmap, 0, 0);
 			if (bitmap.height == 32) {
@@ -931,18 +931,27 @@ SOFTWARE.
 		let id = (params["id"] || null);
 		if (!id && params["username"]) {
 			try {
-				await fetch("https://playerdb.co/api/player/minecraft/" + params["username"])
+				await fetch("https://corsjangapi.b-cdn.net/users/profiles/minecraft/" + params["username"])
 					.then(res => res.json())
 					.then(json => {
-						if (json.success === false) throw new Error("Failed to fetch player data from playerdb.co");
-						id = json.data.player.id;
+						id = json.id;
 					});
 			} catch (e) {
 				console.error(e);
 				return;
 			}
 		}
-		let skinUrl = "https://visage.surgeplay.com/skin/" + id;
+		let skinUrl;
+		try {
+			await fetch("https://corsjangsessionserver.b-cdn.net/session/minecraft/profile/" + id)
+				.then(res => res.json())
+				.then(json => {
+					skinUrl = JSON.parse(atob(json.properties.find(it => it.name === "textures").value)).textures.SKIN.url.replace("http://", "https://");
+				});
+		} catch (e) {
+			console.error(e);
+			return;
+		}
 		try {
 			let res = await fetch(skinUrl);
 			if (!res.ok) throw new Error("Failed to fetch skin from " + skinUrl);
@@ -952,8 +961,7 @@ SOFTWARE.
 			dataTransfer.items.add(file);
 			input.files = dataTransfer.files;
 			updateSkin();
-		}
-		catch (e) {
+		} catch (e) {
 			console.error(e);
 			return;
 		}
@@ -963,7 +971,7 @@ SOFTWARE.
 				let img = new Image();
 				img.onload = () => {
 					let canvas = $(sel);
-					let ctx = canvas.getContext("2d");
+					let ctx = canvas.getContext("2d",{willReadFrequently: true});
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
 					ctx.drawImage(img, 0, -(canvas.height-img.height)/2, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 					resolve();
@@ -1019,7 +1027,7 @@ SOFTWARE.
 				$("#wing-upload").value = null;
 				return;
 			}
-			let ctx = $("#wings").getContext("2d");
+			let ctx = $("#wings").getContext("2d",{willReadFrequently: true});
 			ctx.clearRect(0, 0, 20, 16);
 			ctx.drawImage(bitmap, 0, bitmap.height == 12 ? 2 : 0);
 			encodeToAlfalfa("wing", "#wings");
@@ -1042,7 +1050,7 @@ SOFTWARE.
 				$("#cape-upload").value = null;
 				return;
 			}
-			let ctx = $("#cape").getContext("2d");
+			let ctx = $("#cape").getContext("2d",{willReadFrequently: true});
 			ctx.clearRect(0, 0, 20, 16);
 			if (bitmap.height == 32) {
 				console.log("Converting Mojang cape.");
@@ -1068,7 +1076,7 @@ SOFTWARE.
 	}
 	$("#ears-enabled").addEventListener('input', () => {
 		let en = $("#ears-enabled").checked;
-		let ctx = $("#skin").getContext("2d");
+		let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 		if (en) {
 			ctx.fillStyle = magicPixelValues.blue;
 			ctx.fillRect(0, 32, 4, 4);
@@ -1087,7 +1095,7 @@ SOFTWARE.
 		return new Promise((resolve, reject) => {
 			let img = new Image();
 			img.onload = async () => {
-				let ctx = $("#skin").getContext("2d");
+				let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 				ctx.clearRect(4, 0, 60, 64);
 				ctx.clearRect(0, 0, 4, 32);
 				ctx.clearRect(0, 36, 4, 28);
@@ -1157,7 +1165,7 @@ SOFTWARE.
 					ctx.drawImage(img, 64, 128, 64, 64, 0, 0, 64, 64);
 				}
 				if (usingSampleWing) {
-					let wingsCtx = $("#wings").getContext("2d");
+					let wingsCtx = $("#wings").getContext("2d",{willReadFrequently: true});
 					wingsCtx.clearRect(0, 0, 20, 16);
 					let wingsMode = $("#wings-mode").value;
 					if (wingsMode !== "red" && wingsMode !== "blue") {
@@ -1174,7 +1182,7 @@ SOFTWARE.
 					encodeToAlfalfa("wing", "#wings");
 				}
 				if (usingSampleCape) {
-					let capeCtx = $("#cape").getContext("2d");
+					let capeCtx = $("#cape").getContext("2d",{willReadFrequently: true});
 					capeCtx.clearRect(0, 0, 20, 16);
 					let capeEnabled = $("#cape-enabled").checked;
 					if (capeEnabled) {
@@ -1246,7 +1254,7 @@ SOFTWARE.
 		});
 	});
 	function updateTailBendPixel() {
-		let ctx = $("#skin").getContext("2d");
+		let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 		let scratch = ctx.createImageData(1, 1);
 		let segs = $("#tail-segments").value;
 		for (let i = 0; i < segs; i++) {
@@ -1307,7 +1315,7 @@ SOFTWARE.
 		});
 	});
 	function updateSnoutAndEtcPixel() {
-		let ctx = $("#skin").getContext("2d");
+		let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 		let scratch = ctx.createImageData(2, 1);
 		let en = $("#snout").checked;
 		let width = en ? $("#snout-width").value : 0;
@@ -1334,7 +1342,7 @@ SOFTWARE.
 		rebuild();
 	});
 	$("#chest-size").addEventListener('input', () => {
-		let ctx = $("#skin").getContext("2d");
+		let ctx = $("#skin").getContext("2d",{willReadFrequently: true});
 		updateSnoutAndEtcPixel();
 		rebuild();
 	});
@@ -1352,8 +1360,8 @@ SOFTWARE.
 		if (usingSample && !usingSampleCape) {
 			usingSampleCape = true;
 		}
-		$("#wings").getContext('2d').clearRect(0, 0, 20, 16);
-		$("#cape").getContext('2d').clearRect(0, 0, 20, 16);
+		$("#wings").getContext('2d',{willReadFrequently: true}).clearRect(0, 0, 20, 16);
+		$("#cape").getContext('2d',{willReadFrequently: true}).clearRect(0, 0, 20, 16);
 		window.alfalfaData = {version:0};
 		encodeAlfalfa();
 		rebuild();
