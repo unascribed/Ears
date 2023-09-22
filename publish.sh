@@ -25,7 +25,7 @@ if [ -n "$@" ]; then
 	modrinth="$common"
 	mcmodcn="$common"
 else
-	common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.19.4 forge-1.19.4 fabric-1.20"
+	common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2"
 	curse="$common"
 	modrinth="fabric-b1.7.3 $common"
 	mcmodcn="fabric-b1.7.3 $common"
@@ -156,6 +156,10 @@ if [ "$MCMODCN_COOKIE" != "-" ]; then
 			;;
 			fabric-1.20)
 				title="1.20"
+				loaders="$fabric,$quilt"
+			;;
+			fabric-1.20.2)
+				title="1.20.2"
 				loaders="$fabric,$quilt"
 			;;
 			*)
