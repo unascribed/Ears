@@ -3,6 +3,7 @@ package com.unascribed.ears.common;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.api.features.EarsFeatures.EarAnchor;
@@ -12,7 +13,7 @@ import com.unascribed.ears.api.features.EarsFeatures.WingMode;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.util.BitInputStream;
 
-class EarsFeaturesParserV1 {
+public class EarsFeaturesParserV1 {
 
 	public static final int MAGIC = 0xEA2501; // EARS01
 	
@@ -27,9 +28,13 @@ class EarsFeaturesParserV1 {
 				data.write(c&0xFF);
 			}
 		}
+		return parse(new ByteArrayInputStream(data.toByteArray()));
+	}
+	
+	public static EarsFeatures.Builder parse(InputStream in) {
+		BitInputStream bis = null;
 		try {
-			@SuppressWarnings("resource")
-			BitInputStream bis = new BitInputStream(new ByteArrayInputStream(data.toByteArray()));
+			bis = new BitInputStream(in);
 			
 			// currently, version means nothing. in the future it will indicate additional
 			// data that has been added to the end of the format (earlier data mustn't change
@@ -128,6 +133,10 @@ class EarsFeaturesParserV1 {
 		} catch (IOException e) {
 			EarsLog.debug(EarsLog.Tag.COMMON_FEATURES, "detect(...): Error while parsing v1 (Binary) data. Disabling", e);
 			return null;
+		} finally {
+			try {
+				if (bis != null) bis.close();
+			} catch (IOException e) {}
 		}
 	}
 

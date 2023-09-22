@@ -162,6 +162,18 @@ task legacyJar(type: Jar) {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+task vlegacyJar(type: Jar) {
+	from sourceSets.api.output
+	from sourceSets.main.output
+	from sourceSets.normal.output
+	from sourceSets.legacy.output
+	from sourceSets.vlegacy.output
+	
+	classifier 'vlegacy'
+	
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 task modernJar(type: Jar) {
 	from sourceSets.api.output
 	from sourceSets.main.output
@@ -229,6 +241,7 @@ build.dependsOn mixinLegacyJar
 build.dependsOn mixinModernJar
 build.dependsOn mixinVLegacyJar
 build.dependsOn legacyJar
+build.dependsOn vlegacyJar
 build.dependsOn modernJar
 build.dependsOn agentLegacyJar
 build.dependsOn agentModernJar
@@ -302,10 +315,15 @@ compileJava.doFirst {
 publishing {
 	repositories {
 		maven {
-			url "https://repo-api.sleeping.town/"
-			credentials {
-				username project.hasProperty("publish-username") ? project.getProperty("publish-username") : null
-				password project.hasProperty("publish-password") ? project.getProperty("publish-password") : null
+			url "file:./build/maven"
+		}
+		if (project.hasProperty("publish-username")) {
+			maven {
+				url "https://repo-api.sleeping.town/"
+				credentials {
+					username project.getProperty("publish-username")
+					password project.getProperty("publish-password")
+				}
 			}
 		}
 	}
@@ -317,6 +335,22 @@ publishing {
 
 			artifact source: apiJar, classifier: ''
 			artifact source: apiSourcesJar, classifier: 'sources'
+		}
+		common(MavenPublication) {
+			groupId = 'com.unascribed'
+			artifactId = 'ears-common'
+			version = file('../version.txt').text.trim()
+
+			artifact source: jar, classifier: ''
+			artifact source: vlegacyJar, classifier: 'vlegacy'
+			artifact source: agentVLegacyJar, classifier: 'agent-vlegacy'
+			artifact source: mixinVLegacyJar, classifier: 'mixin-vlegacy'
+			artifact source: legacyJar, classifier: 'legacy'
+			artifact source: agentLegacyJar, classifier: 'agent-legacy'
+			artifact source: mixinLegacyJar, classifier: 'mixin-legacy'
+			artifact source: modernJar, classifier: 'modern'
+			artifact source: agentModernJar, classifier: 'agent-modern'
+			artifact source: mixinModernJar, classifier: 'mixin-modern'
 		}
 	}
 }
