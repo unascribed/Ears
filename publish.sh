@@ -19,7 +19,7 @@ if [ -n "$JAVA11_HOME" ]; then
 	export JAVA_HOME=$JAVA11_HOME
 fi
 
-if [ -n "$@" ]; then
+if [ -n "$1" ]; then
 	common="$@"
 	curse="$common"
 	modrinth="$common"
