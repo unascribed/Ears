@@ -1372,9 +1372,9 @@ SOFTWARE.
 	getSkinFromHash();
 
 	if (WEBGL.isWebGLAvailable()) {
-		let scene = new THREE.Scene();
-		let camera = new THREE.PerspectiveCamera(45, 512/896, 0.1, 1000);
-		let renderer = new THREE.WebGLRenderer({
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(45, 512/896, 0.1, 1000);
+		var renderer = new THREE.WebGLRenderer({
 			powerPreference: "low-power",
 			failIfMajorPerformanceCaveat: false,
 			antialias: false
@@ -1382,10 +1382,10 @@ SOFTWARE.
 		window.addEventListener("resize", () => renderer.setPixelRatio(window.devicePixelRatio));
 		renderer.autoClear = true;
 		renderer.setSize(512, 896);
-		let dragging = false;
-		let yaw = 60;
-		let pitch = 15;
-		let zoom = 65;
+		var dragging = false;
+		var yaw = 60;
+		var pitch = 15;
+		var zoom = 65;
 		$("#three").addEventListener("mousedown", (e) => {
 			if (e.button === 0) {
 				e.preventDefault();
@@ -1417,28 +1417,28 @@ SOFTWARE.
 		});
 		$("#three").appendChild(renderer.domElement);
 		
-		let skinTex = new THREE.CanvasTexture(
+		var skinTex = new THREE.CanvasTexture(
 			$("#skin"), THREE.UVMapping,
 			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
 			THREE.NearestFilter, THREE.NearestFilter);
 		
-		let wingsTex = new THREE.CanvasTexture(
+		var wingsTex = new THREE.CanvasTexture(
 			$("#wings"), THREE.UVMapping,
 			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
 			THREE.NearestFilter, THREE.NearestFilter);
 		
-		let capeTex = new THREE.CanvasTexture(
+		var capeTex = new THREE.CanvasTexture(
 			$("#cape"), THREE.UVMapping,
 			THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping,
 			THREE.NearestFilter, THREE.NearestFilter);
 			
-		let textures = {
+		var textures = {
 			skin: skinTex,
 			wing: wingsTex,
 			cape: capeTex
 		}
 		
-		let mat = new THREE.MeshLambertMaterial({
+		var mat = new THREE.MeshLambertMaterial({
 			reflectivity: -1,
 			flatShading: true,
 			fog: false,
@@ -1446,7 +1446,7 @@ SOFTWARE.
 			color: 0xFFFFFF,
 			map: skinTex
 		});
-		let matOverlay = new THREE.MeshLambertMaterial({
+		var matOverlay = new THREE.MeshLambertMaterial({
 			reflectivity: -1,
 			flatShading: true,
 			fog: false,
@@ -1459,7 +1459,7 @@ SOFTWARE.
 			transparent: true
 		});
 		
-		let earsMatParams = {
+		var earsMatParams = {
 			reflectivity: -1,
 			flatShading: true,
 			fog: false,
@@ -1470,7 +1470,7 @@ SOFTWARE.
 			transparent: true
 		};
 		
-		let uvDiv = 64;
+		var uvDiv = 64;
 		
 		function makeUVs(minU, minV, maxU, maxV) {
 			return [
@@ -1481,7 +1481,7 @@ SOFTWARE.
 			];
 		}
 		
-		let meshes = {};
+		var meshes = {};
 		
 		function bodyPart(name, x, y, z, w, h, d, u, v, overlay, rotX, rotY, rotZ) {
 			let grow = overlay ? name === "head2" ? 0.5 : 0.25 : 0;
@@ -1644,14 +1644,14 @@ SOFTWARE.
 			return new THREE.Vector2(arr[0], 1-arr[1]);
 		}
 		
-		let earsMeshes = [];
+		var earsMeshes = [];
 		rebuildGeom = function() {
 			earsMeshes.forEach((mesh) => {
 				scene.remove(mesh);
 			});
 			earsMeshes = [];
 			renderObjects.forEach((o) => {
-				let mat = new THREE.Matrix4().makeScale(1, 1, -1);
+				var mat = new THREE.Matrix4().makeScale(1, 1, -1);
 				o.moves.forEach((m) => {
 					if (m.type === "anchor") {
 						let tgt = meshes[m.part];
@@ -1717,16 +1717,16 @@ SOFTWARE.
 			scene.add(new THREE.AmbientLight(new THREE.Color(0.3, 0.3, 0.3)));
 		}
 				
-		let light0 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
+		var light0 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
 		light0.position.set(0.3, 1, -0.9);
 		light0.position.normalize();
 		scene.add(light0);
-		let light1 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
+		var light1 = new THREE.DirectionalLight(new THREE.Color(0.6, 0.6, 0.6), 1);
 		light1.position.set(-0.3, 1, 0.9);
 		light1.position.normalize();
 		scene.add(light1);
 		
-		let lastRender = performance.now();
+		var lastRender = performance.now();
 		
 		function render() {
 			let t = performance.now()/1000;
