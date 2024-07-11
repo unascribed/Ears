@@ -1,0 +1,52 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.154'
+}
+
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
+group = 'com.unascribed.ears'
+base {
+    archivesName = 'ears-neoforge-1.20.2'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    implementation 'net.neoforged:neoforge:20.2.88'
+
+    implementation files('../common/build/libs/ears-common-mixin-modern.jar')
+
+}
+
+tasks.withType(ProcessResources).configureEach {
+    inputs.property "version", project.version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+}
+
+jar {
+    from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}

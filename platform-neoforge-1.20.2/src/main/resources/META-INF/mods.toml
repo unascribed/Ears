@@ -1,0 +1,15 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+issueTrackerURL="https://git.sleeping.town/unascribed/Ears/issues"
+[[mods]]
+modId="ears"
+version="${version}"
+displayName="Ears"
+displayURL="https://ears.unascribed.com/"
+logoFile="ears-icon.png"
+authors="unascribed"
+displayTest="IGNORE_ALL_VERSION"
+description="Faithful fancy fashion features for fuzzy folk."
+[[mixins]]
+config="ears.mixins.json"
