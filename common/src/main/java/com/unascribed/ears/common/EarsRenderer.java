@@ -657,7 +657,7 @@ class EarsRenderer {
 						// left
 						delegate.translate(10, 0, 1);
 						delegate.rotate(90, 0, 1, 0);
-						delegate.renderDoubleSided(0, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+						delegate.renderDoubleSided(9, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 						// back
 						delegate.translate(0, 0, 0);
 						delegate.rotate(90, 0, 1, 0);
@@ -665,7 +665,7 @@ class EarsRenderer {
 						// right
 						delegate.translate(10, 0, 1);
 						delegate.rotate(90, 0, 1, 0);
-						delegate.renderDoubleSided(9, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+						delegate.renderDoubleSided(0, 0, 1, 16, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
 					delegate.pop();
 					
 					// top
@@ -674,7 +674,7 @@ class EarsRenderer {
 					
 					// bottom
 					delegate.translate(0, 0, -16);
-					delegate.renderDoubleSided(10, 15, 10, 1, TexRotation.NONE, TexFlip.VERTICAL, QuadGrow.NONE);
+					delegate.renderDoubleSided(0, 15, 10, 1, TexRotation.NONE, TexFlip.VERTICAL, QuadGrow.NONE);
 					delegate.bind(TexSource.SKIN);
 				delegate.pop();
 			}
