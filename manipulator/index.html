@@ -816,9 +816,9 @@ SOFTWARE.
 				let tailBend2 = 0;
 				let tailBend3 = 0;
 				if (magicPixels[tailBend] !== "blue") {
-					tailBend1 = decodeDegrees((tailBend&0xFF000000) >> 24);
-					tailBend2 = decodeDegrees((tailBend&0x00FF0000) >> 16);
-					tailBend3 = decodeDegrees((tailBend&0x0000FF00) >> 8);
+					tailBend1 = decodeDegrees((tailBend&0xFF000000) >>> 24);
+					tailBend2 = decodeDegrees((tailBend&0x00FF0000) >>> 16);
+					tailBend3 = decodeDegrees((tailBend&0x0000FF00) >>> 8);
 				}
 				$("#tail-bend-0").value = tailBend0;
 				$("#tail-bend-0-angle").textContent = renderDegrees(tailBend0);
