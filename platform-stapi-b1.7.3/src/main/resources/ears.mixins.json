@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "com.unascribed.ears.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "MixinImageDownload",
+    "MixinMinecraft",
+    "MixinModelPartAnchor",
+    "MixinPlayerEntityRendererEarsLayer",
+    "MixinSkinImageProcessor",
+    "accessor.AccessorLivingEntityRenderer",
+    "accessor.AccessorSkinImageProcessor",
+    "skinfix.MixinImageDownloadThread",
+    "skinfix.MixinModelPartTextureFixer",
+    "skinfix.MixinPlayerEntityRendererSkinFix",
+    "skinfix.MixinQuad"
+  ],
+  "plugin": "com.unascribed.ears.mixin.EarsMixinPlugin",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
