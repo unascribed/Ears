@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.unascribed.ears.EarsFeatureRenderer;
+import com.unascribed.ears.EarsPlayerRenderState;
 import com.unascribed.ears.common.debug.EarsLog;
 
 @Mixin(PlayerEntityRenderer.class)
@@ -41,6 +42,11 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 	@Inject(at = @At("TAIL"), method = "renderRightArm")
 	private void renderRightArm(MatrixStack ms, VertexConsumerProvider vcp, int light, Identifier skinTexture, boolean sleeveVisible, CallbackInfo ci) {
 		ears$featureRenderer.renderRightArm(ms, vcp, light);
+	}
+	
+	@Inject(at=@At("TAIL"), method="updateRenderState")
+	public void ears$updateRenderState(AbstractClientPlayerEntity p, PlayerEntityRenderState s, float f, CallbackInfo ci) {
+		((EarsPlayerRenderState)s).ears$update(p, f);
 	}
 	
 }

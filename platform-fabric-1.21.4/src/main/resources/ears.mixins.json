@@ -13,7 +13,8 @@
 	"MixinCapeFeatureRenderer",
     "AccessorArmorFeatureRenderer",
     "AccessorLivingEntityRenderer",
-	"AccessorTextureManager"
+    "AccessorTextureManager",
+    "MixinPlayerEntityRenderState"
   ],
   "injectors": {
     "defaultRequire": 1

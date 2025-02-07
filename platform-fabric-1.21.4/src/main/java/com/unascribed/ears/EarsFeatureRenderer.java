@@ -150,6 +150,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 				try {
 					textureManager.registerTexture(id, new NativeImageBackedTexture(NativeImage.read(toNativeBuffer(pngData))));
 				} catch (IOException e) {
+					e.printStackTrace();
 					//textureManager.registerTexture(id, MissingSprite.getMissingSpriteTexture());
 				}
 			}
@@ -170,7 +171,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 						// used to capture the VertexConsumer that has the correct RenderLayer
 						vc = vertices;
 					}
-				}), 
+				}),
 				ImmutableMap.<String, ModelPart>builder()
 				.put(EntityModelPartNames.HEAD, blankHead)
 				.put(EntityModelPartNames.BODY, blank)
@@ -320,7 +321,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 		
 		@Override
 		protected void doRenderDebugDot(float r, float g, float b, float a) {
-			// TODO port this to core profile (nah)
+			// not implemented on post-1.17 versions
 		}
 
 		@Override
@@ -340,7 +341,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public boolean isFlying() {
-			return peer.applyFlyingRotation;
+			return ((EarsPlayerRenderState)peer).ears$isFlying();
 		}
 
 		@Override
@@ -381,17 +382,17 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public double getCapeX() {
-			return peer.field_53536;
+			return ((EarsPlayerRenderState)peer).ears$getCapeX();
 		}
 
 		@Override
 		public double getCapeY() {
-			return peer.field_53537;
+			return ((EarsPlayerRenderState)peer).ears$getCapeY();
 		}
 
 		@Override
 		public double getCapeZ() {
-			return peer.field_53538;
+			return ((EarsPlayerRenderState)peer).ears$getCapeZ();
 		}
 
 		@Override
@@ -411,14 +412,12 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public float getHorizontalSpeed() {
-			// TODO: unimplemented, not used by modified common code
-			return 0;
+			return ((EarsPlayerRenderState)peer).ears$getHorizontalSpeed();
 		}
 
 		@Override
 		public float getStride() {
-			// TODO: unimplemented, not used by modified common code
-			return 0;
+			return ((EarsPlayerRenderState)peer).ears$getStride();
 		}
 	};
 }
