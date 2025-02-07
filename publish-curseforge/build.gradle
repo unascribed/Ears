@@ -13,11 +13,6 @@ def requires = []
 def conflicts = []
 
 switch (target) {
-	case "fabric-1.8":
-		prefix = "FABRIC 1.8"
-		stability = 'beta'
-		gameVersions = ['Fabric', '1.8.9']
-		break
 	case "fabric-1.14":
 		prefix = "FABRIC 1.14"
 		stability = 'release'
@@ -31,32 +26,42 @@ switch (target) {
 	case "fabric-1.17":
 		prefix = "FABRIC 1.17/18"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.17', '1.17.1', '1.18', '1.18.1']
+		gameVersions = ['Fabric', 'Quilt', '1.17', '1.17.1', '1.18', '1.18.1']
 		break
 	case "fabric-1.19":
 		prefix = "FABRIC 1.19"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.19', '1.19.1', '1.19.2']
+		gameVersions = ['Fabric', 'Quilt', '1.19', '1.19.1', '1.19.2']
 		break
 	case "fabric-1.19.3":
 		prefix = "FABRIC 1.19.3"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.19.3']
+		gameVersions = ['Fabric', 'Quilt', '1.19.3']
 		break
 	case "fabric-1.19.4":
 		prefix = "FABRIC 1.19.4"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.19.4']
+		gameVersions = ['Fabric', 'Quilt', '1.19.4']
 		break
 	case "fabric-1.20":
 		prefix = "FABRIC 1.20"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.20', '1.20.1']
+		gameVersions = ['Fabric', 'Quilt', '1.20', '1.20.1']
 		break
 	case "fabric-1.20.2":
 		prefix = "FABRIC 1.20.2"
 		stability = 'release'
-		gameVersions = ['Fabric', '1.20.2']
+		gameVersions = ['Fabric', 'Quilt', '1.20.2']
+		break
+	case "fabric-1.20.6":
+		prefix = "FABRIC 1.20.6"
+		stability = 'release'
+		gameVersions = ['Fabric', 'Quilt', '1.20.6']
+		break
+	case "fabric-1.21":
+		prefix = "FABRIC 1.21.1"
+		stability = 'release'
+		gameVersions = ['Fabric', 'Quilt', '1.21.1']
 		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
@@ -141,14 +146,29 @@ switch (target) {
 		gameVersions = ['Forge', '1.19.3']
 		break
 	case "forge-1.19.4":
-		prefix = "FORGE 1.19.4"
+		prefix = "FORGE 1.19.4/20.1"
 		stability = 'beta'
-		gameVersions = ['Forge', '1.19.4']
+		gameVersions = ['Forge', 'NeoForge', '1.19.4', '1.20.1']
+		break
+	case "neoforge-1.20.2":
+		prefix = "NEOFORGE 1.20.2"
+		stability = 'beta'
+		gameVersions = ['NeoForge', '1.20.2']
+		break
+	case "neoforge-1.21":
+		prefix = "NEOFORGE 1.21"
+		stability = 'beta'
+		gameVersions = ['NeoForge', '1.21.1']
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13.2"
 		stability = 'alpha'
 		gameVersions = ['Rift', '1.13.2']
+		break
+	case "stapi-b1.7.3":
+		prefix = "BABRIC b1.7.3"
+		stability = 'alpha'
+		gameVersions = ['Fabric', 'Beta 1.7.3']
 		break
 	default:
 		throw new Exception("Unknown target ${target}")

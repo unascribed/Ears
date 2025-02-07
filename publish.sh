@@ -25,10 +25,10 @@ if [ -n "$1" ]; then
 	modrinth="$common"
 	mcmodcn="$common"
 else
-	common="forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 rift-1.13 fabric-1.14 forge-1.14 forge-1.15 fabric-1.16 forge-1.16 fabric-1.17 forge-1.17 forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2"
+	common="rift-1.13 stapi-b1.7.3 fabric-1.14 fabric-1.16 fabric-1.17 fabric-1.19 fabric-1.19.3 fabric-1.19.4 fabric-1.20 fabric-1.20.2 fabric-1.20.6 fabric-1.21 forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17 forge-1.18 forge-1.19 forge-1.19.3 forge-1.19.4 neoforge-1.20.2 neoforge-1.21"
 	curse="$common"
-	modrinth="clf-b1.7.3 stapi-b1.7.3 $common"
-	mcmodcn="fabric-b1.7.3 $common"
+	modrinth="$common"
+	mcmodcn="$common"
 fi
 
 cd publish-curseforge
@@ -53,6 +53,7 @@ if [ "$MCMODCN_COOKIE" != "-" ]; then
 	fabric=2
 	quilt=11
 	rift=3
+	neoforge=13
 	other=10
 	for proj in $mcmodcn; do
 		title=""
@@ -127,15 +128,15 @@ if [ "$MCMODCN_COOKIE" != "-" ]; then
 				loaders="$forge"
 			;;
 			forge-1.18)
-				title="1.18"
+				title="1.18.2"
 				loaders="$forge"
 			;;
 			fabric-1.19)
-				title="1.19"
+				title="1.19.2"
 				loaders="$fabric,$quilt"
 			;;
 			forge-1.19)
-				title="1.19"
+				title="1.19.2"
 				loaders="$forge"
 			;;
 			fabric-1.19.3)
@@ -155,12 +156,28 @@ if [ "$MCMODCN_COOKIE" != "-" ]; then
 				loaders="$forge"
 			;;
 			fabric-1.20)
-				title="1.20"
+				title="1.20.1"
 				loaders="$fabric,$quilt"
 			;;
 			fabric-1.20.2)
 				title="1.20.2"
 				loaders="$fabric,$quilt"
+			;;
+			fabric-1.20.6)
+				title="1.20.6"
+				loaders="$fabric,$quilt"
+			;;
+			fabric-1.21)
+				title="1.21.1"
+				loaders="$fabric,$quilt"
+			;;
+			neoforge-1.20.2)
+				title="1.20.2"
+				loaders="$neoforge"
+			;;
+			neoforge-1.21)
+				title="1.21.1"
+				loaders="$neoforge"
 			;;
 			*)
 				echo "Unknown project $proj for mcmod.cn publish"

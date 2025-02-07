@@ -62,6 +62,12 @@ switch (target) {
 		loaders = ['fabric', 'quilt']
 		gameVersions = ['1.20.2']
 		break
+	case "fabric-1.20.6":
+		prefix = "FABRIC 1.20.6"
+		stability = 'release'
+		loaders = ['fabric', 'quilt']
+		gameVersions = ['1.20.6']
+		break
 	case "fabric-1.21":
 		prefix = "FABRIC 1.21.1"
 		stability = 'release'
@@ -159,10 +165,10 @@ switch (target) {
 		gameVersions = ['1.19.3']
 		break
 	case "forge-1.19.4":
-		prefix = "FORGE 1.19.4"
+		prefix = "FORGE 1.19.4/20.1"
 		stability = 'beta'
-		loaders = ['forge']
-		gameVersions = ['1.19.4']
+		loaders = ['forge', 'neoforge']
+		gameVersions = ['1.19.4', '1.20.1']
 		break
 	case "stapi-b1.7.3":
 		prefix = "BABRIC b1.7.3"
@@ -175,6 +181,18 @@ switch (target) {
 		stability = 'alpha'
 		loaders = ['rift']
 		gameVersions = ['1.13.2']
+		break
+	case "neoforge-1.20.2":
+		prefix = "NEOFORGE 1.20.2"
+		stability = 'beta'
+		loaders = ['neoforge']
+		gameVersions = ['1.20.2']
+		break
+	case "neoforge-1.21":
+		prefix = "NEOFORGE 1.21.1"
+		stability = 'beta'
+		loaders = ['neoforge']
+		gameVersions = ['1.21.1']
 		break
 	default:
 		throw new Exception("Unknown target ${target}")
