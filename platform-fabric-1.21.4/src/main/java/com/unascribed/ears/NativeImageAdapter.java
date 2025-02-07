@@ -1,11 +1,10 @@
 package com.unascribed.ears;
 
-import com.unascribed.ears.common.EarsImage;
 import com.unascribed.ears.common.WritableEarsImage;
 
 import net.minecraft.client.texture.NativeImage;
 
-public class NativeImageAdapter implements EarsImage, WritableEarsImage {
+public class NativeImageAdapter implements WritableEarsImage {
 
 	private final NativeImage img;
 
@@ -17,7 +16,7 @@ public class NativeImageAdapter implements EarsImage, WritableEarsImage {
 	public int getARGB(int x, int y) {
 		return img.getColorArgb(x, y);
 	}
-	
+
 	@Override
 	public void setARGB(int x, int y, int argb) {
 		img.setColorArgb(x, y, argb);
@@ -39,7 +38,4 @@ public class NativeImageAdapter implements EarsImage, WritableEarsImage {
 		copy.copyFrom(img);
 		return new NativeImageAdapter(copy);
 	}
-	
-	
-	
 }

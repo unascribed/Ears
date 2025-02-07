@@ -24,8 +24,9 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:0.115.1+1.21.4"
-	modImplementation "com.terraformersmc:modmenu:13.0.1"
+	
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	
 	modImplementation files('../common/build/libs/ears-common-mixin-modern.jar')
 }

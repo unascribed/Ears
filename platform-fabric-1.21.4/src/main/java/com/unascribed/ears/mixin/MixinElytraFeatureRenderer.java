@@ -8,19 +8,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.unascribed.ears.EarsMod;
 import com.unascribed.ears.common.EarsCommon;
 
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.state.BipedEntityRenderState;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
 
 @Mixin(ElytraFeatureRenderer.class)
-public class MixinElytraFeatureRenderer {
+public class MixinElytraFeatureRenderer<S extends BipedEntityRenderState, M extends EntityModel<S>> {
 
 	@Inject(at=@At("HEAD"), method="render", cancellable=true)
-	public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity entity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		if (entity instanceof AbstractClientPlayerEntity) {
-			if (EarsCommon.shouldSuppressElytra(EarsMod.getEarsFeatures((AbstractClientPlayerEntity)entity))) {
+	public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, S entity, float f, float g, CallbackInfo ci) {
+		if (entity instanceof PlayerEntityRenderState player) {
+			if (EarsCommon.shouldSuppressElytra(EarsMod.getEarsFeatures(player))) {
 				ci.cancel();
 			}
 		}

@@ -9,7 +9,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 
@@ -34,14 +34,14 @@ public class EarsMod implements ClientModInitializer {
 		}
 	}
 
-	public static EarsFeatures getEarsFeatures(AbstractClientPlayerEntity peer) {
-		Identifier skin = peer.getSkinTextures().texture();
+	public static EarsFeatures getEarsFeatures(PlayerEntityRenderState peer) {
+		Identifier skin = peer.skinTextures.texture();
 		AbstractTexture tex = MinecraftClient.getInstance().getTextureManager().getTexture(skin);
 		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
 		if (tex instanceof EarsFeaturesHolder) {
 			EarsFeatures feat = ((EarsFeaturesHolder)tex).getEarsFeatures();
-			EarsFeaturesStorage.INSTANCE.put(peer.getGameProfile().getName(), peer.getGameProfile().getId(), feat);
-			if (!peer.isInvisible()) {
+			EarsFeaturesStorage.INSTANCE.put(peer.name, /*peer.getGameProfile().getId()*/null, feat);
+			if (!peer.invisible) {
 				return feat;
 			}
 		}

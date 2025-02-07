@@ -6,16 +6,13 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.registry.tag.ItemTags;
 import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import com.unascribed.ears.common.EarsCommon;
 import com.unascribed.ears.api.features.EarsFeatures;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
@@ -23,15 +20,13 @@ import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.mixin.AccessorArmorFeatureRenderer;
 import com.unascribed.ears.mixin.AccessorLivingEntityRenderer;
-import com.unascribed.ears.mixin.AccessorPlayerEntityModel;
-
+import com.unascribed.ears.mixin.AccessorTextureManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPart.Cuboid;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -43,14 +38,15 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.render.entity.state.BipedEntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.TextureManager;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -67,19 +63,24 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 	}
 	
 	@Override
-	public void render(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, PlayerEntityRenderState state, float limbAngle, float limbDistance) {
-		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlay(state, 0));
+	public void render(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, PlayerEntityRenderState entity, float limbAngle, float limbDistance) {
+		//EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance);
+		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0));
 	}
 	
-	public void renderLeftArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.LEFT_ARM);
+	public void renderLeftArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light) {
+		@SuppressWarnings("resource")
+		PlayerEntityRenderState state = per.getAndUpdateRenderState(MinecraftClient.getInstance().player, 1.0f);
+		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlay(state, 0), BodyPart.LEFT_ARM);
 	}
 	
-	public void renderRightArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity) {
-		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlay(entity, 0), BodyPart.RIGHT_ARM);
+	public void renderRightArm(MatrixStack m, VertexConsumerProvider vertexConsumers, int light) {
+		@SuppressWarnings("resource")
+		PlayerEntityRenderState state = per.getAndUpdateRenderState(MinecraftClient.getInstance().player, 1.0f);
+		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlay(state, 0), BodyPart.RIGHT_ARM);
 	}
 
-	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, AbstractClientPlayerEntity, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
+	private final IndirectEarsRenderDelegate<MatrixStack, VertexConsumerProvider, VertexConsumer, PlayerEntityRenderState, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 		
 		@Override
 		protected Decider<BodyPart, ModelPart> decideModelPart(Decider<BodyPart, ModelPart> d) {
@@ -112,7 +113,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public boolean isSlim() {
-			return ((AccessorPlayerEntityModel)getContextModel()).ears$isThinArms();
+			return peer.skinTextures.model() == SkinTextures.Model.SLIM;
 		}
 
 		@Override
@@ -142,13 +143,14 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		protected void doUploadAux(TexSource src, byte[] pngData) {
-			Identifier skin = peer.getSkinTextures().texture();
-			Identifier id = Identifier.of(skin.getNamespace(), src.addSuffix(skin.getPath()));
-			if (pngData != null && MinecraftClient.getInstance().getTextureManager().getTexture(id, null) == null) {
+			Identifier skin = peer.skinTextures.texture();
+			Identifier id = Identifier.tryParse(skin.getNamespace(), src.addSuffix(skin.getPath()));
+			TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
+			if (pngData != null && !((AccessorTextureManager) textureManager).ears$getTextures().containsKey(id)) {
 				try {
-					MinecraftClient.getInstance().getTextureManager().registerTexture(id, new NativeImageBackedTexture(NativeImage.read(toNativeBuffer(pngData))));
+					textureManager.registerTexture(id, new NativeImageBackedTexture(NativeImage.read(toNativeBuffer(pngData))));
 				} catch (IOException e) {
-					MinecraftClient.getInstance().getTextureManager().registerTexture(id, MissingSprite.getMissingSpriteTexture());
+					//textureManager.registerTexture(id, MissingSprite.getMissingSpriteTexture());
 				}
 			}
 		}
@@ -160,26 +162,30 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 		
 		private ArmorFeatureRenderer<?, ?, ?> afr;
 		private final ModelPart blank = new ModelPart(Collections.emptyList(), Collections.emptyMap());
-		private final ModelPart dummyRoot = new ModelPart(Collections.emptyList(), ImmutableMap.<String, ModelPart>builder()
-				.put(EntityModelPartNames.HEAD, blank)
-				.put(EntityModelPartNames.HAT, blank)
+		private final ModelPart blankHead = new ModelPart(Collections.emptyList(), Map.of(EntityModelPartNames.HAT, blank));
+		private final ModelPart dummyRoot = new ModelPart(
+				List.of(new ModelPart.Cuboid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0, Set.of()) {
+					@Override
+					public void renderCuboid(MatrixStack.Entry entry, VertexConsumer vertices, int light, int overlay, int color) {
+						// used to capture the VertexConsumer that has the correct RenderLayer
+						vc = vertices;
+					}
+				}), 
+				ImmutableMap.<String, ModelPart>builder()
+				.put(EntityModelPartNames.HEAD, blankHead)
 				.put(EntityModelPartNames.BODY, blank)
 				.put(EntityModelPartNames.LEFT_ARM, blank)
 				.put(EntityModelPartNames.RIGHT_ARM, blank)
 				.put(EntityModelPartNames.LEFT_LEG, blank)
 				.put(EntityModelPartNames.RIGHT_LEG, blank)
 				.build());
-		private final BipedEntityModel<?> dummyModel = new BipedEntityModel<PlayerEntity>(dummyRoot) {
-			@Override
-			public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-				// used to capture the VertexConsumer that has the correct RenderLayer
-				vc = vertices;
-			}
-		};
+		private final BipedEntityModel<?> dummyModel = new BipedEntityModel<PlayerEntityRenderState>(dummyRoot);
+		
 		// Fabric API compat
 		private final List<MethodHandle> entityCaptures = Lists.newArrayList();
 		private final List<MethodHandle> slotCaptures = Lists.newArrayList();
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		protected void doBindBuiltin(TexSource src) {
 			commitQuads();
@@ -188,17 +194,18 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 				vc = vcp.getBuffer(RenderLayer.getArmorEntityGlint());
 			} else if (canBind(src)) {
 				EquipmentSlot slot = getSlot(src);
-				ItemStack equipment = peer.getEquippedStack(slot);
-				ArmorItem ai = (ArmorItem)equipment.getItem();
-				ArmorMaterial m = ai.getMaterial().value();
+				ItemStack equipment = getEquippedStack(peer, slot);
 				AccessorArmorFeatureRenderer aafr = (AccessorArmorFeatureRenderer)afr;
-
-				int c = equipment.isIn(ItemTags.DYEABLE) ? DyedColorComponent.getColor(equipment, -6265536): -1;
-				ArmorMaterial.Layer l = m.layers().get(0);
-
+				if (equipment.get(DataComponentTypes.DYED_COLOR) != null) {
+					int c = equipment.get(DataComponentTypes.DYED_COLOR).rgb();
+					armorR = (c >> 16 & 255) / 255.0F;
+					armorG = (c >> 8 & 255) / 255.0F;
+					armorB = (c & 255) / 255.0F;
+					armorA = 1;
+				}
 				try {
 					setCaptures(peer, slot);
-					aafr.ears$renderArmorParts(matrices, vcp, 0, dummyModel, c, l.getTexture(aafr.ears$usesSecondLayer(slot)));
+					aafr.ears$renderArmor(matrices, vcp, equipment, slot, 0, dummyModel);
 					setCaptures(null, null);
 				} catch (Throwable t) {
 					if (skipRendering == 0) skipRendering = 1;
@@ -207,13 +214,14 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 			}
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public boolean canBind(TexSource tex) {
 			boolean glint = tex.isGlint();
 			if (glint) tex = tex.getParent();
 			EquipmentSlot slot = getSlot(tex);
 			if (slot == null) return super.canBind(tex);
-			ItemStack equipment = peer.getEquippedStack(slot);
+			ItemStack equipment = getEquippedStack(peer, slot);
 			if (equipment.isEmpty() || !(equipment.getItem() instanceof ArmorItem)) return false;
 			if (afr == null) {
 				for (FeatureRenderer<?, ?> fr : ((AccessorLivingEntityRenderer)per).ears$getFeatures()) {
@@ -225,7 +233,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 								if (Modifier.isStatic(f.getModifiers())) continue;
 								if (EquipmentSlot.class == f.getType()) {
 									slotCaptures.add(MethodHandles.lookup().unreflectSetter(f));
-								} else if (LivingEntity.class.isAssignableFrom(f.getType())) {
+								} else if (BipedEntityRenderState.class.isAssignableFrom(f.getType())) {
 									entityCaptures.add(MethodHandles.lookup().unreflectSetter(f));
 								}
 							} catch (Throwable t) {
@@ -243,7 +251,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 				try {
 					setCaptures(peer, slot);
-					BipedEntityModel<?> model = aafr.ears$getArmor(slot);
+					BipedEntityModel<?> model = aafr.ears$getArmor(peer, slot);
 					setCaptures(null, null);
 					if (model != bmodel && model != lmodel) {
 						// custom armor model
@@ -258,7 +266,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 			return false;
 		}
 
-		private void setCaptures(LivingEntity entity, EquipmentSlot slot) {
+		private void setCaptures(BipedEntityRenderState entity, EquipmentSlot slot) {
 			for (MethodHandle mh : entityCaptures) {
 				try {
 					mh.invoke(afr, entity);
@@ -279,7 +287,19 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 					.map(TexSource.BOOTS, EquipmentSlot.FEET)
 					.orElse(null);
 		}
+		
+		private ItemStack getEquippedStack(PlayerEntityRenderState peer, EquipmentSlot slot) {
+			return switch(slot) {
+			case HEAD -> peer.equippedHeadStack;
+			case CHEST -> peer.equippedChestStack;
+			case LEGS -> peer.equippedLegsStack;
+			case FEET -> peer.equippedFeetStack;
+			default -> null;
+			};
+		}
 
+		private final MatrixStack.Entry IDENTITY3 = new MatrixStack().peek();
+		
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
 			r *= armorR;
@@ -287,15 +307,14 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 			b *= armorB;
 			a *= armorA;
 			Matrix4f mm = matrices.peek().getPositionMatrix();
-			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(emissive ? LightmapTextureManager.pack(15, 15) : light);
-			if (emissive) vc.normal(nX, nY, nZ); else vc.normal(matrices.peek(), nX, nY, nZ);
-//			vc.next();
+			var mn = emissive ? IDENTITY3 : matrices.peek();
+			vc.vertex(mm, x, y, z).color(r, g, b, a).texture(u, v).overlay(overlay).light(emissive ? LightmapTextureManager.pack(15, 15) : light).normal(mn, nX, nY, nZ);
 		}
 		
 		@Override
 		protected void commitQuads() {
-			if (vcp instanceof VertexConsumerProvider.Immediate) {
-				((VertexConsumerProvider.Immediate)vcp).drawCurrentLayer();
+			if (vcp instanceof VertexConsumerProvider.Immediate immediate) {
+				immediate.drawCurrentLayer();
 			}
 		}
 		
@@ -307,96 +326,99 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 		@Override
 		protected VertexConsumer getVertexConsumer(TexSource src) {
 			armorR = armorG = armorB = armorA = 1;
-			Identifier id = peer.getSkinTextures().texture();
+			Identifier id = peer.skinTextures.texture();
 			if (src != TexSource.SKIN) {
-				id = Identifier.of(id.getNamespace(), src.addSuffix(id.getPath()));
+				id = Identifier.tryParse(id.getNamespace(), src.addSuffix(id.getPath()));
 			}
-			return vcp.getBuffer(RenderLayer.getEntityTranslucentCull(id));
+			return vcp.getBuffer(RenderLayer.getItemEntityTranslucentCull(id));
 		}
 
 		@Override
 		public float getTime() {
-			return peer.age+MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
+			return peer.age;
 		}
 
 		@Override
 		public boolean isFlying() {
-			return peer.getAbilities().flying;
+			return peer.applyFlyingRotation;
 		}
 
 		@Override
 		public boolean isGliding() {
-			return peer.isFallFlying();
+			return peer.isGliding;
 		}
 
 		@Override
 		public boolean isJacketEnabled() {
-			return peer.isPartVisible(PlayerModelPart.JACKET);
+			return peer.jacketVisible;
 		}
 
 		@Override
 		public boolean isWearingBoots() {
-			return peer.getEquippedStack(EquipmentSlot.FEET).getItem() instanceof ArmorItem;
+			return peer.equippedFeetStack.getItem() instanceof ArmorItem;
 		}
 
 		@Override
 		public boolean isWearingChestplate() {
-			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ArmorItem;
+			return peer.equippedChestStack.getItem() instanceof ArmorItem;
 		}
 
 		@Override
 		public boolean isWearingElytra() {
-			return peer.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof ElytraItem;
-		}
-
-		@Override
-		public float getHorizontalSpeed() {
-			return EarsCommon.lerpDelta(peer.prevHorizontalSpeed, peer.horizontalSpeed, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			//TODO: this is not correct, should check for EQUIPPABLE that has actual textures under assetId for elytra
+			return peer.equippedChestStack.getComponents().contains(DataComponentTypes.GLIDER);
 		}
 
 		@Override
 		public float getLimbSwing() {
-			return peer.limbAnimator.getSpeed(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
-		}
-
-		@Override
-		public float getStride() {
-			return EarsCommon.lerpDelta(peer.prevStrideDistance, peer.strideDistance, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.handSwingProgress;
 		}
 
 		@Override
 		public float getBodyYaw() {
-			return EarsCommon.lerpDelta(peer.prevBodyYaw, peer.bodyYaw, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.bodyYaw;
 		}
 
 		@Override
 		public double getCapeX() {
-			return EarsCommon.lerpDelta(peer.prevCapeX, peer.capeX, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.field_53536;
 		}
 
 		@Override
 		public double getCapeY() {
-			return EarsCommon.lerpDelta(peer.prevCapeY, peer.capeY, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.field_53537;
 		}
 
 		@Override
 		public double getCapeZ() {
-			return EarsCommon.lerpDelta(peer.prevCapeZ, peer.capeZ, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.field_53538;
 		}
 
 		@Override
 		public double getX() {
-			return EarsCommon.lerpDelta(peer.prevX, peer.getPos().x, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.x;
 		}
 
 		@Override
 		public double getY() {
-			return EarsCommon.lerpDelta(peer.prevY, peer.getPos().y, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.y;
 		}
 
 		@Override
 		public double getZ() {
-			return EarsCommon.lerpDelta(peer.prevZ, peer.getPos().z, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			return peer.z;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			// TODO: unimplemented, not used by modified common code
+			return 0;
+		}
+
+		@Override
+		public float getStride() {
+			// TODO: unimplemented, not used by modified common code
+			return 0;
 		}
 	};
 }

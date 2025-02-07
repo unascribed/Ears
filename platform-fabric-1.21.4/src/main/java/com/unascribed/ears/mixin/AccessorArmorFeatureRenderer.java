@@ -1,8 +1,5 @@
 package com.unascribed.ears.mixin;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -10,12 +7,13 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.state.BipedEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 
 @Mixin(ArmorFeatureRenderer.class)
-public interface AccessorArmorFeatureRenderer<T extends LivingEntity, A extends BipedEntityModel<T>> {
+public interface AccessorArmorFeatureRenderer<S extends BipedEntityRenderState, M extends BipedEntityModel<S>, A extends BipedEntityModel<S>> {
 
 	@Accessor("innerModel")
 	BipedEntityModel<?> ears$getLeggingsModel();
@@ -23,11 +21,11 @@ public interface AccessorArmorFeatureRenderer<T extends LivingEntity, A extends 
 	BipedEntityModel<?> ears$getBodyModel();
 	
 	@Invoker("getModel")
-	BipedEntityModel<?> ears$getArmor(EquipmentSlot slot);
+	BipedEntityModel<?> ears$getArmor(S state, EquipmentSlot slot);
 	@Invoker("usesInnerModel")
 	boolean ears$usesSecondLayer(EquipmentSlot slot);
 
-	@Invoker("renderArmorParts")
-	void ears$renderArmorParts(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model, int color, Identifier overlay);
+	@Invoker("renderArmor")
+	void ears$renderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, EquipmentSlot slot, int light, A armorModel);
 	
 }
