@@ -292,6 +292,10 @@ SOFTWARE.
 						<option value="green">Back</option>
 						<option value="purple">Up</option>
 						<option value="orange">Vertical</option>
+						<option value="pink">Cross</option>
+						<option value="purple2">Overlapping Cross</option>
+						<option value="white">Star</option>
+						<option value="gray">Overlapping Star</option>
 					</select>
 				</td>
 				<td>
@@ -385,6 +389,8 @@ SOFTWARE.
 						<option value="green">Symmetric Single</option>
 						<option value="cyan">Asymmetric Single (Left)</option>
 						<option value="orange">Asymmetric Single (Right)</option>
+						<option value="purple">Asymmetric Dual</option>
+						<option value="purple2">Flat</option>
 					</select>
 				</td>
 			</tr>
@@ -444,6 +450,21 @@ SOFTWARE.
 				However, no options are enabled that use this data. You can <button id="remove-alfalfa">remove it</button> if you wish.
 			</div>
 		</div>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-145-notice">
+			<b><i>Selected options require new features added in v1.4.5.</i></b><br/>
+			Before v1.4.5, capes will not render.
+		</div>
+		<div class="notice" style="display: none;margin-bottom:8px" id="req-147-notice">
+			<b><i>Selected options require new features added in v1.4.7.</i></b><br/>
+			Before v1.4.7:
+			<ul>
+			<li id="cross-tail-mode">Cross tail modes will not render</li>
+			<li id="star-tail-mode">Star tail modes will not render</li>
+			<li id="asym-dual-wing-mode">Asymmetric Dual wing mode will not render</li>
+			<li id="flat-wing-mode">Flat wing mode will not render</li>
+			</ul>
+		</div>
+		
 		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-121-notice">
 			<b><i>Selected options require new features added in v1.2.1.</i></b><br/>
 			Before v1.2.1, Cross ears mode will not render.
@@ -461,25 +482,21 @@ SOFTWARE.
 			<b><i>Selected options require new features added in v1.2.4.</i></b><br/>
 			Before v1.2.4, Vertical tail mode will not render.
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-130-notice">
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-130-notice">
 			<b><i>Selected options require new features added in v1.3.0.</i></b><br/>
 			Before v1.3.0, <span id="req-130-snouts">snouts</span><span id="req-130-and"> and </span><span id="req-130-chest">chests</span> will not render.
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-140-notice">
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-140-notice">
 			<b><i>Selected options require new features added in v1.4.0.</i></b><br/>
 			Before v1.4.0, wings will not render.
 		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-141-notice">
+		<div class="notice legacy" style="display: none;margin-bottom:8px" id="req-141-notice">
 			<b><i>Selected options require new features added in v1.4.1.</i></b><br/>
 			Before v1.4.1:
 			<ul>
 			<li id="tall-ears-mode">Tall ears mode will not render</li>
 			<li id="wing-anim-off">Wing animations cannot be disabled</li>
 			</ul>
-		</div>
-		<div class="notice" style="display: none;margin-bottom:8px" id="req-145-notice">
-			<b><i>Selected options require new features added in v1.4.5.</i></b><br/>
-			Before v1.4.5, capes will not render.
 		</div>
 		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-122-notice">
 			<b><i>Selected options had bugs fixed in v1.2.2.</i></b><br/>
@@ -496,7 +513,7 @@ SOFTWARE.
 			<li id="claws-bad-pos">Claws rendered one pixel off on the left arm for slim models</li>
 			</ul>
 		</div>
-		<div class="notice bug" style="display: none;margin-bottom:8px" id="bug-140-notice">
+		<div class="notice bug legacy" style="display: none;margin-bottom:8px" id="bug-140-notice">
 			<b><i>Selected options had bugs fixed in v1.4.0.</i></b><br/>
 			Before v1.4.0:
 			<ul>
@@ -516,7 +533,7 @@ SOFTWARE.
 	</div>
 	<script src="WebGL.js"></script>
 	<script src="three.min.js"></script>
-	<script src="ears-common.js?v=1.4.5"></script>
+	<script src="ears-common.js?v=1.4.7"></script>
 	<script>
 	if (location.hash === "#debug") {
 		window.EarsDebug = true;
@@ -613,6 +630,7 @@ SOFTWARE.
 		let req140 = $("#req-140-notice");
 		let req141 = $("#req-141-notice");
 		let req145 = $("#req-145-notice");
+		let req147 = $("#req-147-notice");
 		let bug122 = $("#bug-122-notice");
 		let bug123 = $("#bug-123-notice");
 		let bug140 = $("#bug-140-notice");
@@ -624,6 +642,7 @@ SOFTWARE.
 		req140.style.display = "none";
 		req141.style.display = "none";
 		req145.style.display = "none";
+		req147.style.display = "none";
 		bug122.style.display = "none";
 		bug123.style.display = "none";
 		bug140.style.display = "none";
@@ -637,6 +656,10 @@ SOFTWARE.
 		$("#alfalfa-notice-unneeded").style.display = "none";
 		$("#tall-ears-mode").style.display = "none";
 		$("#wing-anim-off").style.display = "none";
+		$("#cross-tail-mode").style.display = "none";
+		$("#star-tail-mode").style.display = "none";
+		$("#asym-dual-wing-mode").style.display = "none";
+		$("#flat-wing-mode").style.display = "none";
 		let earMode = $("#ear-mode").value;
 		let earAnchor = $("#ear-anchor").value;
 		if (earMode === "pink") {
@@ -670,7 +693,13 @@ SOFTWARE.
 			$("#claws-clip").style.display = "list-item";
 		}
 		let tailMode = $("#tail-mode").value;
-		if (tailMode === "orange") {
+		if (tailMode === "pink" || tailMode === "purple2") {
+			req147.style.display = "block";
+			$("#cross-tail-mode").style.display = "list-item";
+		} else if (tailMode === "white" || tailMode === "gray") {
+			req147.style.display = "block";
+			$("#star-tail-mode").style.display = "list-item";
+		} else if (tailMode === "orange") {
 			req124.style.display = "block";
 		} else if ($("#tail-bend-0").value != 0) {
 			req122.style.display = "block";
@@ -698,6 +727,14 @@ SOFTWARE.
 		if (wingsMode !== "red" && wingsMode !== "blue") {
 			req140.style.display = "block";
 			wingsEnabled = true;
+		}
+		if (wingsMode === "purple") {
+			req147.style.display = "block";
+			$("#asym-dual-wing-mode").style.display = "list-item";
+		}
+		if (wingsMode === "purple2") {
+			req147.style.display = "block";
+			$("#flat-wing-mode").style.display = "list-item";
 		}
 		if ($("#wing-anim").value === "red") {
 			req141.style.display = "block";

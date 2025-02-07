@@ -91,6 +91,10 @@ public class EarsFeatures {
 		BACK,
 		UP,
 		VERTICAL,
+		CROSS,
+		CROSS_OVERLAP,
+		STAR,
+		STAR_OVERLAP,
 	}
 	public enum WingMode {
 		NONE,
@@ -98,6 +102,8 @@ public class EarsFeatures {
 		SYMMETRIC_SINGLE,
 		ASYMMETRIC_L,
 		ASYMMETRIC_R,
+		ASYMMETRIC_DUAL,
+		FLAT,
 	}
 	
 	public static final EarsFeatures DISABLED = new EarsFeatures();

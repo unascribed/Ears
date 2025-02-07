@@ -2,9 +2,9 @@ package com.unascribed.ears;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.ModelBox;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.Tessellator;
 
 public class ModelTransBox extends ModelBox {
 

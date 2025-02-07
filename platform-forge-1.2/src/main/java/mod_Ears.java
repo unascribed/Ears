@@ -5,7 +5,7 @@ public class mod_Ears extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return /*VERSION*/"1.4.6"/*/VERSION*/;
+		return /*VERSION*/"1.4.7"/*/VERSION*/;
 	}
 
 	@Override

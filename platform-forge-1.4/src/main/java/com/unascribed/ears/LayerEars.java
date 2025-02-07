@@ -17,17 +17,17 @@ import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.legacy.LegacyHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EnumArmorMaterial;
-import net.minecraft.src.ItemArmor;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModelBiped;
-import net.minecraft.src.ModelBox;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.OpenGlHelper;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.RenderPlayer;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 
 public class LayerEars {
@@ -187,7 +187,7 @@ public class LayerEars {
 					.orElse(-1);
 		}
 		
-		private final List<Runnable> replayBuffer = new ArrayList<>();
+		private final List<Runnable> replayBuffer = new ArrayList<Runnable>();
 		
 		@Override
 		protected void addVertex(final float x, final float y, final int z, float r, float g, float b, float a, final float u, final float v, final float nX, final float nY, final float nZ) {

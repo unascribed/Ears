@@ -1,35 +1,21 @@
 buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-    }
+	repositories {
+		mavenCentral()
+		maven { url "https://maven.fabricmc.net" }
+		maven { url "https://repo.sleeping.town" }
+	}
+	dependencies {
+		classpath "agency.highlysuspect:voldeloom:2.5-SNAPSHOT"
+	}
 }
 
-apply plugin: 'forge'
+apply plugin: "agency.highlysuspect.voldeloom"
 
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group= "com.unascribed.ears" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ears-forge-1.7"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
-
-minecraft {
-	version = "1.7.10-10.13.4.1614-1.7.10"
-	runDir = "run"
-	mappings = "stable_12"
-	replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
-	replace '@VERSION@', project.version
-}
+sourceCompatibility = targetCompatibility = 8
 
 jar {
 	manifest {
@@ -40,8 +26,44 @@ jar {
 	}
 }
 
+configurations {
+	retrolambda
+}
+
+task retrolambda(type: JavaExec) {
+	dependsOn compileJava
+	
+	javaLauncher = javaToolchains.launcherFor {
+		languageVersion = JavaLanguageVersion.of(8)
+	}
+	
+	doFirst {
+		def rl = configurations.retrolambda.resolve().iterator().next()
+		
+		classpath = files(rl)
+		
+		def out = compileJava.destinationDirectory.getAsFile().get().getAbsolutePath()
+		
+		jvmArgs(
+			'-Dretrolambda.inputDir='+out,
+			'-Dretrolambda.classpath='+compileJava.classpath.getAsPath()+File.pathSeparator+out,
+			'-Dretrolambda.bytecodeVersion=50',
+			'-Dretrolambda.quiet=true'
+		)
+	}
+}
+
+compileJava.finalizedBy retrolambda
+
 dependencies {
-	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
+	implementation files('../common/build/libs/ears-common-agent-vlegacy.jar')
+	
+	retrolambda 'net.orfjackal.retrolambda:retrolambda:2.5.7'
+	minecraft "com.mojang:minecraft:1.7.10"
+	forge "net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10:universal"
+	mappings volde.layered {
+		importMCPBot("https://mcpbot.unascribed.com/", "1.7.10", "stable", "12-1.7.10")
+	}
 }
 
 jar {
@@ -49,24 +71,13 @@ jar {
 }
 
 processResources {
-	// this will ensure that this task is redone when the versions change.
 	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
-
-	// replace stuff in mcmod.info, nothing else
-	from(sourceSets.main.resources.srcDirs) {
-		include 'mcmod.info'
-
-		// replace version and mcversion
-		expand 'version':project.version, 'mcversion':project.minecraft.version
-	}
-
-	// copy everything else, thats not the mcmod.info
-	from(sourceSets.main.resources.srcDirs) {
-		exclude 'mcmod.info'
+	
+	filesMatching("mcmod.info") {
+		expand 'version': project.version, 'mcversion': '1.7.10'
 	}
 }
 
 compileJava.doFirst {
-	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
 }

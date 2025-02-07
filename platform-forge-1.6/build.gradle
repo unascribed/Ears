@@ -1,34 +1,21 @@
 buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        jcenter()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
-    }
+	repositories {
+		mavenCentral()
+		maven { url "https://maven.fabricmc.net" }
+		maven { url "https://repo.sleeping.town" }
+	}
+	dependencies {
+		classpath "agency.highlysuspect:voldeloom:2.5-SNAPSHOT"
+	}
 }
 
-apply plugin: 'forge'
+apply plugin: "agency.highlysuspect.voldeloom"
 
 version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
 group= "com.unascribed.ears" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ears-forge-1.6"
 
 sourceCompatibility = targetCompatibility = 6
-
-minecraft {
-	version = "1.6.4-9.11.1.964"
-	replaceIn 'src/main/java/com/unascribed/ears/Ears.java'
-	replace '@VERSION@', project.version
-}
 
 jar {
 	manifest {
@@ -39,19 +26,12 @@ jar {
 	}
 }
 
-repositories {
-	mavenLocal()
-	maven { url 'https://jitpack.io' }
-	//ivy {
-	//	artifactPattern 'https://version99.qos.ch/commons-logging/commons-logging/[revision]/commons-logging-[revision].[ext]'
-	//}
-}
-
 dependencies {
-	compile files('../common/build/libs/ears-common-agent-vlegacy.jar')
+	implementation files('../common/build/libs/ears-common-agent-vlegacy.jar')
 	
-	//compile 'net.sourceforge.argo:argo:99-empty'
-	//minecraft 'net.sourceforge.argo:argo:99-empty'
+	minecraft "com.mojang:minecraft:1.6.4"
+	forge "net.minecraftforge:forge:1.6.4-9.11.1.1345:universal"
+	mappings "net.minecraftforge:forge:1.6.4-9.11.1.1345:src@zip"
 }
 
 jar {
@@ -59,24 +39,13 @@ jar {
 }
 
 processResources {
-	// this will ensure that this task is redone when the versions change.
 	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
-
-	// replace stuff in mcmod.info, nothing else
-	from(sourceSets.main.resources.srcDirs) {
-		include 'mcmod.info'
-
-		// replace version and mcversion
-		expand 'version':project.version, 'mcversion':project.minecraft.version
-	}
-
-	// copy everything else, thats not the mcmod.info
-	from(sourceSets.main.resources.srcDirs) {
-		exclude 'mcmod.info'
+	
+	filesMatching("mcmod.info") {
+		expand 'version': project.version, 'mcversion': '1.6.4'
 	}
 }
 
 compileJava.doFirst {
-	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/Ears.java src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
 }

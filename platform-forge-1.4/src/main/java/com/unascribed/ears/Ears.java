@@ -29,18 +29,18 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ImageBufferDownload;
-import net.minecraft.src.ModelBiped;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.RenderLiving;
-import net.minecraft.src.RenderPlayer;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.ImageBufferDownload;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.ForgeVersion;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.6"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.7"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
-	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
+	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<String, EarsFeatures>();
 	
 	private static LayerEars layer;
 	
@@ -214,21 +214,7 @@ public class Ears {
 			try {
 				threadDownloadImage = Class.forName("bas");
 			} catch (ClassNotFoundException e) {
-				System.out.println("WOW you have a 1.4.7 dev env you are awesome");
-				System.out.println("Sure hope your mappings haven't renamed ThreadDownloadImage");
-				try {
-					threadDownloadImage = Class.forName("net/minecraft/client/renderer/ThreadDownloadImage");
-				} catch (ClassNotFoundException e2) {
-					try {
-						threadDownloadImage = Class.forName("net/minecraft/src/ThreadDownloadImage");
-					} catch (ClassNotFoundException e3) {
-						NoClassDefFoundError err = new NoClassDefFoundError("Cannot resolve ThreadDownloadImage");
-						err.addSuppressed(e3);
-						err.addSuppressed(e2);
-						err.addSuppressed(e);
-						throw err;
-					}
-				}
+				throw new NoClassDefFoundError("bas");
 			}
 			
 			location = ReflectionHelper.findField(threadDownloadImage, "a", "location");
@@ -243,7 +229,7 @@ public class Ears {
 	
 	private static int getImageWidth(ImageBufferDownload subject) {
 		try {
-			return (int)imageWidth.get(subject);
+			return (Integer)imageWidth.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);
@@ -251,7 +237,7 @@ public class Ears {
 	}
 	private static int getImageHeight(ImageBufferDownload subject) {
 		try {
-			return (int)imageHeight.get(subject);
+			return (Integer)imageHeight.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);

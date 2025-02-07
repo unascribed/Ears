@@ -43,7 +43,9 @@ class EarsFeaturesParserV0 {
 		}
 		
 		public static MagicPixel from(int argb) {
-			return rgbToValue.getOrDefault(argb&0x00FFFFFF, UNKNOWN);
+			MagicPixel p = rgbToValue.get(argb&0x00FFFFFF);
+			if (p == null) return UNKNOWN;
+			return p;
 		}
 		
 		@Override
@@ -114,7 +116,11 @@ class EarsFeaturesParserV0 {
 			MagicPixel.BLUE, TailMode.DOWN,
 			MagicPixel.GREEN, TailMode.BACK,
 			MagicPixel.PURPLE, TailMode.UP,
-			MagicPixel.ORANGE, TailMode.VERTICAL
+			MagicPixel.ORANGE, TailMode.VERTICAL,
+			MagicPixel.PINK, TailMode.CROSS,
+			MagicPixel.PURPLE2, TailMode.CROSS_OVERLAP,
+			MagicPixel.WHITE, TailMode.STAR,
+			MagicPixel.GRAY, TailMode.STAR_OVERLAP
 	);
 	public static final Map<MagicPixel, WingMode> WING_MODE_BY_MAGIC = buildMap(
 			MagicPixel.BLUE, WingMode.NONE,
@@ -122,7 +128,9 @@ class EarsFeaturesParserV0 {
 			MagicPixel.PINK, WingMode.SYMMETRIC_DUAL,
 			MagicPixel.GREEN, WingMode.SYMMETRIC_SINGLE,
 			MagicPixel.CYAN, WingMode.ASYMMETRIC_L,
-			MagicPixel.ORANGE, WingMode.ASYMMETRIC_R
+			MagicPixel.ORANGE, WingMode.ASYMMETRIC_R,
+			MagicPixel.PURPLE, WingMode.ASYMMETRIC_DUAL,
+			MagicPixel.PURPLE2, WingMode.FLAT
 	);
 
 	public static EarsFeatures.Builder parse(EarsImage img) {

@@ -5,7 +5,7 @@ import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.agent.mini.PatchContext;
 import com.unascribed.ears.common.debug.EarsLog;
 
-@Patch.Class("bco") // net/minecraft/src/RenderPlayer
+@Patch.Class("bco") // net.minecraft.client.renderer.entity.RenderPlayer
 public class RenderPlayerTransformer extends MiniTransformer {
 	
 	@Patch.Method("<init>()V")

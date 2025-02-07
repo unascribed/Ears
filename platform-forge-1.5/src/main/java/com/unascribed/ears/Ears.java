@@ -41,10 +41,10 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
-@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.6"/*/VERSION*/, useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.7"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
-	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();
+	public static final Map<String, EarsFeatures> earsSkinFeatures = new WeakHashMap<String, EarsFeatures>();
 	
 	private static LayerEars layer;
 	
@@ -237,7 +237,7 @@ public class Ears {
 	
 	private static int getImageWidth(ImageBufferDownload subject) {
 		try {
-			return (int)imageWidth.get(subject);
+			return (Integer)imageWidth.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);
@@ -245,7 +245,7 @@ public class Ears {
 	}
 	private static int getImageHeight(ImageBufferDownload subject) {
 		try {
-			return (int)imageHeight.get(subject);
+			return (Integer)imageHeight.get(subject);
 		} catch (Throwable e) {
 			if (e instanceof RuntimeException) throw (RuntimeException)e;
 			throw new RuntimeException(e);

@@ -41,7 +41,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid="ears", name="Ears", version="@VERSION@", useMetadata=true)
+@Mod(modid="ears", name="Ears", version=/*VERSION*/"1.4.7"/*/VERSION*/, useMetadata=true)
 public class Ears {
 	
 	public static final Map<ITextureObject, EarsFeatures> earsSkinFeatures = new WeakHashMap<>();

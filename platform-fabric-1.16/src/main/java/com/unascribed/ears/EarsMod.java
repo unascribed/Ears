@@ -5,7 +5,7 @@ import com.unascribed.ears.common.EarsFeaturesHolder;
 import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -13,9 +13,9 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 
-public class EarsMod implements ModInitializer {
+public class EarsMod implements ClientModInitializer {
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 		if (EarsLog.DEBUG) {
 			EarsLog.debugva(EarsLog.Tag.PLATFORM, "Initialized - Minecraft {} / Fabric {}; Env={}",
 					SharedConstants.getGameVersion().getName(),

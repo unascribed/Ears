@@ -1,7 +1,6 @@
 package com.unascribed.ears.common.util;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 /**
  * Basically a zero-allocation inline map.
@@ -36,7 +35,7 @@ public final class Decider<K, V> {
 	private V value;
 	
 	public Decider<K, V> map(K k, V v) {
-		if (value == UNDECIDED && Objects.equals(needle, k)) {
+		if (value == UNDECIDED && (needle == null ? k == null : needle.equals(k))) {
 			value = v;
 		}
 		return this;
@@ -54,7 +53,7 @@ public final class Decider<K, V> {
 		V v = value;
 		needle = null;
 		((Decider)this).value = UNDECIDED;
-		if (v == UNDECIDED) throw new NoSuchElementException(Objects.toString(needle));
+		if (v == UNDECIDED) throw new NoSuchElementException(String.valueOf(needle));
 		return v;
 	}
 	

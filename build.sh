@@ -51,7 +51,7 @@ fi
 if [[ -z "$JAVA8_HOME" || -z "$JAVA11_HOME" || -z "$JAVA17_HOME" || -z "$JAVA21_HOME" ]]; then
 	echo "Building Ears requires Java 8, Java 11, Java 17, and Java 21." 1>&2
 	echo "Please install them and set the JAVA8_HOME, JAVA11_HOME, JAVA17_HOME, and JAVA21_HOME env vars." 1>&2
-	echo "You can get all three of these from https://adoptium.net/" 1>&2
+	echo "You can get all four of these from https://adoptium.net/" 1>&2
 	echo "Alternatively, run this script again with --download as the first argument to do it for you. (This will only work on Linux, and will download and execute binaries from adoptium.net.)" 1>&2
 	exit 1
 fi
@@ -88,16 +88,16 @@ JAVA_HOME=$JAVA21_HOME check_java 21 21
 echo "Looks good."
 echo
 
-normal="fabric-1.14 fabric-1.16 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fabric-b1.7.3 rift-1.13"
-needsJ8="forge-1.6 forge-1.7 forge-1.8 forge-1.9"
+normal="forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.12 forge-1.14 forge-1.15 forge-1.16 fcl-b1.7.3 rift-1.13"
+needsJ8="forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
-needsJ17="forge-1.18 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2 neoforge-1.20.2 stapi-b1.7.3"
-needsJ21="fabric-1.21 neoforge-1.21"
+needsJ17="forge-1.18 fabric-1.14 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.16 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2 neoforge-1.20.2 stapi-b1.7.3"
+needsJ21="fabric-1.21 neoforge-1.21 fabric-1.20.6"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
-special="nfc nsss vanilla-b1.7.3 forge-1.2 forge-1.4 forge-1.5"
+special="vanilla-b1.7.3 forge-1.2"
 
 buildAll=1
-toBuild=" $normal $needsJ8 $needsJ16 $needsJ17 $special "
+toBuild=" $normal $needsJ8 $needsJ16 $needsJ17 $needsJ21 $special "
 if [ -n "$1" ]; then
 	buildAll=0
 	toBuild=" $@ "
@@ -143,7 +143,7 @@ JAVA_HOME=$JAVA17_HOME build $needsJ17
 JAVA_HOME=$JAVA21_HOME build $needsJ21
 wait
 for proj in $special; do
-	if echo "$toBuild" | grep -qF "$proj"; then
+	if echo "$toBuild" | grep -qF " $proj "; then
 		(
 			cd platform-$proj
 			rm -f build-ok

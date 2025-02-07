@@ -333,7 +333,7 @@ class EarsRenderer {
 					if (tailMode == TailMode.DOWN) {
 						ang = 30;
 						swing = 40;
-					} else if (tailMode == TailMode.BACK) {
+					} else if (tailMode == TailMode.BACK || tailMode == TailMode.CROSS || tailMode == TailMode.CROSS_OVERLAP || tailMode == TailMode.STAR || tailMode == TailMode.STAR_OVERLAP) {
 						if (features.tailBend0 != 0) {
 							ang = 90;
 						} else {
@@ -373,8 +373,26 @@ class EarsRenderer {
 						float[] angles = {vert ? 0 : baseAngle, features.tailBend1, features.tailBend2, features.tailBend3};
 						int segHeight = 12/segments;
 						for (int i = 0; i < segments; i++) {
+							int ofs = i == 0 ? 0 : tailMode == TailMode.CROSS_OVERLAP || tailMode == TailMode.STAR_OVERLAP ? 4 : 0;
 							delegate.rotate(angles[i]*(1-(swingAmount/2)), 1, 0, 0);
 							delegate.renderDoubleSided(56, 16+(i*segHeight), 8, segHeight, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+							if (tailMode == TailMode.CROSS || tailMode == TailMode.CROSS_OVERLAP) {
+								delegate.push();
+									delegate.translate(4, 0, 0);
+									delegate.rotate(90, 0, 1, 0);
+									delegate.translate(-4, -ofs, 0);
+									delegate.renderDoubleSided(56, 16+(i*segHeight)-ofs, 8, segHeight+ofs, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+								delegate.pop();
+							} else if (tailMode == TailMode.STAR || tailMode == TailMode.STAR_OVERLAP) {
+								for (int j = 0; j < 3; j++) {
+									delegate.push();
+										delegate.translate(4, 0, 0);
+										delegate.rotate(45*(j+1), 0, 1, 0);
+										delegate.translate(-4, -ofs, 0);
+										delegate.renderDoubleSided(56, 16+(i*segHeight)-ofs, 8, segHeight+ofs, TexRotation.NONE, TexFlip.HORIZONTAL, QuadGrow.NONE);
+									delegate.pop();
+								}
+							}
 							delegate.translate(0, segHeight, 0);
 						}
 					delegate.pop();
@@ -615,6 +633,23 @@ class EarsRenderer {
 							delegate.translate(2, 0, 0);
 							delegate.push();
 								delegate.rotate(-90+wiggle, 0, 1, 0);
+								delegate.renderDoubleSided(0, 0, 20, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.pop();
+						}
+						if (wingMode == WingMode.ASYMMETRIC_DUAL) {
+							delegate.push();
+								delegate.rotate(-120+wiggle, 0, 1, 0);
+								delegate.renderDoubleSided(0, 0, 10, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.pop();
+							delegate.translate(4, 0, 0);
+							delegate.push();
+								delegate.rotate(-60-wiggle, 0, 1, 0);
+								delegate.renderDoubleSided(10, 0, 10, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
+							delegate.pop();
+						}
+						if (wingMode == WingMode.FLAT) {
+							delegate.translate(-8, 0, 0.75f);
+							delegate.push();
 								delegate.renderDoubleSided(0, 0, 20, 16, TexRotation.NONE, TexFlip.NONE, QuadGrow.NONE);
 							delegate.pop();
 						}

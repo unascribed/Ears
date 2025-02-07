@@ -3,19 +3,40 @@ buildscript {
 		mavenCentral()
 		gradlePluginPortal()
 		maven { url 'https://maven.fabricmc.net' }
-		maven { url 'https://jitpack.io' }
+		maven { url 'https://repo.sleeping.town' }
 		maven { url 'https://maven.minecraftforge.net/' }
 	}
 	dependencies {
-		classpath 'com.github.unascribed.voldeloom:fabric-loom:1.2.5-SNAPSHOT'
+		classpath 'com.unascribed:voldeloom:1.0.1+1.2.5'
 		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
+		// the eclipse jdt artifacts pulled in by mercury have dynamic version specs, and eclipse
+		// moved from compiling for java 8 to 17 without a major version bump. villains do this
+		////
+		// we're stuck on java 8 due to the old version of gradle, and we're stuck on the old
+		// version of gradle in order to use legacy voldeloom. the new quat voldeloom doesn't
+		// support 1.2.5 yet
+		classpath('org.eclipse.platform:org.eclipse.core.resources') {
+			version { strictly '3.12.0' }
+		}
+		classpath('org.eclipse.platform:org.eclipse.core.expressions') {
+			version { strictly '3.9.400' }
+		}
+		classpath('org.eclipse.platform:org.eclipse.core.runtime') {
+			version { strictly '3.32.0' }
+		}
+		classpath('org.eclipse.platform:org.eclipse.core.filesystem') {
+			version { strictly '1.11.100' }
+		}
+		classpath('org.eclipse.platform:org.eclipse.text') {
+			version { strictly '3.6.0' }
+		}
 	}
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
-apply plugin: 'fabric-loom'
+apply plugin: 'com.unascribed.voldeloom'
 
 sourceCompatibility = 8
 targetCompatibility = 8

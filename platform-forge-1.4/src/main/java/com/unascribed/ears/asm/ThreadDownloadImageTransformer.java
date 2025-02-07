@@ -4,7 +4,7 @@ import com.unascribed.ears.common.agent.mini.annotation.Patch;
 import com.unascribed.ears.common.agent.mini.MiniTransformer;
 import com.unascribed.ears.common.agent.mini.PatchContext;
 
-@Patch.Class("bas") // net/minecraft/src/ThreadDownloadImage
+@Patch.Class("bas") // net.minecraft.client.renderer.ThreadDownloadImage
 public class ThreadDownloadImageTransformer extends MiniTransformer {
 
 	@Patch.Method("run()V")
