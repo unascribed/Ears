@@ -26,7 +26,7 @@ switch (target) {
 	case "fabric-1.17":
 		prefix = "FABRIC 1.17/18"
 		stability = 'release'
-		gameVersions = ['Fabric', 'Quilt', '1.17', '1.17.1', '1.18', '1.18.1']
+		gameVersions = ['Fabric', 'Quilt', '1.17', '1.17.1', '1.18', '1.18.1', '1.18.2']
 		break
 	case "fabric-1.19":
 		prefix = "FABRIC 1.19"
@@ -138,12 +138,12 @@ switch (target) {
 	case "forge-1.18":
 		prefix = "FORGE 1.18"
 		stability = 'beta'
-		gameVersions = ['Forge', '1.18', '1.18.1']
+		gameVersions = ['Forge', '1.18', '1.18.1', '1.18.2']
 		break
 	case "forge-1.19":
 		prefix = "FORGE 1.19"
 		stability = 'beta'
-		gameVersions = ['Forge', '1.19']
+		gameVersions = ['Forge', '1.19', '1.19.1', '1.19.2']
 		break
 	case "forge-1.19.3":
 		prefix = "FORGE 1.19.3"
