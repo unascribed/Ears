@@ -20,7 +20,7 @@ public class MixinCapeLayer {
     @Inject(at=@At("HEAD"), method="render", cancellable=true)
     public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, PlayerRenderState player, float f, float g, CallbackInfo ci) {
         EarsFeatures features = EarsLayerRenderer.getEarsFeatures(player);
-        if (features != null && (!features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
+        if (features != null && (features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
             ci.cancel();
         }
     }
