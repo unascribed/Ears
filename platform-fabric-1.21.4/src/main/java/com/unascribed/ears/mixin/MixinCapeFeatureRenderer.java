@@ -21,7 +21,7 @@ public class MixinCapeFeatureRenderer {
 	@Inject(at=@At("HEAD"), method="render", cancellable=true)
 	public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, PlayerEntityRenderState player, float f, float g, CallbackInfo ci) {
 		EarsFeatures features = EarsMod.getEarsFeatures(player);
-		if (features != null && (!features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
+		if (features != null && (features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
 			ci.cancel();
 		}
 	}
