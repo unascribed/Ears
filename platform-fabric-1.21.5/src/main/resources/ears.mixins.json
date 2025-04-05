@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.unascribed.ears.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "plugin": "com.unascribed.ears.common.mixin.EarsMixinConfigPlugin",
+  "mixins": [
+  ],
+  "client": [
+    "MixinPlayerEntityRenderer",
+    "MixinPlayerSkinTextureDownloader",
+    "MixinElytraFeatureRenderer",
+	"MixinCapeFeatureRenderer",
+    "AccessorArmorFeatureRenderer",
+    "AccessorLivingEntityRenderer",
+    "AccessorTextureManager",
+    "MixinPlayerEntityRenderState"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
