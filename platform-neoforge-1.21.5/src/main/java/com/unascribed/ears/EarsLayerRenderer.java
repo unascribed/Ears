@@ -381,7 +381,7 @@ public class EarsLayerRenderer extends RenderLayer<PlayerRenderState, PlayerMode
 
 		@Override
 		public boolean isWearingChestplate() {
-			return peer.chestEquipment.getComponents().has(DataComponents.EQUIPPABLE);
+			return peer.chestEquipment.getComponents().has(DataComponents.EQUIPPABLE) && !isWearingElytra();
 		}
 
 		@Override

@@ -360,7 +360,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public boolean isWearingChestplate() {
-			return peer.equippedChestStack.getComponents().contains(DataComponentTypes.EQUIPPABLE);
+			return peer.equippedChestStack.getComponents().contains(DataComponentTypes.EQUIPPABLE) && !isWearingElytra();
 		}
 
 		@Override
