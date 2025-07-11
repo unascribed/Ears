@@ -25,7 +25,7 @@ if [ -n "$1" ]; then
 	modrinth="$common"
 	mcmodcn="$common"
 else
-	common="rift-1.13 stapi-b1.7.3 fabric-1.14 fabric-1.16 fabric-1.17 fabric-1.19 fabric-1.19.3 fabric-1.19.4 fabric-1.20 fabric-1.20.2 fabric-1.20.6 fabric-1.21 fabric-1.21.4 forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17 forge-1.18 forge-1.19 forge-1.19.3 forge-1.19.4 neoforge-1.20.2 neoforge-1.21"
+	common="rift-1.13 stapi-b1.7.3 fabric-1.14 fabric-1.16 fabric-1.17 fabric-1.19 fabric-1.19.3 fabric-1.19.4 fabric-1.20 fabric-1.20.2 fabric-1.20.6 fabric-1.21 fabric-1.21.4 forge-1.2 forge-1.4 forge-1.5 forge-1.6 forge-1.7 forge-1.8 forge-1.9 forge-1.12 forge-1.14 forge-1.15 forge-1.16 forge-1.17 forge-1.18 forge-1.19 forge-1.19.3 forge-1.19.4 neoforge-1.20.2 neoforge-1.21 fabric-1.21.4 fabric-1.21.5 neoforge-1.21.4 neoforge-1.21.5"
 	curse="$common"
 	modrinth="$common"
 	mcmodcn="$common"
@@ -175,12 +175,24 @@ if [ "$MCMODCN_COOKIE" != "-" ]; then
 				title="1.21.4"
 				loaders="$fabric,$quilt"
 			;;
+			fabric-1.21.5)
+				title="1.21.5"
+				loaders="$fabric,$quilt"
+			;;
 			neoforge-1.20.2)
 				title="1.20.2"
 				loaders="$neoforge"
 			;;
 			neoforge-1.21)
 				title="1.21.1"
+				loaders="$neoforge"
+			;;
+			neoforge-1.21.4)
+				title="1.21.4"
+				loaders="$neoforge"
+			;;
+			neoforge-1.21.5)
+				title="1.21.5"
 				loaders="$neoforge"
 			;;
 			*)

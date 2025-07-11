@@ -68,6 +68,11 @@ switch (target) {
 		stability = 'release'
 		gameVersions = ['Fabric', 'Quilt', '1.21.4']
 		break
+	case "fabric-1.21.5":
+		prefix = "FABRIC 1.21.5"
+		stability = 'release'
+		gameVersions = ['Fabric', 'Quilt', '1.21.5']
+		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
 		stability = 'beta'
@@ -164,6 +169,16 @@ switch (target) {
 		prefix = "NEOFORGE 1.21"
 		stability = 'beta'
 		gameVersions = ['NeoForge', '1.21.1']
+		break
+	case "neoforge-1.21.4":
+		prefix = "NEOFORGE 1.21.4"
+		stability = 'beta'
+		gameVersions = ['NeoForge', '1.21.4']
+		break
+	case "neoforge-1.21.5":
+		prefix = "NEOFORGE 1.21.5"
+		stability = 'beta'
+		gameVersions = ['NeoForge', '1.21.5']
 		break
 	case "rift-1.13":
 		prefix = "RIFT 1.13.2"
