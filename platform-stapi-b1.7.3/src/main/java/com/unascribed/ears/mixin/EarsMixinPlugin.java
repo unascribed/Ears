@@ -29,7 +29,7 @@ public class EarsMixinPlugin implements IMixinConfigPlugin {
             if (isRetroAuthInstalled) {
                 EarsLog.debug(EarsLog.Tag.PLATFORM_LOAD, "RetroAuth is installed, disabling Ears skinfix.");
             }
-            return !(isMojFixInstalled || isCPMInstalled);
+            return !(isMojFixInstalled || isCPMInstalled || isRetroAuthInstalled);
         }
 
         return true;
