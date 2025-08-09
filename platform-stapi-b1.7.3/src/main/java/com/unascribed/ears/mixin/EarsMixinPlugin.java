@@ -17,6 +17,7 @@ public class EarsMixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         boolean isMojFixInstalled = FabricLoader.getInstance().isModLoaded("mojangfixstationapi");
         boolean isCPMInstalled = FabricLoader.getInstance().isModLoaded("cpm");
+        boolean isRetroAuthInstalled = FabricLoader.getInstance().isModLoaded("retroauth");
 
         if (mixinClassName.startsWith("com.unascribed.ears.mixin.skinfix")) {
             if (isMojFixInstalled) {
@@ -24,6 +25,9 @@ public class EarsMixinPlugin implements IMixinConfigPlugin {
             }
             if (isCPMInstalled) {
                 EarsLog.debug(EarsLog.Tag.PLATFORM_LOAD, "Customizable Player Models is installed, disabling Ears skinfix.");
+            }
+            if (isRetroAuthInstalled) {
+                EarsLog.debug(EarsLog.Tag.PLATFORM_LOAD, "RetroAuth is installed, disabling Ears skinfix.");
             }
             return !(isMojFixInstalled || isCPMInstalled);
         }
