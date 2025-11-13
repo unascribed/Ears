@@ -1,0 +1,45 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.116'
+}
+
+version = file('../version.txt').text.trim()+file('version-suffix.txt').text.trim()
+group = 'com.unascribed.ears'
+base.archivesName = 'ears-neoforge-1.21.10'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
+
+neoForge {
+    version = project.neo_version
+}
+
+dependencies {
+    implementation files('../common/build/libs/ears-common-mixin-modern.jar')
+}
+
+processResources {
+    var expandProps = [
+            "version": project.version,
+            "loader_version": project.loader_version
+    ]
+    inputs.properties(expandProps)
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand expandProps
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    from zipTree('../common/build/libs/ears-common-mixin-modern.jar')
+    from "../LICENSE"
+}
+
+compileJava.doFirst {
+	'../common/replace-version.sh src/main/java/com/unascribed/ears/EarsPlatformVersion.java'.execute()
+}
