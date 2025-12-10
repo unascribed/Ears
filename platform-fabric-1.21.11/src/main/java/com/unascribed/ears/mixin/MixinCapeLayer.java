@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CapeLayer.class)
 public class MixinCapeLayer {
 
-    @Inject(at=@At("HEAD"), method="submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", cancellable=true)
-    public void render(PoseStack matrixStack, SubmitNodeCollector vertexConsumerProvider, int i, AvatarRenderState player, float f, float g, CallbackInfo ci) {
-        EarsFeatures features = EarsMod.getEarsFeatures(player);
-        if (features != null && (features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
-            ci.cancel();
-        }
-    }
+	@Inject(at=@At("HEAD"), method="submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", cancellable=true)
+	public void render(PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int i, AvatarRenderState player, float f, float g, CallbackInfo ci) {
+		EarsFeatures features = EarsMod.getEarsFeatures(player);
+		if (features != null && (features.capeEnabled || EarsInhibitorRegistry.isInhibited(EarsFeatureType.CAPE, player) != null)) {
+			ci.cancel();
+		}
+	}
 
 }

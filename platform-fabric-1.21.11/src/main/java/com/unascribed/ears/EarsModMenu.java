@@ -3,31 +3,30 @@ package com.unascribed.ears;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.unascribed.ears.common.EarsCommon;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.session.Session;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Util;
 
 public class EarsModMenu implements ModMenuApi {
 
 	@Override
 	public ConfigScreenFactory<Screen> getModConfigScreenFactory() {
-		Session s = MinecraftClient.getInstance().getSession();
+		User s = Minecraft.getInstance().getUser();
 		return screen -> new ConfirmLinkScreen(
 				clicked -> {
 					if (clicked) {
-						Util.getOperatingSystem().open(EarsCommon.getConfigUrl(s.getUsername(), s.getUuidOrNull().toString()));
+						Util.getPlatform().openUri(EarsCommon.getConfigUrl(s.getName(), s.getProfileId().toString()));
 					}
-					MinecraftClient.getInstance().setScreen(screen);
+					Minecraft.getInstance().setScreen(screen);
 				},
 				EarsCommon.getConfigPreviewUrl(), true) {
-					@Override
-					public void copyToClipboard() {
-						client.keyboard.setClipboard(EarsCommon.getConfigUrl(s.getUsername(), s.getUuidOrNull().toString()));
-					}
-				};
+			@Override
+			public void copyToClipboard() {
+				minecraft.keyboardHandler.setClipboard(EarsCommon.getConfigUrl(s.getName(), s.getProfileId().toString()));
+			}
+		};
 	}
 
 }

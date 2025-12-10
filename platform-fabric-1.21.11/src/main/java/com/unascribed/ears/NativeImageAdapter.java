@@ -1,8 +1,7 @@
 package com.unascribed.ears;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.unascribed.ears.common.WritableEarsImage;
-
-import net.minecraft.client.texture.NativeImage;
 
 public class NativeImageAdapter implements WritableEarsImage {
 
@@ -14,12 +13,12 @@ public class NativeImageAdapter implements WritableEarsImage {
 
 	@Override
 	public int getARGB(int x, int y) {
-		return img.getColorArgb(x, y);
+		return img.getPixel(x, y);
 	}
 
 	@Override
 	public void setARGB(int x, int y, int argb) {
-		img.setColorArgb(x, y, argb);
+		img.setPixel(x, y, argb);
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class NativeImageAdapter implements WritableEarsImage {
 
 	@Override
 	public WritableEarsImage copy() {
-		NativeImage copy = new NativeImage(img.getFormat(), img.getWidth(), img.getHeight(), false);
+		NativeImage copy = new NativeImage(img.format(), img.getWidth(), img.getHeight(), false);
 		copy.copyFrom(img);
 		return new NativeImageAdapter(copy);
 	}

@@ -1,18 +1,17 @@
 package com.unascribed.ears.mixin;
 
-import java.util.Map;
-
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.util.Identifier;
+import java.util.Map;
 
 @Mixin(TextureManager.class)
 public interface AccessorTextureManager {
 
-	@Accessor("textures")
+	@Accessor("byPath")
 	Map<Identifier, AbstractTexture> ears$getTextures();
-	
+
 }

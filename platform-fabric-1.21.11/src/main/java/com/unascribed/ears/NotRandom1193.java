@@ -1,22 +1,22 @@
 package com.unascribed.ears;
 
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.math.random.RandomSplitter;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 
-public class NotRandom1193 implements Random {
+public class NotRandom1193 implements RandomSource {
 
 	public static final NotRandom1193 INSTANCE = new NotRandom1193();
 
 	@Override
-	public Random split() {
+	public RandomSource fork() {
 		return this;
 	}
 
 	@Override
-	public RandomSplitter nextSplitter() {
+	public PositionalRandomFactory forkPositional() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public boolean nextBoolean() {
 		return false;
@@ -54,7 +54,7 @@ public class NotRandom1193 implements Random {
 
 	@Override
 	public void setSeed(long seed) {
-		
+
 	}
 
 }

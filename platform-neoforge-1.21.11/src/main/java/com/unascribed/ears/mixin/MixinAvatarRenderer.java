@@ -20,9 +20,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AvatarRenderer.class)
-public abstract class MixinPlayerRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity> extends LivingEntityRenderer<AbstractClientPlayer, AvatarRenderState, PlayerModel> {
+public abstract class MixinAvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity> extends LivingEntityRenderer<AbstractClientPlayer, AvatarRenderState, PlayerModel> {
 
-	public MixinPlayerRenderer(EntityRendererProvider.Context ctx, PlayerModel model, float shadowRadius) {
+	public MixinAvatarRenderer(EntityRendererProvider.Context ctx, PlayerModel model, float shadowRadius) {
 		super(ctx, model, shadowRadius);
 	}
 

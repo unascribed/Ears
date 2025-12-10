@@ -52,28 +52,28 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 	public EarsLayerRenderer(AvatarRenderer<LocalPlayer> per) {
 		super(per);
-        this.per = per;
-        EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
+		this.per = per;
+		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "Constructed");
 	}
 
 	@Override
-	public void submit(PoseStack m, SubmitNodeCollector vertexConsumers, int light, AvatarRenderState entity, float limbAngle, float limbDistance) {
-//		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
-		delegate.render(m, vertexConsumers, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
+	public void submit(PoseStack m, SubmitNodeCollector queue, int light, AvatarRenderState entity, float limbAngle, float limbDistance) {
+		//EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "render({}, {}, {}, {}, {})", m, vertexConsumers, light, entity, limbAngle, limbDistance);
+		delegate.render(m, queue, entity, light, LivingEntityRenderer.getOverlayCoords(entity, 0));
 	}
 
-	public void renderLeftArm(PoseStack m, SubmitNodeCollector vertexConsumers, int light) {
-        AvatarRenderState state = per.createRenderState(Minecraft.getInstance().player, 1.0f);
-		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlayCoords(state, 0), BodyPart.LEFT_ARM);
+	public void renderLeftArm(PoseStack m, SubmitNodeCollector queue, int light) {
+		@SuppressWarnings("resource")
+		AvatarRenderState state = per.createRenderState(Minecraft.getInstance().player, 1.0f);
+		delegate.render(m, queue, state, light, LivingEntityRenderer.getOverlayCoords(state, 0), BodyPart.LEFT_ARM);
 	}
 
-	public void renderRightArm(PoseStack m, SubmitNodeCollector vertexConsumers, int light) {
-        AvatarRenderState state = per.createRenderState(Minecraft.getInstance().player, 1.0f);
-		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlayCoords(state, 0), BodyPart.RIGHT_ARM);
+	public void renderRightArm(PoseStack m, SubmitNodeCollector queue, int light) {
+		@SuppressWarnings("resource")
+		AvatarRenderState state = per.createRenderState(Minecraft.getInstance().player, 1.0f);
+		delegate.render(m, queue, state, light, LivingEntityRenderer.getOverlayCoords(state, 0), BodyPart.RIGHT_ARM);
 	}
 
-	// official Mojang mappings continue to baffle me. PoseStack????????????
-	// MCP mappings were bad but they never managed to make me irrationally angry
 	private final IndirectEarsRenderDelegate<PoseStack, SubmitNodeCollector, RenderType, AvatarRenderState, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
 
 		@Override
@@ -90,7 +90,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 		@Override
 		protected void doAnchorTo(BodyPart part, ModelPart modelPart) {
 			modelPart.translateAndRotate(matrices);
-			Cube cuboid = modelPart.getRandomCube(NotRandom119.INSTANCE);
+			Cube cuboid = modelPart.getRandomCube(NotRandom1193.INSTANCE);
 			matrices.scale(1/16f, 1/16f, 1/16f);
 			matrices.translate(cuboid.minX, cuboid.maxY, cuboid.minZ);
 		}
@@ -145,7 +145,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 					textureManager.register(id, new DynamicTexture(src::toString, NativeImage.read(toNativeBuffer(pngData))));
 				} catch (IOException e) {
 					e.printStackTrace();
-//					Minecraft.getInstance().getTextureManager().register(id, MissingTextureAtlasSprite.getTexture());
+					//textureManager.registerTexture(id, MissingSprite.getMissingSpriteTexture());
 				}
 			}
 		}
@@ -172,7 +172,6 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 				EquipmentSlot slot = getSlot(src);
 				ItemStack equipment = getEquippedStack(peer, slot);
 				AccessorHumanoidArmorLayer aafr = (AccessorHumanoidArmorLayer)afr;
-
 				if (equipment.get(DataComponents.DYED_COLOR) != null) {
 					int c = equipment.get(DataComponents.DYED_COLOR).rgb();
 					armorR = (c >> 16 & 255) / 255.0F;
@@ -180,10 +179,9 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 					armorB = (c & 255) / 255.0F;
 					armorA = 1;
 				}
-
 				try {
 					setCaptures(peer, slot);
-					aafr.ears$renderArmorPiece(matrices, vcp, equipment, slot, 0, peer);
+					aafr.ears$renderArmor(matrices, vcp, equipment, slot, 0, peer);
 					setCaptures(null, null);
 				} catch (Throwable t) {
 					if (skipRendering == 0) skipRendering = 1;
@@ -202,8 +200,8 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 			ItemStack equipment = getEquippedStack(peer, slot);
 			if (equipment.isEmpty() || !(equipment.getComponents().has(DataComponents.EQUIPPABLE))) return false;
 			if (afr == null) {
-				for (RenderLayer<?, ?> fr : ((AccessorLivingEntityRenderer)per).ears$getLayers()) {
-					if (fr instanceof HumanoidArmorLayer<?,?,?>) {
+				for (RenderLayer<?, ?> fr : ((AccessorLivingEntityRenderer)per).ears$getFeatures()) {
+					if (fr instanceof HumanoidArmorLayer) {
 						afr = (HumanoidArmorLayer<?, ?, ?>)fr;
 						for (Field f : HumanoidArmorLayer.class.getDeclaredFields()) {
 							try {
@@ -224,8 +222,8 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 			}
 			if (afr != null) {
 				AccessorHumanoidArmorLayer aafr = (AccessorHumanoidArmorLayer)afr;
-				HumanoidModel<?> bmodel = (HumanoidModel<?>) aafr.ears$getModelSet().chest();
-				HumanoidModel<?> lmodel = (HumanoidModel<?>) aafr.ears$getModelSet().legs();
+				HumanoidModel<?> bmodel = (HumanoidModel<?>) aafr.ears$getModelData().chest();
+				HumanoidModel<?> lmodel = (HumanoidModel<?>) aafr.ears$getModelData().legs();
 
 				try {
 					setCaptures(peer, slot);
@@ -280,32 +278,32 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		protected void addVertex(float x, float y, int z, float r, float g, float b, float a, float u, float v, float nX, float nY, float nZ) {
-            r *= armorR;
-            g *= armorG;
-            b *= armorB;
-            a *= armorA;
+			r *= armorR;
+			g *= armorG;
+			b *= armorB;
+			a *= armorA;
 
-            final PoseStack.Pose snapshot = matrices.last().copy();
-            final Matrix4f positionMatrix = snapshot.pose();
-            final PoseStack.Pose normalMatrix = emissive ? IDENTITY3 : snapshot;
+			final PoseStack.Pose snapshot = matrices.last().copy();
+			final Matrix4f positionMatrix = snapshot.pose();
+			final PoseStack.Pose normalMatrix = emissive ? IDENTITY3 : snapshot;
 
-            final int packedLight = emissive ? LightTexture.pack(15, 15) : light;
-            final int packedOverlay = overlay;
+			final int packedLight = emissive ? LightTexture.pack(15, 15) : light;
+			final int packedOverlay = overlay;
 
-            final PoseStack frozenStack = new PoseStack();
-            frozenStack.last().pose().set(positionMatrix);
-            frozenStack.last().normal().set(snapshot.normal());
+			final PoseStack frozenStack = new PoseStack();
+			frozenStack.last().pose().set(positionMatrix);
+			frozenStack.last().normal().set(snapshot.normal());
 
-            final float fr = r, fg = g, fb = b, fa = a;
+			final float fr = r, fg = g, fb = b, fa = a;
 
-            vcp.submitCustomGeometry(frozenStack, vc, (entry, consumer) -> {
-                consumer.addVertex(positionMatrix, x, y, z)
-                        .setColor(fr, fg, fb, fa)
-                        .setUv(u, v)
-                        .setOverlay(packedOverlay)
-                        .setLight(packedLight)
-                        .setNormal(normalMatrix, nX, nY, nZ);
-            });
+			vcp.submitCustomGeometry(frozenStack, vc, (entry, consumer) -> {
+				consumer.addVertex(positionMatrix, x, y, z)
+						.setColor(fr, fg, fb, fa)
+						.setUv(u, v)
+						.setOverlay(packedOverlay)
+						.setLight(packedLight)
+						.setNormal(normalMatrix, nX, nY, nZ);
+			});
 		}
 
 		@Override
@@ -315,7 +313,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		protected void doRenderDebugDot(float r, float g, float b, float a) {
-			// TODO port this to core profile (no)
+			// not implemented on post-1.17 versions
 		}
 
 		@Override
@@ -360,22 +358,13 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		public boolean isWearingElytra() {
+			//TODO: this is not correct, should check for EQUIPPABLE that has actual textures under assetId for elytra
 			return peer.chestEquipment.getComponents().has(DataComponents.GLIDER);
-		}
-
-		@Override
-		public float getHorizontalSpeed() {
-			return ((EarsPlayerRenderState)peer).ears$getHorizontalSpeed();
 		}
 
 		@Override
 		public float getLimbSwing() {
 			return peer.attackTime;
-		}
-
-		@Override
-		public float getStride() {
-			return ((EarsPlayerRenderState)peer).ears$getStride();
 		}
 
 		@Override
@@ -411,6 +400,16 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 		@Override
 		public double getZ() {
 			return peer.z;
+		}
+
+		@Override
+		public float getHorizontalSpeed() {
+			return ((EarsPlayerRenderState)peer).ears$getHorizontalSpeed();
+		}
+
+		@Override
+		public float getStride() {
+			return ((EarsPlayerRenderState)peer).ears$getStride();
 		}
 	};
 }

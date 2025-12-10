@@ -9,13 +9,12 @@
   "client": [
     "AccessorHumanoidArmorLayer",
     "AccessorLivingEntityRenderer",
-    "AccessorPlayerModel",
     "AccessorTextureManager",
+    "MixinAvatarRenderer",
+    "MixinAvatarRenderState",
     "MixinCapeLayer",
-    "MixinElytraLayer",
-    "MixinPlayerRenderer",
-    "MixinPlayerRenderState",
-    "MixinSkinTextureDownloader"
+    "MixinSkinTextureDownloader",
+    "MixinWingsLayer"
   ],
   "injectors": {
     "defaultRequire": 1
