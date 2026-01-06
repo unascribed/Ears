@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.unascribed.ears.api.features.EarsFeatures;
-import com.unascribed.ears.common.EarsFeaturesHolder;
-import com.unascribed.ears.common.EarsFeaturesStorage;
 import com.unascribed.ears.common.debug.EarsLog;
 import com.unascribed.ears.common.render.EarsRenderDelegate.BodyPart;
 import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
@@ -17,13 +15,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelPart.Cube;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.MovingBlockRenderState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -34,18 +31,18 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.HitboxesRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -92,20 +89,6 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 		delegate.render(m, vertexConsumers, state, light, LivingEntityRenderer.getOverlayCoords(state, 0), BodyPart.RIGHT_ARM);
 	}
 
-	public static EarsFeatures getEarsFeatures(AvatarRenderState peer) {
-		ResourceLocation skin = peer.skin.body().id();
-		AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(skin);
-		EarsLog.debug(EarsLog.Tag.PLATFORM_RENDERER, "getEarsFeatures(): skin={}, tex={}", skin, tex);
-		if (tex instanceof EarsFeaturesHolder) {
-			EarsFeatures feat = ((EarsFeaturesHolder)tex).getEarsFeatures();
-			EarsFeaturesStorage.INSTANCE.put(peer.scoreText == null ? Minecraft.getInstance().name() : peer.scoreText.getString(), /*peer.getGameProfile().getId()*/null, feat);
-			if (!peer.isInvisible) {
-				return feat;
-			}
-		}
-		return EarsFeatures.DISABLED;
-	}
-
 	// official Mojang mappings continue to baffle me. PoseStack????????????
 	// MCP mappings were bad but they never managed to make me irrationally angry
 	private final IndirectEarsRenderDelegate<PoseStack, SubmitNodeCollector, RenderType, AvatarRenderState, ModelPart> delegate = new IndirectEarsRenderDelegate<>() {
@@ -136,7 +119,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		protected EarsFeatures getEarsFeatures() {
-			return EarsLayerRenderer.getEarsFeatures(peer);
+			return EarsMod.getEarsFeatures(peer);
 		}
 
 		@Override
@@ -171,8 +154,8 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		protected void doUploadAux(TexSource src, byte[] pngData) {
-			ResourceLocation skin = peer.skin.body().id();
-			ResourceLocation id = ResourceLocation.tryBuild(skin.getNamespace(), src.addSuffix(skin.getPath()));
+			Identifier skin = peer.skin.body().id();
+			Identifier id = Identifier.tryBuild(skin.getNamespace(), src.addSuffix(skin.getPath()));
 			TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 			if (pngData != null && !((AccessorTextureManager) textureManager).ears$getTextures().containsKey(id)) {
 				try {
@@ -201,11 +184,11 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 			commitQuads();
 			if (src.isGlint()) {
 				armorR = armorG = armorB = armorA = 1;
-				vc = RenderType.armorEntityGlint();
+				vc = RenderTypes.armorEntityGlint();
 			} else if (canBind(src)) {
 				EquipmentSlot slot = getSlot(src);
 				ItemStack equipment = getEquippedStack(peer, slot);
-				AccessorHumanoidArmorLayer aafr = (AccessorHumanoidArmorLayer) afr;
+				AccessorHumanoidArmorLayer aafr = (AccessorHumanoidArmorLayer)afr;
 
 				if (equipment.get(DataComponents.DYED_COLOR) != null) {
 					int c = equipment.get(DataComponents.DYED_COLOR).rgb();
@@ -221,11 +204,6 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 						@Override
 						public <S> void submitModel(Model<? super S> model, S renderState, PoseStack poseStack, RenderType renderType, int packedLight, int packedOverlay, int tintColor, @Nullable TextureAtlasSprite sprite, int outlineColor, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
 							vc = renderType;
-						}
-
-						@Override
-						public void submitHitbox(PoseStack poseStack, EntityRenderState entityRenderState, HitboxesRenderState hitboxesRenderState) {
-
 						}
 
 						@Override
@@ -418,11 +396,11 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 		@Override
 		protected RenderType getVertexConsumer(TexSource src) {
 			armorR = armorG = armorB = armorA = 1;
-			ResourceLocation id = peer.skin.body().id();
+			Identifier id = peer.skin.body().id();
 			if (src != TexSource.SKIN) {
-				id = ResourceLocation.tryBuild(id.getNamespace(), src.addSuffix(id.getPath()));
+				id = Identifier.tryBuild(id.getNamespace(), src.addSuffix(id.getPath()));
 			}
-			return RenderType.itemEntityTranslucentCull(id);
+			return RenderTypes.itemEntityTranslucentCull(id);
 		}
 
 		@Override
