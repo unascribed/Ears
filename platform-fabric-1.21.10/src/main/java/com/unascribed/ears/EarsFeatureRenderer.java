@@ -9,13 +9,19 @@ import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.mixin.AccessorArmorFeatureRenderer;
 import com.unascribed.ears.mixin.AccessorLivingEntityRenderer;
 import com.unascribed.ears.mixin.AccessorTextureManager;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPart.Cuboid;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.block.MovingBlockRenderState;
+import net.minecraft.client.render.command.ModelCommandRenderer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import net.minecraft.client.render.command.RenderCommandQueue;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -23,17 +29,29 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
+import net.minecraft.client.render.entity.state.EntityHitboxAndView;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
+import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.render.model.BlockStateModel;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerSkinType;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -166,11 +184,11 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 			commitQuads();
 			if (src.isGlint()) {
 				armorR = armorG = armorB = armorA = 1;
-                vc = RenderLayer.getArmorEntityGlint();
+				vc = RenderLayer.getArmorEntityGlint();
 			} else if (canBind(src)) {
 				EquipmentSlot slot = getSlot(src);
 				ItemStack equipment = getEquippedStack(peer, slot);
-				AccessorArmorFeatureRenderer aafr = (AccessorArmorFeatureRenderer)afr;
+				AccessorArmorFeatureRenderer aafr = (AccessorArmorFeatureRenderer) afr;
 				if (equipment.get(DataComponentTypes.DYED_COLOR) != null) {
 					int c = equipment.get(DataComponentTypes.DYED_COLOR).rgb();
 					armorR = (c >> 16 & 255) / 255.0F;
@@ -180,7 +198,82 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 				}
 				try {
 					setCaptures(peer, slot);
-					aafr.ears$renderArmor(matrices, vcp, equipment, slot, 0, peer);
+					aafr.ears$renderArmor(matrices, new OrderedRenderCommandQueue() {
+						@Override
+						public void submitDebugHitbox(MatrixStack matrices, EntityRenderState renderState, EntityHitboxAndView debugHitbox) {
+
+						}
+
+						@Override
+						public void submitShadowPieces(MatrixStack matrices, float shadowRadius, List<EntityRenderState.ShadowPiece> shadowPieces) {
+
+						}
+
+						@Override
+						public void submitLabel(MatrixStack matrices, @Nullable Vec3d nameLabelPos, int y, Text label, boolean notSneaking, int light, double squaredDistanceToCamera, CameraRenderState cameraState) {
+
+						}
+
+						@Override
+						public void submitText(MatrixStack matrices, float x, float y, OrderedText text, boolean dropShadow, TextRenderer.TextLayerType layerType, int light, int color, int backgroundColor, int outlineColor) {
+
+						}
+
+						@Override
+						public void submitFire(MatrixStack matrices, EntityRenderState renderState, Quaternionf rotation) {
+
+						}
+
+						@Override
+						public void submitLeash(MatrixStack matrices, EntityRenderState.LeashData leashData) {
+
+						}
+
+						@Override
+						public <S> void submitModel(Model<? super S> model, S state, MatrixStack matrices, RenderLayer renderLayer, int light, int overlay, int tintedColor, @Nullable Sprite sprite, int outlineColor, @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlay) {
+							vc = renderLayer;
+						}
+
+						@Override
+						public void submitModelPart(ModelPart part, MatrixStack matrices, RenderLayer renderLayer, int light, int overlay, @Nullable Sprite sprite, boolean sheeted, boolean hasGlint, int tintedColor, @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlay, int i) {
+
+						}
+
+						@Override
+						public void submitBlock(MatrixStack matrices, BlockState state, int light, int overlay, int outlineColor) {
+
+						}
+
+						@Override
+						public void submitMovingBlock(MatrixStack matrices, MovingBlockRenderState state) {
+
+						}
+
+						@Override
+						public void submitBlockStateModel(MatrixStack matrices, RenderLayer renderLayer, BlockStateModel model, float r, float g, float b, int light, int overlay, int outlineColor) {
+
+						}
+
+						@Override
+						public void submitItem(MatrixStack matrices, ItemDisplayContext displayContext, int light, int overlay, int outlineColors, int[] tintLayers, List<BakedQuad> quads, RenderLayer renderLayer, ItemRenderState.Glint glintType) {
+
+						}
+
+						@Override
+						public void submitCustom(MatrixStack matrices, RenderLayer renderLayer, Custom customRenderer) {
+
+						}
+
+						@Override
+						public void submitCustom(LayeredCustom customRenderer) {
+
+						}
+
+						@Override
+						public RenderCommandQueue getBatchingQueue(int order) {
+							return this;
+						}
+					}, equipment, slot, 0, peer);
 					setCaptures(null, null);
 				} catch (Throwable t) {
 					if (skipRendering == 0) skipRendering = 1;
