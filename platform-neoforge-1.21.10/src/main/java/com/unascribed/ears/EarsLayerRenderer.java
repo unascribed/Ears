@@ -467,7 +467,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		public float getLimbSwing() {
-			return peer.attackTime;
+			return peer.walkAnimationSpeed;
 		}
 
 		@Override

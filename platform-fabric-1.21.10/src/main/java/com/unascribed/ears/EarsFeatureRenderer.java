@@ -456,7 +456,7 @@ public class EarsFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState
 
 		@Override
 		public float getLimbSwing() {
-			return peer.handSwingProgress;
+			return peer.limbSwingAmplitude;
 		}
 
 		@Override

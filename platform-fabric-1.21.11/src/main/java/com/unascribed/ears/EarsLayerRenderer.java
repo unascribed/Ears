@@ -400,7 +400,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 			}
 			return RenderTypes.itemEntityTranslucentCull(id);
 		}
-
+		
 		@Override
 		public float getTime() {
 			return peer.ageInTicks;
@@ -439,7 +439,7 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		public float getLimbSwing() {
-			return peer.attackTime;
+			return peer.walkAnimationSpeed;
 		}
 
 		@Override
