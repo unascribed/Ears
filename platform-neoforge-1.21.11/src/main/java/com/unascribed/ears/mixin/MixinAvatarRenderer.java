@@ -35,13 +35,13 @@ public abstract class MixinAvatarRenderer<AvatarlikeEntity extends Avatar & Clie
 		this.addLayer(ears$layerRenderer = new EarsLayerRenderer((AvatarRenderer)(Object)this));
 	}
 
-	@Inject(at = @At("TAIL"), method = "renderLeftHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;Z)V")
-	private void renderLeftArm(PoseStack ms, SubmitNodeCollector vcp, int light, Identifier skinTexture, boolean sleeveVisible, CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "renderLeftHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;ZLnet/minecraft/client/player/AbstractClientPlayer;)V")
+	private void renderLeftArm(PoseStack ms, SubmitNodeCollector vcp, int light, Identifier skinTexture, boolean sleeveVisible, AbstractClientPlayer player, CallbackInfo ci) {
 		ears$layerRenderer.renderLeftArm(ms, vcp, light);
 	}
 	
-	@Inject(at = @At("TAIL"), method = "renderRightHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;Z)V")
-	private void renderRightArm(PoseStack ms, SubmitNodeCollector vcp, int light, Identifier skinTexture, boolean sleeveVisible, CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "renderRightHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;ZLnet/minecraft/client/player/AbstractClientPlayer;)V")
+	private void renderRightArm(PoseStack ms, SubmitNodeCollector vcp, int light, Identifier skinTexture, boolean sleeveVisible, AbstractClientPlayer player, CallbackInfo ci) {
 		ears$layerRenderer.renderRightArm(ms, vcp, light);
 	}
 
