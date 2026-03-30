@@ -22,7 +22,7 @@ request({
 		let platforms = {};
 		fs.readdirSync('../').forEach((f) => {
 			let basename = path.basename(f);
-			if (basename.indexOf("platform-") == 0) {
+			if (basename.indexOf("platform-") === 0) {
 				let name = basename.substring(9);
 				let cleaned = name.replace(/-/g, '_').replace(/\./g, '');
 				platforms[name] = cleaned;
