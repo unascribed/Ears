@@ -207,7 +207,9 @@ public class EarsLayerRenderer extends RenderLayer<AbstractClientPlayer, PlayerM
 				AccessorHumanoidArmorLayer aafr = (AccessorHumanoidArmorLayer)afr;
 
 				int c = equipment.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(equipment, -6265536): -1;
-				ArmorMaterial.Layer l = m.layers().get(0);
+				var ls = m.layers();
+				if (ls.isEmpty()) return;
+				ArmorMaterial.Layer l = ls.get(0);
 
 				try {
 					aafr.ears$renderArmorParts(matrices, vcp, 0, dummyModel, c, l.texture(aafr.ears$usesSecondLayer(slot)));

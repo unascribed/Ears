@@ -6,7 +6,7 @@ if [[ "$(uname -s)" =~ ^CYGWIN || "$(uname -s)" =~ ^MINGW || "$(uname -s)" =~ ^M
 fi
 
 needShift=
-for j in 8 11 17 21; do
+for j in 8 11 17 21 25; do
 	if [[ "$1" == "--download" && ! -e ".java/$j/bin/java" ]]; then
 		needShift=1
 		arch=$(uname -m)
@@ -48,9 +48,9 @@ if [ "$needShift" == 1 ]; then
 	shift
 fi
 
-if [[ -z "$JAVA8_HOME" || -z "$JAVA11_HOME" || -z "$JAVA17_HOME" || -z "$JAVA21_HOME" ]]; then
-	echo "Building Ears requires Java 8, Java 11, Java 17, and Java 21." 1>&2
-	echo "Please install them and set the JAVA8_HOME, JAVA11_HOME, JAVA17_HOME, and JAVA21_HOME env vars." 1>&2
+if [[ -z "$JAVA8_HOME" || -z "$JAVA11_HOME" || -z "$JAVA17_HOME" || -z "$JAVA25_HOME" ]]; then
+	echo "Building Ears requires Java 8, Java 11, Java 17, Java 21, and Java 25." 1>&2
+	echo "Please install them and set the JAVA8_HOME, JAVA11_HOME, JAVA17_HOME, JAVA21_HOME, and JAVA25_HOME env vars." 1>&2
 	echo "You can get all four of these from https://adoptium.net/" 1>&2
 	echo "Alternatively, run this script again with --download as the first argument to do it for you. (This will only work on Linux, and will download and execute binaries from adoptium.net.)" 1>&2
 	exit 1
@@ -84,7 +84,8 @@ JAVA_HOME=$JAVA8_HOME check_java 8 1.8
 check_java 11 11
 JAVA_HOME=$JAVA16_HOME check_java 16 16 17
 JAVA_HOME=$JAVA17_HOME check_java 17 17
-JAVA_HOME=$JAVA21_HOME check_java 21 21
+JAVA_HOME=$JAVA21_HOME check_java 21 21 25
+JAVA_HOME=$JAVA25_HOME check_java 25 25
 echo "Looks good."
 echo
 
@@ -93,6 +94,7 @@ needsJ8="forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
 needsJ17="forge-1.18 fabric-1.14 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.16 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2 neoforge-1.20.2 stapi-b1.7.3"
 needsJ21="fabric-1.21 neoforge-1.21 fabric-1.20.6 fabric-1.21.4 neoforge-1.21.4 fabric-1.21.5 neoforge-1.21.5 fabric-1.21.10 neoforge-1.21.10 fabric-1.21.11 neoforge-1.21.11"
+needsJ25="fabric-26.1 neoforge-26.1"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
 special="vanilla-b1.7.3 forge-1.2"
 
@@ -141,6 +143,7 @@ JAVA_HOME=$JAVA8_HOME build $needsJ8
 JAVA_HOME=$JAVA16_HOME build $needsJ16
 JAVA_HOME=$JAVA17_HOME build $needsJ17
 JAVA_HOME=$JAVA21_HOME build $needsJ21
+JAVA_HOME=$JAVA25_HOME build $needsJ25
 wait
 for proj in $special; do
 	if echo "$toBuild" | grep -qF " $proj "; then

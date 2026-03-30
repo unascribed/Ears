@@ -98,6 +98,12 @@ switch (target) {
 		loaders = ['fabric', 'quilt']
 		gameVersions = ['1.21.11']
 		break
+	case "fabric-26.1":
+		prefix = "FABRIC 26.1"
+		stability = 'release'
+		loaders = ['fabric', 'quilt']
+		gameVersions = ['26.1']
+		break
 	case "forge-1.2":
 		prefix = "FORGE 1.2"
 		stability = 'beta'
@@ -241,6 +247,12 @@ switch (target) {
 		stability = 'beta'
 		loaders = ['neoforge']
 		gameVersions = ['1.21.11']
+		break
+	case "neoforge-26.1":
+		prefix = "NEOFORGE 26.1"
+		stability = 'beta'
+		loaders = ['neoforge']
+		gameVersions = ['26.1']
 		break
 	default:
 		throw new Exception("Unknown target ${target}")
