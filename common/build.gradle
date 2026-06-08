@@ -1,10 +1,8 @@
 buildscript {
 	repositories {
-		maven { url "https://teavm.org/maven/repository/" }
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath "org.teavm:teavm-tooling:0.7.0-dev-1192"
 		classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
 	}
 }
@@ -251,62 +249,11 @@ dependencies {
 	implementation('org.spongepowered:mixin:0.7-SNAPSHOT') {
 		transitive = false
 	}
-	compileOnly('org.teavm:teavm-classlib:0.7.0-dev-1196') {
-		exclude group: 'com.google.code.gson'
-		exclude group: 'com.jcraft'
-		exclude group: 'joda-time'
-	}
 	
 	implementation 'org.ow2.asm:asm:9.2'
 	implementation 'org.ow2.asm:asm-tree:9.2'
 	agentShade 'org.ow2.asm:asm:9.2'
 	agentShade 'org.ow2.asm:asm-tree:9.2'
-	
-	
-	teavm 'org.teavm:teavm-classlib:0.7.0-dev-1196'
-}
-
-import org.teavm.tooling.TeaVMTool
-import org.teavm.tooling.TeaVMTargetType
-import org.teavm.tooling.sources.DirectorySourceFileProvider
-import org.teavm.tooling.TeaVMProblemRenderer
-import org.teavm.tooling.ConsoleTeaVMToolLog
-
-task teavm {
-	dependsOn compileJsJava
-	inputs.dir file('src')
-	outputs.dir file('build/teavm')
-	doFirst {
-		file('build/teavm').mkdirs()
-		def tool = new TeaVMTool()
-		tool.targetDirectory = file('build/teavm')
-		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/api/java')))
-		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/main/java')))
-		tool.addSourceFileProvider(new DirectorySourceFileProvider(file('src/js/java')))
-		tool.sourceMapsFileGenerated = true
-		tool.mainClass = 'com.unascribed.ears.common.EarsJS'
-		tool.entryPointName = 'initCommon'
-		tool.targetType = TeaVMTargetType.JAVASCRIPT
-		tool.log = new ConsoleTeaVMToolLog(true)
-		tool.obfuscated = false
-		def urls = []
-		urls.add(file('build/classes/java/api').toURI().toURL())
-		urls.add(file('build/classes/java/main').toURI().toURL())
-		urls.add(file('build/classes/java/js').toURI().toURL())
-		configurations.teavm.files.each {
-			urls.add(it.toURI().toURL())
-		}
-		def ucl = new URLClassLoader(urls.toArray(new URL[0]), TeaVMTool.class.classLoader)
-		tool.classLoader = ucl
-		tool.generate()
-		TeaVMProblemRenderer.describeProblems(tool.getDependencyInfo().getCallGraph(), tool.getProblemProvider(), tool.log)
-	}
-}
-task closure(type: Exec) {
-	dependsOn teavm
-	inputs.file file('build/teavm/classes.js')
-	outputs.file file('build/teavm/classes.min.js')
-	commandLine 'google-closure-compiler', '-O', 'SIMPLE', '--js', 'build/teavm/classes.js', '--js_output_file', 'build/teavm/classes.min.js', '--source_map_include_content', '--create_source_map', 'build/teavm/classes.min.js.map'
 }
 
 compileJava.doFirst {

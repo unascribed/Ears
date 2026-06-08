@@ -2,8 +2,6 @@ package com.unascribed.ears.api.features;
 
 import java.util.UUID;
 
-import org.teavm.jso.JSBody;
-
 import com.unascribed.ears.EarsFeaturesLookup;
 import com.unascribed.ears.api.Slice;
 
@@ -41,7 +39,6 @@ public class EarsFeatures {
 		lookup = lookupTmp;
 	}
 
-	@JSBody(script="return true")
 	private static boolean isJs() {
 		return false;
 	}

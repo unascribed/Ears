@@ -222,7 +222,7 @@ public class GameProfile {
 	 * @throws IllegalArgumentException If an error occurs decoding the profile's texture property.
 	 */
 	public Map<TextureType, Texture> getTextures() throws IllegalArgumentException {
-		return this.getTextures(true);
+		return this.getTextures(false);
 	}
 
 	/**
