@@ -36,20 +36,18 @@ public abstract class MixinSkinTextureDownloader {
 	}
 
 	// Adjust alpha stripping
-	private static boolean ears$reentering = false;
+	private static ScopedValue<Boolean> ears$reentering = ScopedValue.newInstance();
 
 	@Inject(at = @At("HEAD"), method = "setNoAlpha", cancellable = true)
 	private static void setNoAlpha(NativeImage image, int x1, int y1, int x2, int y2, CallbackInfo ci) {
-		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering);
-		if (ears$reentering) return;
+		EarsLog.debug(EarsLog.Tag.PLATFORM_INJECT, "stripAlpha({}, {}, {}, {}, {}) reentering={}", image, x1, y2, x2, y2, ears$reentering.orElse(false));
+		if (ears$reentering.orElse(false)) return;
 		if (x1 == 0 && y1 == 0 && x2 == 32 && y2 == 16) {
-			try {
-				ears$reentering = true;
-				EarsStorage.put(image, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new NativeImageAdapter(image)));
-				EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setNoAlpha(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
-			} finally {
-				ears$reentering = false;
-			}
+				ScopedValue.where(ears$reentering, true)
+						.run(() -> {
+							EarsStorage.put(image, EarsStorage.Key.ALFALFA, EarsCommon.preprocessSkin(new NativeImageAdapter(image)));
+							EarsCommon.carefullyStripAlpha((_x1, _y1, _x2, _y2) -> setNoAlpha(image, _x1, _y1, _x2, _y2), image.getHeight() != 32);
+						});
 		}
 		ci.cancel();
 	}
