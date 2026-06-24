@@ -208,13 +208,16 @@ SOFTWARE.
 			<b>Once you're done, click "Download Skin".</b><br/><br/>
 			<b>This tool helps you to set up the "magic pixels" in your skin that are read by the Ears mod.</b> You can see it as the various colors on the left center of the skin shown below. <b><i style="color:#F44336">This means that in order for changes made here to apply, you must save the skin below and <a style="color:#F44336" href="https://www.minecraft.net/en-us/msaprofile/mygames/editskin" rel="nofollow">upload it to Mojang</a>!</i></b> If you do not do this, <i>no Ears features will appear in-game</i>. There is no in-game configuration GUI or anything for Ears, all the options are encoded into those magic pixels.
 		</p>
-		<input type="file" id="skin-upload" accept="image/png,.png"></input><br/><br/>
+		<input type="file" id="skin-upload" accept="image/png,.png"></input><br/>
+		Or paste the skin image onto the page
+		<br/><br/>
 		If you're new here, you should <button id="sample">load a sample skin</button> which will change to demonstrate any options you select below.
 		You can use this to learn where the regions for various features are, so you can add them to your skin.<br/><br/>
 		<div>
 		<canvas id="skin" class="tex" width="64" height="64"></canvas>
 		</div>
 		<button id="download">Download Skin</button> (Includes wing data)<br/>
+		or <button id="skin-copy">Copy</button> the skin as an image<br/>
 		<small>* This entire thing is client-sided. You're not actually uploading or downloading anything, those are just the words people are familiar with.</small>
 		<h2>Vanilla Skin Customization<br/>
 		<small>Not stored in the skin. Only affects the render on the right.</small></h2>
@@ -783,16 +786,21 @@ SOFTWARE.
 	wireElement("wing-anim", 9);
 	wireElement("cape-enabled", -1);
 	wireElement("cape-upload", -1);
-	async function updateSkin() {
+	function isBitmapSkinSized(bitmap) {
+		if (bitmap.width != 64) {
+			return false;
+		}
+		if (bitmap.height != 64 && bitmap.height != 32) {
+			return false;
+		}
+		return true;
+	}
+	async function updateSkinFromBitmap(bitmap) {
+		document.body.classList.add("loading");
 		usingSample = false;
 		usingSampleWing = false;
 		usingSampleCape = false;
-		let files = $("#skin-upload").files;
-		if (!files || files.length == 0) return;
-		let file = files[0];
-		document.body.classList.add("loading");
 		try {
-			let bitmap = await createImageBitmap(file);
 			if (bitmap.width != 64) {
 				alert("This doesn't look like a Minecraft skin; the width is wrong. Needs to be 64px.");
 				$("#skin-upload").value = null;
@@ -958,6 +966,18 @@ SOFTWARE.
 			document.body.classList.remove("loading");
 		}
 	}
+	async function updateSkin() {
+		usingSample = false;
+		usingSampleWing = false;
+		usingSampleCape = false;
+		
+		let files = $("#skin-upload").files;
+		if (!files || files.length == 0) return;
+		file = files[0];
+
+		let bitmap = await createImageBitmap(file);
+		updateSkinFromBitmap(bitmap);
+	}
 	async function getSkinFromHash() {
 		let input = $("#skin-upload");
 		let hash = window.location.hash.slice(1);
@@ -1047,14 +1067,19 @@ SOFTWARE.
 		$("#cape-outer").style.display = "block";
 		return "Very Happy Cape Added";
 	});
-	async function updateWing() {
+	function isBitmapWingsSized(bitmap) {
+		if (bitmap.width != 12 && bitmap.width != 20) {
+			return false;
+		}
+		if (bitmap.height != 12 && bitmap.height != 16) {
+			return false;
+		}
+
+		return true;
+	}
+	async function updateWingFromBitmap(bitmap) {
 		usingSampleWing = false;
-		let files = $("#wing-upload").files;
-		if (!files || files.length == 0) return;
-		let file = files[0];
-		document.body.classList.add("loading");
 		try {
-			let bitmap = await createImageBitmap(file);
 			if (bitmap.width != 12 && bitmap.width != 20) {
 				alert("This doesn't look like an Ears wing; the width is wrong. Needs to be 12px or 20px.");
 				$("#wing-upload").value = null;
@@ -1074,6 +1099,15 @@ SOFTWARE.
 			$("#wing-upload").value = null;
 			document.body.classList.remove("loading");
 		}
+	}
+	async function updateWing() {
+		usingSampleWing = false;
+		let files = $("#wing-upload").files;
+		if (!files || files.length == 0) return;
+		let file = files[0];
+		
+		let bitmap = await createImageBitmap(file);
+		updateWingFromBitmap(bitmap);
 	}
 	async function updateCape() {
 		usingSampleCape = false;
@@ -1373,6 +1407,34 @@ SOFTWARE.
 		ctx.putImageData(scratch, 2, 33);
 		rebuild();
 	}
+	async function handlePagePaste(clipboardData) {
+		let items = clipboardData.items;
+		if (!items) return;
+
+		let image = null;
+		for (let i = 0; i < items.length; i++) {
+			let item = items[i];
+			if (item.kind == "file" && item.type.startsWith("image/"))
+			{
+				image = item.getAsFile();
+				break;
+			}
+		}
+
+		if (!image) return;
+
+		let bitmap = await createImageBitmap(image);
+
+		if (isBitmapSkinSized(bitmap)) {
+			updateSkinFromBitmap(bitmap);
+		}
+		else if (isBitmapWingsSized(bitmap)) {
+			updateWingFromBitmap(bitmap);
+		}
+		else {
+			alert("Pasted image size doesn't match skin sizes (64x32 or 64x64) nor wing sizes (20x16 or 12x12)");
+		}
+	}
 	$("#chest").addEventListener('input', () => {
 		let en = $("#chest").checked;
 		$("#chest-size").disabled = !en;
@@ -1410,7 +1472,17 @@ SOFTWARE.
 		a.download = "skin.png";
 		a.click();
 	});
+	$("#skin-copy").addEventListener('click', () => {
+		$("#skin").toBlob((blob) => {
+			let item = new ClipboardItem({"image/png": blob});
+			navigator.clipboard.write([item]);
+		}, "image/png");
+	});
 	window.addEventListener("resize", () => updateDpr());
+	window.addEventListener("paste", (event) => {
+		if (!event.clipboardData) return;
+		handlePagePaste(event.clipboardData);
+	});
 	updateDpr();
 	updateSkin();
 	getSkinFromHash();
