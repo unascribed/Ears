@@ -94,7 +94,7 @@ needsJ8="forge-1.8 forge-1.9"
 needsJ16="fabric-1.17 forge-1.17"
 needsJ17="forge-1.18 fabric-1.14 fabric-1.19 forge-1.19 fabric-1.19.3 forge-1.19.3 fabric-1.16 fabric-1.19.4 forge-1.19.4 fabric-1.20 fabric-1.20.2 neoforge-1.20.2 stapi-b1.7.3"
 needsJ21="fabric-1.21 neoforge-1.21 fabric-1.20.6 fabric-1.21.4 neoforge-1.21.4 fabric-1.21.5 neoforge-1.21.5 fabric-1.21.10 neoforge-1.21.10 fabric-1.21.11 neoforge-1.21.11"
-needsJ25="fabric-26.1 neoforge-26.1"
+needsJ25="fabric-26.1 neoforge-26.1 fabric-26.3 neoforge-26.3"
 # these ones can't be built in parallel (or build so quickly that we shouldn't bother)
 special="vanilla-b1.7.3 forge-1.2"
 
