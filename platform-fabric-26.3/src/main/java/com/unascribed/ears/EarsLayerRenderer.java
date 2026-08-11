@@ -10,6 +10,7 @@ import com.unascribed.ears.common.render.IndirectEarsRenderDelegate;
 import com.unascribed.ears.common.util.Decider;
 import com.unascribed.ears.mixin.AccessorHumanoidArmorLayer;
 import com.unascribed.ears.mixin.AccessorLivingEntityRenderer;
+import com.unascribed.ears.mixin.AccessorModelPart;
 import com.unascribed.ears.mixin.AccessorTextureManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -64,6 +65,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
@@ -108,9 +111,25 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 
 		@Override
 		protected void doAnchorTo(BodyPart part, ModelPart modelPart) {
+			java.util.List<ModelPart> ancestors = findAncestorPath(getParentModel().root(), modelPart);
+			if (ancestors != null) {
+				for (ModelPart ancestor : ancestors) {
+					ancestor.translateAndRotate(matrices);
+				}
+			}
 			modelPart.translateAndRotate(matrices);
-			Cube cuboid = modelPart.getRandomCube(NotRandom1193.INSTANCE);
+			while (modelPart.isEmpty()) {
+				ModelPart child = findCubeBearingChild(modelPart);
+				if (child == null) break;
+				modelPart = child;
+				modelPart.translateAndRotate(matrices);
+			}
 			matrices.scale(1/16f, 1/16f, 1/16f);
+			if (modelPart.isEmpty()) {
+				if (skipRendering == 0) skipRendering = 1;
+				return;
+			}
+			Cube cuboid = modelPart.getRandomCube(NotRandom1193.INSTANCE);
 			matrices.translate(cuboid.minX, cuboid.maxY, cuboid.minZ);
 		}
 
@@ -502,4 +521,61 @@ public class EarsLayerRenderer extends RenderLayer<AvatarRenderState, PlayerMode
 			return ((EarsPlayerRenderState)peer).ears$getStride();
 		}
 	};
+
+	private static Map<String, ModelPart> childrenOf(ModelPart part) {
+		return ((AccessorModelPart)(Object)part).ears$getChildren();
+	}
+
+	private static ModelPart findCubeBearingChild(ModelPart parent) {
+		Map<String, ModelPart> children = childrenOf(parent);
+		ModelPart cemPreferred = null;
+		ModelPart nonAccessory = null;
+		ModelPart accessory = null;
+		for (Map.Entry<String, ModelPart> e : children.entrySet()) {
+			ModelPart child = e.getValue();
+			if (child.isEmpty()) continue;
+			if (looksLikeCemCustomPart(child)) {
+				if (cemPreferred == null) cemPreferred = child;
+			} else if (VANILLA_ACCESSORY_CHILDREN.contains(e.getKey())) {
+				if (accessory == null) accessory = child;
+			} else {
+				if (nonAccessory == null) nonAccessory = child;
+			}
+		}
+		ModelPart chosen = cemPreferred != null ? cemPreferred
+				: (nonAccessory != null ? nonAccessory : accessory);
+		if (chosen != null) return chosen;
+		for (ModelPart child : children.values()) {
+			if (hasCubeAnywhere(child)) return child;
+		}
+		return null;
+	}
+
+	private static boolean looksLikeCemCustomPart(ModelPart part) {
+		// EMF wraps CEM/.jem-defined parts in EMFModelPartCustom
+		return part.getClass().getSimpleName().equals("EMFModelPartCustom");
+	}
+
+	private static final Set<String> VANILLA_ACCESSORY_CHILDREN = Set.of("hat");
+
+	private static java.util.List<ModelPart> findAncestorPath(ModelPart from, ModelPart target) {
+		if (from == null) return null;
+		if (from == target) return new java.util.ArrayList<>();
+		for (ModelPart child : childrenOf(from).values()) {
+			java.util.List<ModelPart> path = findAncestorPath(child, target);
+			if (path != null) {
+				path.add(0, from);
+				return path;
+			}
+		}
+		return null;
+	}
+
+	private static boolean hasCubeAnywhere(ModelPart part) {
+		if (!part.isEmpty()) return true;
+		for (ModelPart child : childrenOf(part).values()) {
+			if (hasCubeAnywhere(child)) return true;
+		}
+		return false;
+	}
 }
